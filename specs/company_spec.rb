@@ -21,6 +21,20 @@ describe FinModeling::Company  do
 
       FinModeling::Company.find("aapl").should be_an_instance_of FinModeling::Company
     end
+    it "returns nil if the stock symbol is invalid" do
+      SecQuery::Entity.should_receive(:find).and_return(nil)
+
+      FinModeling::Company.find("bogus symbol").should be_nil
+    end
+  end
+
+  describe "name" do
+    it "returns the name of the company" do
+      SecQuery::Entity.should_receive(:find).and_return(FinModeling::Mocks::Entity.new)
+
+      c = FinModeling::Company.find("aapl")
+      c.name.should == "Apple Inc"
+    end
   end
 
   describe "annual_reports" do

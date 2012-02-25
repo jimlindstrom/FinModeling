@@ -5,8 +5,16 @@ module FinModeling
     end
   
     def self.find(stock_symbol)
-      entity = filings=SecQuery::Entity.find(stock_symbol, {:relationships=>false, :transactions=>false, :filings=>true})
-      return Company.new(entity)
+      begin
+        entity = SecQuery::Entity.find(stock_symbol, {:relationships=>false, :transactions=>false, :filings=>true})
+        return Company.new(entity)
+      rescue
+        return nil
+      end
+    end
+
+    def name
+      @entity.name
     end
   
     def annual_reports
