@@ -1,0 +1,34 @@
+# company_spec.rb
+
+require 'spec_helper'
+
+describe FinModeling::Company  do
+  before(:each) do
+  end
+
+  describe "initialize" do
+    it "takes a SecQuery::Entity and creates a new company" do
+      SecQuery::Entity.should_receive(:find).and_return(FinModeling::Mocks::Entity.new)
+
+      entity = filings=SecQuery::Entity.find("appl", {:relationships=>false, :transactions=>false, :filings=>true})
+      FinModeling::Company.new(entity).should be_an_instance_of FinModeling::Company
+    end
+  end
+
+  describe "find" do
+    it "looks up a company by its stock ticker" do
+      SecQuery::Entity.should_receive(:find).and_return(FinModeling::Mocks::Entity.new)
+
+      FinModeling::Company.find("aapl").should be_an_instance_of FinModeling::Company
+    end
+  end
+
+  describe "annual_reports" do
+    it "returns an array of 10-K filings" do
+      SecQuery::Entity.should_receive(:find).and_return(FinModeling::Mocks::Entity.new)
+
+      company = FinModeling::Company.find "aapl"
+      company.annual_reports.last.term.should == "10-K"
+    end
+  end
+end
