@@ -5,6 +5,8 @@ require 'xbrlware'
 
 $LOAD_PATH << "."
 
+require 'lib/string_helpers'
+require 'lib/xbrlware_item_helpers'
 require 'lib/company'
 require 'lib/company_filing'
 require 'lib/annual_report_filing'

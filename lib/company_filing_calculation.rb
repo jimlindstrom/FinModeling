@@ -33,6 +33,20 @@ module FinModeling
       return sum
     end
 
+    def summarize(period, type_to_flip, flip_total)
+      title = @calculation.label + " (#{@calculation.item_id})"
+
+      rows = leaf_items(period).collect do |item| 
+        [ item.pretty_name, item.value_with_correct_sign(type_to_flip) ]
+      end
+    
+      total_val = leaf_items_sum(period)
+      total_val = -total_val if flip_total
+      rows.push ["Total", total_val ]
+
+      print_pretty_summary(title, rows)
+    end
+
     private
 
     def leaf_items_helper(node, period)
@@ -49,5 +63,21 @@ module FinModeling
       end
       return leaf_items
     end
+
+    KEY_WIDTH = 50
+    VAL_WIDTH = 18
+    def print_pretty_summary(title, rows)
+      puts title
+      rows.each do |key, val| 
+        justified_key = key.fixed_width_left_justify(KEY_WIDTH)
+    
+        val_with_commas = val.to_s.with_thousands_separators
+        justified_val = val_with_commas.fixed_width_right_justify(VAL_WIDTH) 
+    
+        puts "\t" + justified_key + "  " + justified_val
+      end
+      puts
+    end
+
   end
 end
