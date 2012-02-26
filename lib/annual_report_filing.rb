@@ -11,5 +11,17 @@ module FinModeling
   
       return BalanceSheetCalculation.new(@taxonomy, bal_sheet)
     end
+
+    def income_statement
+      calculations=@taxonomy.callb.calculation
+      inc_stmt = calculations.find{ |x| (x.title.downcase =~ /statement.*operations/) or
+                                        (x.title.downcase =~ /statement[s]* of earnings/) or
+                                        (x.title.downcase =~ /statement[s]* of income/) }
+      if inc_stmt.nil?
+        raise RuntimeError.new("Couldn't find income statement in: " + calculations.map{ |x| "\"#{x.title}\"" }.join("; "))
+      end
+  
+      return IncomeStatementCalculation.new(@taxonomy, inc_stmt)
+    end
   end
 end

@@ -15,9 +15,9 @@ describe FinModeling::BalanceSheetCalculation  do
       @balance_sheet.assets.label.downcase.should match /asset/
     end
     it "sums to the same value as do the liabilities and equity" do
-      left_sum = @balance_sheet.assets.leaf_items(@period).map{|x| x.value.to_f}.inject(:+)
-      right_sum = @balance_sheet.liabs_and_equity.leaf_items(@period).map{|x| x.value.to_f}.inject(:+)
-      left_sum.should == right_sum
+      left_sum = @balance_sheet.assets.leaf_items_sum(@period)
+      right_sum = @balance_sheet.liabs_and_equity.leaf_items_sum(@period)
+      left_sum.should be_within(1.0).of(-right_sum)
     end
   end
 

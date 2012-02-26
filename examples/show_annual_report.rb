@@ -59,13 +59,24 @@ filing_url = company.annual_reports.last.link
 puts "url: #{filing_url}"
 filing = FinModeling::AnnualReportFiling.download(filing_url)
 
+###########
+
+puts "Balance Sheet"
 balance_sheet = filing.balance_sheet
-period = filing.balance_sheet.periods.last
+period = balance_sheet.periods.last
 puts "period: #{period.to_s}"
 
-assets            = balance_sheet.assets
-liabs_and_equity  = balance_sheet.liabs_and_equity
+summarize_calculation(balance_sheet.assets,           period, type_to_flip="credit", flip_total=false)
+summarize_calculation(balance_sheet.liabs_and_equity, period, type_to_flip="debit",  flip_total=true)
 
-summarize_calculation(assets,           period, type_to_flip="credit", flip_total=false)
-summarize_calculation(liabs_and_equity, period, type_to_flip="debit",  flip_total=true)
+###########
+
+puts "Income Statement"
+inc_stmt = filing.income_statement
+period = inc_stmt.periods.last
+puts "period: #{period.to_s}"
+
+summarize_calculation(inc_stmt.operating_expenses, period, type_to_flip="debit", flip_total=true)
+summarize_calculation(inc_stmt.operating_income,   period, type_to_flip="debit", flip_total=true)
+summarize_calculation(inc_stmt.net_income,         period, type_to_flip="debit", flip_total=true)
 

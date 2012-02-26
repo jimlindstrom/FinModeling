@@ -1,6 +1,6 @@
 module FinModeling
   class CompanyFilingCalculation
-    attr_accessor :calculation # FIXME: hide this
+    attr_accessor :taxonomy, :calculation # FIXME: hide both of these
 
     def initialize(taxonomy, calculation)
       @taxonomy = taxonomy
