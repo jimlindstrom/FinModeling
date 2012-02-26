@@ -24,6 +24,7 @@ module FinModeling
   
   class CompanyFiling
     DOWNLOAD_PATH = "filings/"
+    attr_accessor :instance # FIXME: hide this
   
     def initialize(download_dir)
       instance_file = Xbrlware.file_grep(download_dir)["ins"]

@@ -14,7 +14,7 @@ module FinModeling
     end
 
     def name
-      @entity.name
+      @entity.name.gsub(/ \(.*/, '')
     end
   
     def annual_reports

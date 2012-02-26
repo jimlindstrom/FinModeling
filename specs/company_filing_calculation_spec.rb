@@ -3,21 +3,52 @@
 require 'spec_helper'
 
 describe FinModeling::CompanyFilingCalculation  do
-  before(:each) do
-    @taxonomy = nil
-    @calculation = FinModeling::Mocks::Calculation.new
+  before(:all) do
+    google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
+    @filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
   end
 
   describe "new" do
+    before(:each) do
+      @taxonomy = nil
+      @calculation = FinModeling::Mocks::Calculation.new
+    end
     it "takes a taxonomy and a xbrlware calculation and returns a CompanyFilingCalculation" do
       FinModeling::CompanyFilingCalculation.new(@taxonomy, @calculation).should be_an_instance_of FinModeling::CompanyFilingCalculation
     end
   end
 
   describe "label" do
+    before(:each) do
+      @taxonomy = nil
+      @calculation = FinModeling::Mocks::Calculation.new
+    end
     it "returns the calculation's label" do
       cfc = FinModeling::CompanyFilingCalculation.new(@taxonomy, @calculation)
       cfc.label.should == @calculation.label
+    end
+  end
+
+  describe "periods" do
+    before(:all) do
+      @balance_sheet = @filing.balance_sheet
+    end
+    it "returns an array of the periods over/at which this calculation can be queried" do
+      @balance_sheet.periods.map{|x| x.to_s }.sort.should == ["2010-12-31", "2011-12-31"]
+    end
+  end
+
+  describe "leaf_items" do
+    before(:all) do
+      balance_sheet = @filing.balance_sheet
+      @assets = balance_sheet.assets
+      @period = balance_sheet.periods.last
+    end
+    it "returns an array of the leaf items in the calculation tree that match the period" do
+      @assets.leaf_items(@period).length.should == 12
+    end
+    it "returns an array of the leaf items in the calculation tree that match the period" do
+      @assets.leaf_items(@period).first.should be_an_instance_of Xbrlware::Item
     end
   end
 end

@@ -9,37 +9,33 @@ if ARGV.length != 1
   exit
 end
 
-company = FinModeling::Company.find(stock_symbol = ARGV[0])
-if company.nil?
-  puts "couldn't find company"
-  exit
-elsif company.annual_reports.length == 0
-  puts "no annual reports"
-  exit
-end
+stock_symbol = ARGV[0]
+company = FinModeling::Company.find(stock_symbol)
+raise RuntimeError.new("couldn't find company") if company.nil?
+raise RuntimeError.new("company has no annual reports") if company.annual_reports.length == 0
 puts "company name: #{company.name}"
 
 filing_url = company.annual_reports.last.link
+puts "url: #{filing_url}"
 filing = FinModeling::AnnualReportFiling.download(filing_url)
 
 balance_sheet = filing.balance_sheet
-if balance_sheet.nil?
-  puts "couldn't find balance sheet"
-  exit
-end
+raise RuntimeError.new("Couldn't find balance sheet") if balance_sheet.nil?
+period = filing.balance_sheet.periods.last
+puts "period: #{period.to_s}"
 
-left_side  = balance_sheet.assets
-right_side = balance_sheet.liabs_and_equity
+assets            = balance_sheet.assets
+liabs_and_equity  = balance_sheet.liabs_and_equity
 
-if left_side.nil?
-  puts "couldn't find assets"
-else
-  puts "assets label: " + left_side.label
-end
+raise RuntimeError.new("Couldn't find assets") if assets.nil?
+raise RuntimeError.new("Couldn't find liabs") if liabs_and_equity.nil?
 
-if right_side.nil?
-  puts "couldn't find liabs/equity"
-else
-  puts "liabs/equity label: " + right_side.label
-end
+puts "assets label: " + assets.label + " (#{assets.calculation.item_id})"
+assets.leaf_items(period).each { |item| puts "\t#{item.name}\t#{item.value}" }
+puts "\ttotal: #{assets.leaf_items(period).map{|x| x.value.to_f}.inject(:+)}"
 
+puts "liabs/equity label: " + liabs_and_equity.label + " (#{liabs_and_equity.calculation.item_id})"
+liabs_and_equity.leaf_items(period).each { |item| puts "\t#{item.name % "%30s"}\t#{item.value}" }
+puts "\ttotal: #{liabs_and_equity.leaf_items(period).map{|x| x.value.to_f}.inject(:+)}"
+
+puts

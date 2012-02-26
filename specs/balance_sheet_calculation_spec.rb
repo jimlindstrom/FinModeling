@@ -7,11 +7,17 @@ describe FinModeling::BalanceSheetCalculation  do
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
     @balance_sheet = filing.balance_sheet
+    @period = @balance_sheet.periods.last
   end
 
   describe "assets" do
     it "returns the root node of the assets calculation" do
       @balance_sheet.assets.label.downcase.should match /asset/
+    end
+    it "sums to the same value as do the liabilities and equity" do
+      left_sum = @balance_sheet.assets.leaf_items(@period).map{|x| x.value.to_f}.inject(:+)
+      right_sum = @balance_sheet.liabs_and_equity.leaf_items(@period).map{|x| x.value.to_f}.inject(:+)
+      left_sum.should == right_sum
     end
   end
 

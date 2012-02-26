@@ -20,6 +20,7 @@ end
 puts "company name: #{company.name}"
 
 filing_url = company.annual_reports.last.link
+puts "url: #{filing_url}"
 filing = FinModeling::AnnualReportFiling.download(filing_url)
 
 filing.print_presentations
