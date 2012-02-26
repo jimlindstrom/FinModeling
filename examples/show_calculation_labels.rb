@@ -32,8 +32,8 @@ raise RuntimeError.new("Couldn't find liabs") if liabs_and_equity.nil?
 
 puts "assets label: " + assets.label + " (#{assets.calculation.item_id})"
 assets.leaf_items(period).each do |item| 
-  puts "\t#{item.name}\t #{item.value}" if item.def["xbrli:balance"] == "credit"
-  puts "\t#{item.name}\t-#{item.value}" if item.def["xbrli:balance"] == "debit"
+  puts "\t#{item.name}\t-#{item.value}" if item.def["xbrli:balance"] == "credit"
+  puts "\t#{item.name}\t #{item.value}" if item.def["xbrli:balance"] == "debit"
 end
 puts "\ttotal: #{assets.leaf_items_sum(period)}"
 
