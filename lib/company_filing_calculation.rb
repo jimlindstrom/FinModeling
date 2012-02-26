@@ -14,9 +14,22 @@ module FinModeling
     def periods
       @calculation.arcs[0].items.map{|x| x.context.period}.uniq.sort{|x,y| x.to_s <=> y.to_s }
     end
- 
+  
     def leaf_items(period)
       leaf_items_helper(@calculation, period)
+    end
+
+    def leaf_items_sum(period)
+      sum = 0.0
+      leaf_items(period).each do |item|
+        case item.def["xbrli:balance"]
+          when "debit"  
+            sum += item.value.to_f
+          when "credit"
+            sum -= item.value.to_f
+        end
+      end
+      return sum
     end
 
     private

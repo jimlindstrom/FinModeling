@@ -6,6 +6,9 @@ describe FinModeling::CompanyFilingCalculation  do
   before(:all) do
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     @filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
+
+    vepc_2010_annual_rpt = "http://www.sec.gov/Archives/edgar/data/103682/000119312511049905/d10k.htm"
+    @filing_with_mixed_order = FinModeling::AnnualReportFiling.download vepc_2010_annual_rpt
   end
 
   describe "new" do
@@ -49,6 +52,20 @@ describe FinModeling::CompanyFilingCalculation  do
     end
     it "returns an array of the leaf items in the calculation tree that match the period" do
       @assets.leaf_items(@period).first.should be_an_instance_of Xbrlware::Item
+    end
+  end
+
+  describe "leaf_items_sum" do
+    before(:all) do
+      # this balance sheet has some items (accumulated depreciation) that 
+      # should be subtracted from total assets, which makes it a better test
+      # than the google annual report
+      balance_sheet = @filing_with_mixed_order.balance_sheet
+      @assets = balance_sheet.assets
+      @period = balance_sheet.periods.last
+    end
+    it "returns the sum of the calculation tree, in the given period" do
+      @assets.leaf_items_sum(@period).should be_within(1.0).of(42817000000.0)
     end
   end
 end

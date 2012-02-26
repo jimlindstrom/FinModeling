@@ -31,11 +31,17 @@ raise RuntimeError.new("Couldn't find assets") if assets.nil?
 raise RuntimeError.new("Couldn't find liabs") if liabs_and_equity.nil?
 
 puts "assets label: " + assets.label + " (#{assets.calculation.item_id})"
-assets.leaf_items(period).each { |item| puts "\t#{item.name}\t#{item.value}" }
-puts "\ttotal: #{assets.leaf_items(period).map{|x| x.value.to_f}.inject(:+)}"
+assets.leaf_items(period).each do |item| 
+  puts "\t#{item.name}\t #{item.value}" if item.def["xbrli:balance"] == "credit"
+  puts "\t#{item.name}\t-#{item.value}" if item.def["xbrli:balance"] == "debit"
+end
+puts "\ttotal: #{assets.leaf_items_sum(period)}"
 
 puts "liabs/equity label: " + liabs_and_equity.label + " (#{liabs_and_equity.calculation.item_id})"
-liabs_and_equity.leaf_items(period).each { |item| puts "\t#{item.name % "%30s"}\t#{item.value}" }
-puts "\ttotal: #{liabs_and_equity.leaf_items(period).map{|x| x.value.to_f}.inject(:+)}"
+liabs_and_equity.leaf_items(period).each do |item| 
+  puts "\t#{item.name}\t #{item.value}" if item.def["xbrli:balance"] == "credit"
+  puts "\t#{item.name}\t-#{item.value}" if item.def["xbrli:balance"] == "debit"
+end
+puts "\ttotal: #{-liabs_and_equity.leaf_items_sum(period)}"
 
 puts
