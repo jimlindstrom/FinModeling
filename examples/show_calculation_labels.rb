@@ -4,6 +4,43 @@ $LOAD_PATH << "."
 
 require 'finmodeling'
 
+
+def left_justify(str, width)
+  return str[0..(width-1)] if str.length > width
+  return str + (" " * (width - str.length))
+end
+
+def right_justify(str, width)
+  return str[(-width)..-1] if str.length > width
+  return (" " * (width - str.length)) + str
+end
+
+def summarize_calculation(items, period, item_type_to_flip, flip_total)
+  puts items.label + " (#{items.calculation.item_id})"
+  items.leaf_items(period).each do |item| 
+    row = "\t"
+    item_name = item.name.gsub(/([a-z])([A-Z])/, '\1 \2')
+    row += left_justify(item_name, 50)
+    row += "  "
+
+    item_val = item.value.to_f 
+    item_val = -item_val if item.def["xbrli:balance"] == item_type_to_flip
+
+    item_val_str = item_val.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse
+
+    row += right_justify(item_val_str, 15) 
+
+    puts row
+  end
+
+  total_val = items.leaf_items_sum(period)
+  total_val = -total_val if flip_total
+  total_val_str = total_val.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse
+  puts "\t#{left_justify("total", 50)}  #{right_justify(total_val_str, 15)}"
+  puts
+end
+
+
 if ARGV.length != 1
   puts "usage #{__FILE__} <stock symbol>"
   exit
@@ -20,28 +57,12 @@ puts "url: #{filing_url}"
 filing = FinModeling::AnnualReportFiling.download(filing_url)
 
 balance_sheet = filing.balance_sheet
-raise RuntimeError.new("Couldn't find balance sheet") if balance_sheet.nil?
 period = filing.balance_sheet.periods.last
 puts "period: #{period.to_s}"
 
 assets            = balance_sheet.assets
 liabs_and_equity  = balance_sheet.liabs_and_equity
 
-raise RuntimeError.new("Couldn't find assets") if assets.nil?
-raise RuntimeError.new("Couldn't find liabs") if liabs_and_equity.nil?
+summarize_calculation(assets,           period, type_to_flip="credit", flip_total=false)
+summarize_calculation(liabs_and_equity, period, type_to_flip="debit",  flip_total=true)
 
-puts "assets label: " + assets.label + " (#{assets.calculation.item_id})"
-assets.leaf_items(period).each do |item| 
-  puts "\t#{item.name}\t-#{item.value}" if item.def["xbrli:balance"] == "credit"
-  puts "\t#{item.name}\t #{item.value}" if item.def["xbrli:balance"] == "debit"
-end
-puts "\ttotal: #{assets.leaf_items_sum(period)}"
-
-puts "liabs/equity label: " + liabs_and_equity.label + " (#{liabs_and_equity.calculation.item_id})"
-liabs_and_equity.leaf_items(period).each do |item| 
-  puts "\t#{item.name}\t #{item.value}" if item.def["xbrli:balance"] == "credit"
-  puts "\t#{item.name}\t-#{item.value}" if item.def["xbrli:balance"] == "debit"
-end
-puts "\ttotal: #{-liabs_and_equity.leaf_items_sum(period)}"
-
-puts
