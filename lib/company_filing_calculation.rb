@@ -22,6 +22,7 @@ module FinModeling
     def leaf_items_sum(period)
       sum = 0.0
       leaf_items(period).each do |item|
+        raise RuntimeError.new("can't find balance definition in #{item.inspect}") if item.def.nil?
         case item.def["xbrli:balance"]
           when "debit"  
             sum += item.value.to_f
