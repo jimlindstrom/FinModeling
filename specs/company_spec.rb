@@ -22,7 +22,7 @@ describe FinModeling::Company  do
       FinModeling::Company.find("aapl").should be_an_instance_of FinModeling::Company
     end
     it "returns nil if the stock symbol is invalid" do
-      SecQuery::Entity.should_receive(:find).and_return(nil)
+      SecQuery::Entity.should_receive(:find).and_raise(RuntimeError)
 
       FinModeling::Company.find("bogus symbol").should be_nil
     end
