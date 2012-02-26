@@ -1,22 +1,30 @@
 module FinModeling
   class BalanceSheetCalculation < CompanyFilingCalculation
+
     def assets
-      calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '') =~ /(^total *|^)assets$/ }
-      if calc.nil?
-        raise RuntimeError.new("Couldn't find assets in: " + @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; "))
+      if @assets.nil?
+        friendly_goal = "assets"
+        label_regexes = [ /(^total *|^)assets$/ ]
+        id_regexes    = [ /^us-gaap_Assets_\d+/,
+                          /^Assets_\d+/ ]
+  
+        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
+        @assets = CompanyFilingCalculation.new(@taxonomy, calc)
       end
-      if !(calc.item_id =~ /^us-gaap_Assets_\d+/) and !(calc.item_id =~ /^Assets_\d+/)
-        puts "Warning: assets id is not recognized: #{calc.item_id}"
-      end
-      return CompanyFilingCalculation.new(@taxonomy, calc)
+      return @assets
     end
   
     def liabs_and_equity
-      calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '') =~ /(^total *|^)liabilities.*and.*equity/ }
-      if calc.nil?
-        raise RuntimeError.new("Couldn't find liabs and equity in: " + @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; "))
+       if @liabs_and_equity.nil?
+        friendly_goal = "liabilities and equity"
+        label_regexes = [ /(^total *|^)liabilities.*and.*equity/ ]
+        id_regexes    = [ /.*/ ] # no checking...
+  
+        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
+        @liabs_and_equity = CompanyFilingCalculation.new(@taxonomy, calc)
       end
-      return CompanyFilingCalculation.new(@taxonomy, calc)
+      return @liabs_and_equity
     end
+
   end
 end

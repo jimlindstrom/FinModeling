@@ -2,37 +2,39 @@ module FinModeling
   class IncomeStatementCalculation < CompanyFilingCalculation
 
     def operating_expenses
-      calc = @calculation.arcs.find{ |x| (x.label.downcase.gsub(/[^a-z ]/, '') =~ /(^|^total )operating expenses/) or
-                                         (x.label.downcase.gsub(/[^a-z ]/, '') =~ /costs and expenses/) }
-      if calc.nil?
-        raise RuntimeError.new("Couldn't find operating expenses in: " + @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; "))
+      if @oe.nil?
+        friendly_goal = "operating expenses"
+        label_regexes = [ /(^|^total )operating expense[s]*/,
+                          /costs and expenses/ ]
+        id_regexes    = [ /^us-gaap_CostsAndExpenses_\d+/ ]
+        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
+        @oe = CompanyFilingCalculation.new(@taxonomy, calc)
       end
-      if !(calc.item_id =~ /^us-gaap_CostsAndExpenses_\d+/)
-        puts "Warning: operating expenses id is not recognized: #{calc.item_id}"
-      end
-      return CompanyFilingCalculation.new(@taxonomy, calc)
+      return @oe
     end
 
     def operating_income
-      calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '') =~ /^operating income/ }
-      if calc.nil?
-        raise RuntimeError.new("Couldn't find operating income in: " + @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; "))
+      if @oi.nil?
+        friendly_goal = "operating income"
+        label_regexes = [ /^operating income/,
+                          /^income from operations/ ]
+        id_regexes    = [ /^us-gaap_OperatingIncomeLoss_\d+/ ]
+        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
+        @oi = CompanyFilingCalculation.new(@taxonomy, calc)
       end
-      if !(calc.item_id =~ /^us-gaap_OperatingIncomeLoss_\d+/)
-        puts "Warning: operating income id is not recognized: #{calc.item_id}"
-      end
-      return CompanyFilingCalculation.new(@taxonomy, calc)
+      return @oi
     end
 
     def net_income
-      calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '') =~ /^net income/ }
-      if calc.nil?
-        raise RuntimeError.new("Couldn't find net income in: " + @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; "))
+      if @ni.nil?
+        friendly_goal = "net income"
+        label_regexes = [ /^net income/,
+                          /^net loss income/ ]
+        id_regexes    = [ /^us-gaap_NetIncomeLoss_\d+/ ]
+        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
+        @ni = CompanyFilingCalculation.new(@taxonomy, calc)
       end
-      if !(calc.item_id =~ /^us-gaap_NetIncomeLoss_\d+/)
-        puts "Warning: net income id is not recognized: #{calc.item_id}"
-      end
-      return CompanyFilingCalculation.new(@taxonomy, calc)
+      return @ni
     end
   
   end

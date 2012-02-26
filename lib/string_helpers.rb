@@ -14,4 +14,8 @@ class String
   def with_thousands_separators
     self.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse
   end
+
+  def matches_regexes?(regexes)
+    return regexes.inject(false){ |matches, regex| matches or regex =~ self }
+  end
 end
