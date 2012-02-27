@@ -20,4 +20,10 @@ describe FinModeling::AnnualReportFiling  do
       @filing.income_statement.should be_an_instance_of FinModeling::IncomeStatementCalculation
     end
   end
+
+  describe "is_valid?" do
+    it "returns true if the income statement is valid" do
+      @filing.is_valid?.should == @filing.income_statement.is_valid?
+    end
+  end
 end

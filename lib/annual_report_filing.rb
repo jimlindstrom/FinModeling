@@ -23,5 +23,9 @@ module FinModeling
   
       return IncomeStatementCalculation.new(@taxonomy, inc_stmt)
     end
+
+    def is_valid?
+      return income_statement.is_valid?
+    end
   end
 end

@@ -26,6 +26,8 @@ def get_filing(company)
   filing_url = company.annual_reports.last.link
   puts "url:          #{filing_url}\n"
   filing = FinModeling::AnnualReportFiling.download(filing_url)
+  raise RuntimeError.new("annual report is not valid") if !filing.is_valid?
+  return filing
 end
 
 def print_balance_sheet(filing)

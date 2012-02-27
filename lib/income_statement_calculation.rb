@@ -37,7 +37,7 @@ module FinModeling
       return @ni
     end
 
-    def validate
+    def is_valid?
       has_revenue_item = false
       has_tax_item     = false
       net_income.leaf_items(periods.last).each do |leaf|
