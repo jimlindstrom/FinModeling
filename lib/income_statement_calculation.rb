@@ -36,6 +36,21 @@ module FinModeling
       end
       return @ni
     end
+
+    def validate
+      has_revenue_item = false
+      has_tax_item     = false
+      net_income.leaf_items(periods.last).each do |leaf|
+        if !has_revenue_item and leaf.name.downcase.matches_regexes?([/revenue/, /sales/])
+          has_revenue_item = true
+        end
+        if !has_tax_item and leaf.name.downcase.matches_regexes?([/tax/])
+          has_tax_item     = true
+        end
+      end
+
+      return (has_revenue_item and has_tax_item)
+    end
   
   end
 end

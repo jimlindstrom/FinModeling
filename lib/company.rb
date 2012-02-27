@@ -6,7 +6,10 @@ module FinModeling
   
     def self.find(stock_symbol)
       begin
-        entity = SecQuery::Entity.find(stock_symbol, {:relationships=>false, :transactions=>false, :filings=>true})
+        entity = SecQuery::Entity.find(stock_symbol, { :relationships => false, 
+                                                       :transactions  => false, 
+                                                       :filings       => true })
+                                                       #:filings       => {:start=> 0, :count=>20, :limit=> 20} })
         return Company.new(entity)
       rescue
         return nil

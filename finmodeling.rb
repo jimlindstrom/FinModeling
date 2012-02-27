@@ -1,7 +1,13 @@
+require 'fileutils'
+
 require 'rubygems' 
+
 require 'sec_query'
 require 'edgar'
 require 'xbrlware'
+
+require 'restclient/components'
+require 'rack/cache'
 
 $LOAD_PATH << "."
 
