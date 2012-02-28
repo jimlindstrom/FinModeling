@@ -44,7 +44,7 @@ describe FinModeling::CompanyFilingCalculation  do
   describe "leaf_items" do
     before(:all) do
       balance_sheet = @filing.balance_sheet
-      @assets = balance_sheet.assets
+      @assets = balance_sheet.assets_calculation
       @period = balance_sheet.periods.last
     end
     it "returns an array of the leaf items in the calculation tree that match the period" do
@@ -64,7 +64,7 @@ describe FinModeling::CompanyFilingCalculation  do
       # should be subtracted from total assets, which makes it a better test
       # than the google annual report
       balance_sheet = @filing_with_mixed_order.balance_sheet
-      @assets = balance_sheet.assets
+      @assets = balance_sheet.assets_calculation
       @period = balance_sheet.periods.last
     end
     it "returns the sum of the calculation tree, in the given period" do

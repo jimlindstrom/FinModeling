@@ -10,21 +10,9 @@ describe FinModeling::IncomeStatementCalculation  do
     @period = @inc_stmt.periods.last
   end
 
-  describe "operating_expenses" do
-    it "returns the root node of the operating expenses calculation" do
-      @inc_stmt.operating_expenses.label.downcase.should match /expense/
-    end
-  end
-
-  describe "operating_income" do
-    it "returns the root node of the operating income calculation" do
-      @inc_stmt.operating_income.label.downcase.should match /operating.*income/
-    end
-  end
-
-  describe "net_income" do
+  describe "net_income_calculation" do
     it "returns the root node of the net income calculation" do
-      @inc_stmt.net_income.label.downcase.should match /net.*income/
+      @inc_stmt.net_income_calculation.label.downcase.should match /net.*income/
     end
   end
 

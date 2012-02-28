@@ -26,7 +26,7 @@ module FinModeling
     end
 
     def is_valid?
-      return income_statement.is_valid?
+      return (income_statement.is_valid? and balance_sheet.is_valid?)
     end
   end
 end

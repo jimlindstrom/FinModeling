@@ -22,8 +22,8 @@ describe FinModeling::AnnualReportFiling  do
   end
 
   describe "is_valid?" do
-    it "returns true if the income statement is valid" do
-      @filing.is_valid?.should == @filing.income_statement.is_valid?
+    it "returns true if the income statement and balance sheet are both valid" do
+      @filing.is_valid?.should == (@filing.income_statement.is_valid? and @filing.balance_sheet.is_valid?)
     end
   end
 end
