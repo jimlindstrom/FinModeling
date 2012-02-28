@@ -51,7 +51,7 @@ module FinModeling
     def print_presentations
       pres = @taxonomy.prelb.presentation
       pres.each do |pre|
-        puts "Pres: #{pre.title} (#{pre.id})"
+        puts "Pres: #{pre.title} (#{pre.role})"
         walk_subtree(pre.arcs)
         puts "\n\n"
       end
@@ -60,7 +60,7 @@ module FinModeling
     def print_calculations
       calculations=@taxonomy.callb.calculation
       calculations.each do |calc|
-        puts "Calc: #{calc.title} (#{calc.id})"
+        puts "Calc: #{calc.title} (#{calc.role})"
         walk_subtree(calc.arcs)
         puts "\n\n"
       end
