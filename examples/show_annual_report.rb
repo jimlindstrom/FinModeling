@@ -46,7 +46,7 @@ def print_balance_sheet(filing)
 end
 
 def print_income_statement(filing)
-  period = filing.income_statement.periods.last
+  period = filing.income_statement.net_income.periods.last # FIXME: this is is broken...
   puts "Income Statement (#{period.to_pretty_s})"
   
   filing.income_statement.net_income.summarize(    period, type_to_flip="debit", flip_total=true)

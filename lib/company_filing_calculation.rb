@@ -12,10 +12,10 @@ module FinModeling
     end
 
     def periods
-      @calculation.arcs[0].items.map{|x| x.context.period}.uniq.sort{|x,y| x.to_pretty_s <=> y.to_pretty_s }
+      leaf_items.map{ |x| x.context.period }.sort{ |x,y| x.to_pretty_s <=> y.to_pretty_s }.uniq
     end
   
-    def leaf_items(period)
+    def leaf_items(period=nil)
       leaf_items_helper(@calculation, period)
     end
 
@@ -67,15 +67,25 @@ module FinModeling
     private
 
     def leaf_items_helper(node, period)
-      if node.children.empty?
-        return node.items.select{ |x| x.context.period.to_pretty_s == period.to_pretty_s }#.select{ |x| x.context.entity.segment.nil? }
+      children = if node.class == Xbrlware::Linkbase::CalculationLinkbase::Calculation
+        node.arcs
+      else
+        node.children
+      end
+
+      if children.empty?
+        items = node.items.select{ |x| x.context.entity.segment.nil? }
         # FIXME: I don't fully understand the '.context.entity.segment' 
         # attribute. It appears, though, that items that have this attribute are
         # sub-elements of other leaf nodes, broken out to provide more detail.
+        if !period.nil?
+          items = items.select{ |x| x.context.period.to_pretty_s == period.to_pretty_s }
+        end
+        return items
       end
 
       leaf_items = [ ]
-      node.children.each do |child|
+      children.each do |child|
         leaf_items += leaf_items_helper(child, period)
       end
       return leaf_items

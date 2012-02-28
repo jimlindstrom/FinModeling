@@ -37,7 +37,7 @@ describe FinModeling::CompanyFilingCalculation  do
       @balance_sheet = @filing.balance_sheet
     end
     it "returns an array of the periods over/at which this calculation can be queried" do
-      @balance_sheet.periods.map{|x| x.to_s }.sort.should == ["2010-12-31", "2011-12-31"]
+      @balance_sheet.periods.map{|x| x.to_s }.sort.should == ["2008-12-31", "2009-12-31", "2010-12-31", "2011-12-31"]
     end
   end
 
@@ -52,6 +52,9 @@ describe FinModeling::CompanyFilingCalculation  do
     end
     it "returns an array of the leaf items in the calculation tree that match the period" do
       @assets.leaf_items(@period).first.should be_an_instance_of Xbrlware::Item
+    end
+    it "returns all leaf items, if no period given" do
+      @assets.leaf_items.length.should == 26
     end
   end
 
