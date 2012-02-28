@@ -46,9 +46,7 @@ def print_balance_sheet(filing)
 end
 
 def print_income_statement(filing)
-  all_periods = filing.income_statement.net_income_calculation.periods
-  all_12mo_periods = all_periods.select{ |x| Xbrlware::DateUtil.months_between(x.value["end_date"], x.value["start_date"]) >= 11 }
-  period = all_12mo_periods.last
+  period  = filing.income_statement.net_income_calculation.periods.yearly.last
   puts "Income Statement (#{period.to_pretty_s})"
   
   filing.income_statement.net_income_calculation.summarize(    period, type_to_flip="debit",  flip_total=true)

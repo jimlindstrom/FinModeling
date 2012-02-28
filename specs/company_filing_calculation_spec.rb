@@ -36,6 +36,9 @@ describe FinModeling::CompanyFilingCalculation  do
     before(:all) do
       @balance_sheet = @filing.balance_sheet
     end
+    it "returns a PeriodArray, which helps filter and choose periods" do
+      @balance_sheet.periods.should be_an_instance_of FinModeling::PeriodArray
+    end
     it "returns an array of the periods over/at which this calculation can be queried" do
       @balance_sheet.periods.map{|x| x.to_s }.sort.should == ["2008-12-31", "2009-12-31", "2010-12-31", "2011-12-31"]
     end
