@@ -12,7 +12,7 @@ module FinModeling
     end
 
     def periods
-      @calculation.arcs[0].items.map{|x| x.context.period}.uniq.sort{|x,y| x.to_s <=> y.to_s }
+      @calculation.arcs[0].items.map{|x| x.context.period}.uniq.sort{|x,y| x.to_pretty_s <=> y.to_pretty_s }
     end
   
     def leaf_items(period)
@@ -68,7 +68,7 @@ module FinModeling
 
     def leaf_items_helper(node, period)
       if node.children.empty?
-        return node.items.select{ |x| x.context.period.to_s == period.to_s }#.select{ |x| x.context.entity.segment.nil? }
+        return node.items.select{ |x| x.context.period.to_pretty_s == period.to_pretty_s }#.select{ |x| x.context.entity.segment.nil? }
         # FIXME: I don't fully understand the '.context.entity.segment' 
         # attribute. It appears, though, that items that have this attribute are
         # sub-elements of other leaf nodes, broken out to provide more detail.

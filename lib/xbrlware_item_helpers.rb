@@ -14,4 +14,19 @@ module Xbrlware
     end
   end
 
+  class Context
+    class Period
+      def to_pretty_s
+        case
+          when is_instant?
+            return "#{@value}" 
+          when is_duration?
+            return "#{@value["start_date"]} to #{@value["end_date"]}" 
+          else
+            return to_s
+        end
+      end
+    end
+  end
+
 end
