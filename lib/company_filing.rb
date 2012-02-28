@@ -16,7 +16,7 @@ module FinModeling
         puts output
     
         # If it has more elements, walk tree, recursively.
-        #walk_subtree(element.children, indent_count+1) if element.has_children?
+        walk_subtree(element.children, indent_count+1) if element.has_children?
       end
     end
   
@@ -51,7 +51,7 @@ module FinModeling
     def print_presentations
       pres = @taxonomy.prelb.presentation
       pres.each do |pre|
-        puts "Title is #{pre.title}"
+        puts "Pres: #{pre.title} (#{pre.id})"
         walk_subtree(pre.arcs)
         puts "\n\n"
       end
@@ -60,7 +60,7 @@ module FinModeling
     def print_calculations
       calculations=@taxonomy.callb.calculation
       calculations.each do |calc|
-        puts "Title is #{calc.title}"
+        puts "Calc: #{calc.title} (#{calc.id})"
         walk_subtree(calc.arcs)
         puts "\n\n"
       end

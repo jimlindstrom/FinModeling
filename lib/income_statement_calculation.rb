@@ -30,7 +30,7 @@ module FinModeling
         friendly_goal = "net income"
         label_regexes = [ /^net income/,
                           /^net loss income/ ]
-        id_regexes    = [ /^us-gaap_NetIncomeLoss_\d+/ ]
+        id_regexes    = [ /^us-gaap_NetIncomeLoss_.*/ ]
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @ni = CompanyFilingCalculation.new(@taxonomy, calc)
       end
@@ -49,6 +49,8 @@ module FinModeling
         end
       end
 
+      puts "income statement's net income calculation lacks tax item" if !has_tax_item 
+      puts "income statement's net income calculation lacks sales/revenue item" if !has_revenue_item 
       return (has_revenue_item and has_tax_item)
     end
   

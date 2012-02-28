@@ -10,6 +10,7 @@ module FinModeling
                                                        :transactions  => false, 
                                                        :filings       => true })
                                                        #:filings       => {:start=> 0, :count=>20, :limit=> 20} })
+        return nil if !entity
         return Company.new(entity)
       rescue
         return nil
