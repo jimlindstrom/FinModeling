@@ -9,7 +9,7 @@ module FinModeling
                           /^Assets_\d+/ ]
   
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
-        @assets = CompanyFilingCalculation.new(@taxonomy, calc)
+        @assets = AssetsCalculation.new(@taxonomy, calc)
       end
       return @assets
     end
@@ -21,7 +21,7 @@ module FinModeling
         id_regexes    = [ /.*/ ] # no checking...
   
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
-        @liabs_and_equity = CompanyFilingCalculation.new(@taxonomy, calc)
+        @liabs_and_equity = LiabsAndEquityCalculation.new(@taxonomy, calc)
       end
       return @liabs_and_equity
     end

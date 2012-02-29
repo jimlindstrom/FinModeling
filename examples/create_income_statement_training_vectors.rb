@@ -37,7 +37,7 @@ end
 
 def print_income_statement(filing)
   period = filing.income_statement.net_income_calculation.periods.yearly.last
-  filing.income_statement.net_income_calculation.summary(period, type_to_flip="debit", flip_total=true).print
+  filing.income_statement.net_income_calculation.summary(period).print
 end
 
 args = get_args

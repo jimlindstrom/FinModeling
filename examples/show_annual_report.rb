@@ -41,8 +41,8 @@ def print_balance_sheet(filing)
   period = filing.balance_sheet.periods.last
   puts "Balance Sheet (#{period.to_pretty_s})"
   
-  filing.balance_sheet.assets_calculation.summary(          period, type_to_flip="credit", flip_total=false).print
-  filing.balance_sheet.liabs_and_equity_calculation.summary(period, type_to_flip="debit",  flip_total=true ).print
+  filing.balance_sheet.assets_calculation.summary(period).print
+  filing.balance_sheet.liabs_and_equity_calculation.summary(period).print
 end
 
 def print_income_statement(filing)

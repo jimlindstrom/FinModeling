@@ -11,6 +11,9 @@ describe FinModeling::BalanceSheetCalculation  do
   end
 
   describe "assets_calculation" do
+    it "returns an AssetsCalculation" do
+      @balance_sheet.assets_calculation.should be_an_instance_of FinModeling::AssetsCalculation
+    end
     it "returns the root node of the assets calculation" do
       @balance_sheet.assets_calculation.label.downcase.should match /asset/
     end
@@ -22,6 +25,9 @@ describe FinModeling::BalanceSheetCalculation  do
   end
 
   describe "liabs_and_equity_calculation" do
+    it "returns a LiabsAndEquityCalculation" do
+      @balance_sheet.liabs_and_equity_calculation.should be_an_instance_of FinModeling::LiabsAndEquityCalculation
+    end
     it "returns the root node of the liability & shareholders' equity calculation" do
       @balance_sheet.liabs_and_equity_calculation.label.downcase.should match /liab.*equity/
     end
