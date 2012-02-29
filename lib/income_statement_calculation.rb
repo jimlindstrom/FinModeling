@@ -29,6 +29,6 @@ module FinModeling
       puts "income statement's net income calculation lacks sales/revenue item" if !has_revenue_item 
       return (has_revenue_item and has_tax_item)
     end
-  
+ 
   end
 end

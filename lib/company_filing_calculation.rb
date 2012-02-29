@@ -1,6 +1,24 @@
 module FinModeling
+  class CalculationSummary
+    attr_accessor :title, :rows
+
+    KEY_WIDTH = 60
+    VAL_WIDTH = 20
+    def print
+      puts @title
+      @rows.each do |row|
+        justified_key = row[:key].fixed_width_left_justify(KEY_WIDTH)
+    
+        val_with_commas = row[:val].to_s.with_thousands_separators
+        justified_val = val_with_commas.fixed_width_right_justify(VAL_WIDTH) 
+    
+        puts "\t" + justified_key + "  " + justified_val
+      end
+      puts
+    end
+  end
+
   class CompanyFilingCalculation
-    attr_accessor :taxonomy, :calculation # FIXME: hide both of these
 
     def initialize(taxonomy, calculation)
       @taxonomy = taxonomy
@@ -12,7 +30,7 @@ module FinModeling
     end
 
     def periods
-      leaf_items.map{ |x| x.context.period }.sort{ |x,y| x.to_pretty_s <=> y.to_pretty_s }.uniq
+      PeriodArray.new(leaf_items.map{ |x| x.context.period }.sort{ |x,y| x.to_pretty_s <=> y.to_pretty_s }.uniq)
     end
   
     def leaf_items(period=nil)
@@ -33,18 +51,19 @@ module FinModeling
       return sum
     end
 
-    def summarize(period, type_to_flip, flip_total)
-      title = @calculation.label + " (#{@calculation.item_id})"
+    def summary(period, type_to_flip, flip_total)
+      calc_summary = CalculationSummary.new
+      calc_summary.title = @calculation.label + " (#{@calculation.item_id})"
 
-      rows = leaf_items(period).collect do |item| 
-        [ item.pretty_name, item.value_with_correct_sign(type_to_flip) ]
+      calc_summary.rows = leaf_items(period).collect do |item| 
+        { :key => item.pretty_name, :val => item.value_with_correct_sign(type_to_flip) }
       end
     
       total_val = leaf_items_sum(period)
       total_val = -total_val if flip_total
-      rows.push ["Total", total_val ]
+      calc_summary.rows.push({ :key => "Total", :val => total_val })
 
-      print_pretty_summary(title, rows)
+      return calc_summary
     end
 
     protected
@@ -89,21 +108,6 @@ module FinModeling
         leaf_items += leaf_items_helper(child, period)
       end
       return leaf_items
-    end
-
-    KEY_WIDTH = 50
-    VAL_WIDTH = 18
-    def print_pretty_summary(title, rows)
-      puts title
-      rows.each do |key, val| 
-        justified_key = key.fixed_width_left_justify(KEY_WIDTH)
-    
-        val_with_commas = val.to_s.with_thousands_separators
-        justified_val = val_with_commas.fixed_width_right_justify(VAL_WIDTH) 
-    
-        puts "\t" + justified_key + "  " + justified_val
-      end
-      puts
     end
 
   end

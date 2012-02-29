@@ -1,0 +1,182 @@
+OR Sales Revenue Net                                     
+COGS Cost Of Revenue                                      
+OE Research And Development Expense                      
+OE Selling And Marketing Expense                        
+OE General And Administrative Expense                    
+FIBT Nonoperating Income Expense                              
+TAX Income Tax Expense Benefit                            
+
+OR Sales Revenue Net                                     
+COGS Cost Of Revenue                                      
+OE Research And Development Expense                      
+OE Selling And Marketing Expense                         
+OE General And Administrative Expense                    
+OIBT Charge Related To Resolution Of Investigation           
+FIBT Nonoperating Income Expense                              
+TAX Income Tax Expense Benefit                            
+
+OR Revenues                                               
+COGS Cost Of Revenue                                       
+OE Selling And Marketing Expense                         
+OE Research And Development Expense                      
+OE General And Administrative Expense                      
+OE Amortization Of Intangible Assets                        
+OIBT Goodwill Impairment Loss                                          
+OIBT Restructuring Charges                                    
+FIBT Other Nonoperating Income Expense                        
+TAX Income Tax Expense Benefit                              
+OOIAT Income Loss From Equity Method Investments               
+OOIAT Net Income Loss Attributable To Noncontrolling 
+
+OR Licenses Revenue New                                   
+OR Licenses Revenues Updates And Support                 
+OR Sales Revenue Goods Net                                
+OR Sales Revenue Services Net                             
+OR Technology Services Revenue                            
+COGS Selling And Marketing Expense                         
+COGS License Costs                                         
+COGS Cost Of Revenue                                       
+COGS Cost Of Services                                      
+OE Technology Services Costs                             
+OE Research And Development Expense                      
+OE General And Administrative Expense                      
+OE Amortization Of Intangible Assets                     
+OIBT Business Combination Acquisition Related Costs          
+OIBT Restructuring Charges                                   
+FIBT Interest Expense                                        
+FIBT Nonoperating Income Expense                              
+TAX Income Tax Expense Benefit                            
+
+OR Revenues                                               
+COGS Cost Of Goods Sold Subscription                       
+COGS Fulfillment Expense                                     
+OE Research And Development Expense                        
+OE Marketing Expense                                       
+OE General And Administrative Expense                      
+OIBT Litigation Settlement Expense                             
+FIBT Interest Expense                                         
+FIBT Other Nonoperating Income                                  
+TAX Income Tax Expense Benefit                              
+
+OR Revenues                                               
+COGS Cost Of Revenue                                         
+OE Selling And Marketing Expense                           
+OE General And Administrative Expense                      
+OE Research And Development Expense                         
+OE Depreciation                                             
+OE Amortization Of Intangible Assets                        
+OIBT Goodwill Impairment Loss                                 
+FIBT Investment Income Interest                                 
+FIBT Interest Expense                                          
+FIBT Income Loss From Equity Method Investments               
+FIBT Gain Loss On Long Term Investments                         
+FIBT Other Nonoperating Income Expense                         
+TAX Income Tax Expense Benefit                               
+OOIAT Discontinued Operation Income Loss From 
+OOIAT Gain Loss On Business Exchange                           
+OOIAT Net Income Loss Attributable To Noncontrolling 
+
+OR Sales Revenue Goods Net                                
+OR Sales Revenue Services Net                               
+OR Subscription Revenue                                     
+COGS Cost Of Goods Sold                                      
+COGS Cost Of Services                                        
+COGS Cost Of Goods Sold Subscription                         
+OE Research And Development Expense Software 
+OE Selling And Marketing Expense                         
+OE General And Administrative Expense                      
+OIBT Restructuring Charges                                    
+OIBT Amortization Of Intangible Asets And Incomplete
+FIBT Other Nonoperating Income                                 
+FIBT Interest Expense                                         
+FIBT Gain Loss On Investments                                   
+TAX Income Tax Expense Benefit                              
+
+OR Sales Revenue Net                                    
+COGS Cost Of Goods And Services Sold                      
+OE Research And Development Expense                      
+OE Selling General And Administrative Expense            
+FIBT Nonoperating Income Expense                              
+TAX Income Tax Expense Benefit                            
+
+OR Sales Revenue Goods Net                               
+OR Sales Revenue Services Net                            
+COGS Cost Of Goods Sold                                   
+COGS Cost Of Services                                      
+OE Selling General And Administrative Expense            
+OE Research And Development Expense Excluding
+FIBT Nonoperating Income Expense                              
+TAX Income Tax Expense Benefit                              
+
+OR Sales Revenue Net                                      
+COGS Cost Of Revenue                                         
+OE Selling And Marketing Expense                         
+OE Technology And Content Expense                          
+OE General And Administrative Expense                      
+OE Amortization Of Intangible Assets                        
+FIBT Investment Income Interest                                
+FIBT Interest Expense                                         
+FIBT Other Nonoperating Income Expense                         
+TAX Income Tax Expense Benefit                               
+OOIAT Income Loss From Discontinued Operations Net Of
+OOIAT Net Income Loss Attributable To Noncontrolling 
+
+OR Sales Revenue Net
+COGS Cost Of Goods And Services Sold
+OE Selling General And Administrative Expense
+OE Depreciation And Amortization
+OIBT Restructuring And Acquisition Related Costs
+FIBT Interest Expense Income Net Including Other
+TAX Income Tax Expense Benefit
+
+OR Sales Revenue Net
+COGS Cost Of Revenue
+OE Selling And Marketing Expense
+OE General And Administrative Expense
+OE Research And Development Expense
+OIBT Restructuring Charges
+FIBT Nonoperating Income Expense
+TAX Income Tax Expense Benefit
+
+OR Subscription And Support Revenue
+OR Sales Revenue Services Net
+COGS Cost Of Revenue Subscription And Support
+COGS Cost Of Services
+OE Research And Development Expense
+OE Selling And Marketing Expense
+OE General And Administrative Expense
+FIBT Investment Income Net
+FIBT Interest Expense
+FIBT Other Nonoperating Income Expense
+TAX Income Tax Expense Benefit
+OOIAT Net Income Loss Attributable To Noncontrolling
+
+OR Sales Revenue Goods Net
+OR Sales Revenue Services Net
+COGS Cost Of Goods Sold
+COGS Cost Of Services
+OE Research And Development Costs Including
+OE Selling And Marketing Expense
+OE General And Administrative Expense
+OE Amortization Of Intangible Assets
+OIBT Restructuring And Other Charges
+FIBT Interest Expense
+FIBT Investment Income Interest And Dividend
+FIBT Other Nonoperating Income Expense
+TAX Income Tax Expense Benefit
+
+OR Sales Revenue Goods Net
+OR Sales Revenue Services Net
+COGS Cost Of Goods Sold
+COGS Cost Of Services
+OE Research And Development Expense Excluding
+OE Selling General And Administrative Expense
+OE Amortization Of Intangible Assets
+OE Research And Development In Process
+OIBT Restructuring Charges
+OIBT Goodwill Impairment Loss
+FIBT Investment Income Interest
+FIBT Other Nonoperating Income Expense
+TAX Income Tax Expense Benefit
+OOIAT Discontinued Operation Tax Effect Of
+

@@ -41,16 +41,25 @@ def print_balance_sheet(filing)
   period = filing.balance_sheet.periods.last
   puts "Balance Sheet (#{period.to_pretty_s})"
   
-  filing.balance_sheet.assets_calculation.summarize(           period, type_to_flip="credit", flip_total=false)
-  filing.balance_sheet.liabs_and_equity_calculation.summarize( period, type_to_flip="debit",  flip_total=true)
+  filing.balance_sheet.assets_calculation.summary(          period, type_to_flip="credit", flip_total=false).print
+  filing.balance_sheet.liabs_and_equity_calculation.summary(period, type_to_flip="debit",  flip_total=true ).print
 end
 
 def print_income_statement(filing)
   period  = filing.income_statement.net_income_calculation.periods.yearly.last
   puts "Income Statement (#{period.to_pretty_s})"
+
+  summary = filing.income_statement.net_income_calculation.summary(period, type_to_flip="debit",  flip_total=true)
+
+  summary.rows[0..-2].each do |row|
+    isi = FinModeling::IncomeStatementItem.new(row[:key])
+    row[:key] = "[#{isi.classify.to_s}] " + row[:key]
+  end
   
-  filing.income_statement.net_income_calculation.summarize(    period, type_to_flip="debit",  flip_total=true)
+  summary.print
 end
+
+FinModeling::IncomeStatementItem.load_vectors_and_train("specs/vectors/income_statement_training_vectors.txt")
 
 args = get_args
 filing_url = args[:filing_url] || get_company_filing_url(args[:stock_symbol])
