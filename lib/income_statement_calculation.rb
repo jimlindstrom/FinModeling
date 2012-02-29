@@ -8,7 +8,7 @@ module FinModeling
                           /^net loss income/ ]
         id_regexes    = [ /^us-gaap_NetIncomeLoss_.*/ ]
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
-        @ni = CompanyFilingCalculation.new(@taxonomy, calc)
+        @ni = NetIncomeCalculation.new(@taxonomy, calc)
       end
       return @ni
     end

@@ -11,6 +11,9 @@ describe FinModeling::IncomeStatementCalculation  do
   end
 
   describe "net_income_calculation" do
+    it "returns a NetIncomeCalculation" do
+      @inc_stmt.net_income_calculation.should be_an_instance_of FinModeling::NetIncomeCalculation
+    end
     it "returns the root node of the net income calculation" do
       @inc_stmt.net_income_calculation.label.downcase.should match /net.*income/
     end

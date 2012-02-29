@@ -7,7 +7,11 @@ module FinModeling
     def print
       puts @title
       @rows.each do |row|
-        justified_key = row[:key].fixed_width_left_justify(KEY_WIDTH)
+        justified_key = if !row[:type].nil?
+          ("[#{row[:type]}] " + row[:key]).fixed_width_left_justify(KEY_WIDTH)
+        else
+          row[:key].fixed_width_left_justify(KEY_WIDTH)
+        end
     
         val_with_commas = row[:val].to_s.with_thousands_separators
         justified_val = val_with_commas.fixed_width_right_justify(VAL_WIDTH) 

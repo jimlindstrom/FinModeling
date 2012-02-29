@@ -49,14 +49,7 @@ def print_income_statement(filing)
   period  = filing.income_statement.net_income_calculation.periods.yearly.last
   puts "Income Statement (#{period.to_pretty_s})"
 
-  summary = filing.income_statement.net_income_calculation.summary(period, type_to_flip="debit",  flip_total=true)
-
-  summary.rows[0..-2].each do |row|
-    isi = FinModeling::IncomeStatementItem.new(row[:key])
-    row[:key] = "[#{isi.classify.to_s}] " + row[:key]
-  end
-  
-  summary.print
+  filing.income_statement.net_income_calculation.summary(period).print
 end
 
 FinModeling::IncomeStatementItem.load_vectors_and_train("specs/vectors/income_statement_training_vectors.txt")
