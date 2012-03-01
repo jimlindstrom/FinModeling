@@ -5,7 +5,7 @@ require 'spec_helper'
 describe FinModeling::IncomeStatementItem do
 
   before(:all) do
-    FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
+    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
   end
 
   describe "new" do

@@ -38,13 +38,10 @@ end
 def print_income_statement(filing)
   period = filing.income_statement.net_income_calculation.periods.yearly.last
   items = filing.income_statement.net_income_calculation.leaf_items(period)
-  items.each do |item|
-    puts item.pretty_name
-  end
+  items.each { |item| puts item.pretty_name }
   puts
 end
 
-FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
 args = get_args
 filing_url = args[:filing_url] || get_company_filing_url(args[:stock_symbol])
 filing = get_filing(filing_url)

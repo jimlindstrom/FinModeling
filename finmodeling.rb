@@ -27,3 +27,5 @@ require 'lib/income_statement_calculation'
 require 'lib/income_statement_item_vectors'
 require 'lib/income_statement_item'
 require 'lib/net_income_calculation'
+
+FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
