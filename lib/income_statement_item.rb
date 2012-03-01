@@ -33,16 +33,11 @@ module FinModeling
       return best_guess_type
     end
 
-    def self.load_vectors_and_train(filename)
-      f = File.open(filename)
-      while line = f.gets
-        if line =~ /^([A-Z]*) (.*)$/
-          expected_outcome = $1.downcase.to_sym
-          isi = FinModeling::IncomeStatementItem.new($2)
-          isi.train(expected_outcome)
-        end
+    def self.load_vectors_and_train(vectors)
+      vectors.each do |vector|
+        isi = FinModeling::IncomeStatementItem.new(vector[:item_string])
+        isi.train(vector[:isi_type])
       end
-      f.close
     end
 
     def tokenize

@@ -44,7 +44,7 @@ def print_income_statement(filing)
   puts
 end
 
-FinModeling::IncomeStatementItem.load_vectors_and_train("specs/vectors/income_statement_training_vectors.txt")
+FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
 args = get_args
 filing_url = args[:filing_url] || get_company_filing_url(args[:stock_symbol])
 filing = get_filing(filing_url)

@@ -5,8 +5,7 @@ require 'spec_helper'
 describe FinModeling::IncomeStatementItem do
 
   before(:all) do
-    @vectors_filename = "specs/vectors/income_statement_training_vectors.txt"
-    FinModeling::IncomeStatementItem.load_vectors_and_train(@vectors_filename)
+    FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
   end
 
   describe "new" do
@@ -55,21 +54,15 @@ describe FinModeling::IncomeStatementItem do
     end
 
     it "classifies >95% correctly" do
-      f = File.open(@vectors_filename)
-      errors = []
       num_items = 0
-      while line = f.gets
-        if line =~ /^([^ ]*) (.*)$/
-          num_items += 1
-          expected_outcome = $1.downcase.to_sym
-          isi = FinModeling::IncomeStatementItem.new($2)
-          if isi.classify != expected_outcome
-            errors.push({ :isi=>isi.to_s, :expected=>expected_outcome, :got=>isi.classify })
-          end
-          #puts ":isi=>#{isi.to_s}, :expected=>#{expected_outcome.to_s}, :got=>#{isi.classify.to_s}"
+      errors = []
+      FinModeling::ISI_TRAINING_VECTORS.each do |vector|
+        num_items += 1
+        isi = FinModeling::IncomeStatementItem.new(vector[:item_string])
+        if isi.classify != vector[:isi_type]
+          errors.push({ :isi=>isi.to_s, :expected=>vector[:isi_type], :got=>isi.classify })
         end
       end
-      f.close
 
       pct_errors = errors.length.to_f / num_items
       if pct_errors > 0.05
