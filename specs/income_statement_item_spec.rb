@@ -83,9 +83,9 @@ describe FinModeling::IncomeStatementItem do
   describe "tokenize" do
     it "returns an array of downcased 1-word, 2-word, and 3-word tokens" do
       isi = FinModeling::IncomeStatementItem.new("Cost of Goods Sold")
-      expected_tokens  = ["cost", "of", "goods", "sold"]
-      expected_tokens += ["cost of", "of goods", "goods sold"]
-      expected_tokens += ["cost of goods", "of goods sold"]
+      expected_tokens  = ["^", "cost", "of", "goods", "sold", "$"]
+      expected_tokens += ["^ cost", "cost of", "of goods", "goods sold", "sold $"]
+      expected_tokens += ["^ cost of", "cost of goods", "of goods sold", "goods sold $"]
       isi.tokenize.sort.should == expected_tokens.sort
     end
   end

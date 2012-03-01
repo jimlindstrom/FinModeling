@@ -1,7 +1,7 @@
 module FinModeling
   class IncomeStatementItem < String
 
-    ISI_TYPES = [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat ]
+    ISI_TYPES = [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ]
 
     @@classifiers = Hash[ *ISI_TYPES.zip(ISI_TYPES.map{ |x| NaiveBayes.new(:yes, :no) }).flatten ]
 
@@ -36,7 +36,7 @@ module FinModeling
     def self.load_vectors_and_train(filename)
       f = File.open(filename)
       while line = f.gets
-        if line =~ /^([^ ]*) (.*)$/
+        if line =~ /^([A-Z]*) (.*)$/
           expected_outcome = $1.downcase.to_sym
           isi = FinModeling::IncomeStatementItem.new($2)
           isi.train(expected_outcome)
@@ -46,7 +46,7 @@ module FinModeling
     end
 
     def tokenize
-      words = self.downcase.split(" ")
+      words = ["^"] + self.downcase.split(" ") + ["$"]
 
       tokens = [1, 2, 3].collect do |words_per_token|
         words.each_cons(words_per_token).to_a.map{|x| x.join(" ") }

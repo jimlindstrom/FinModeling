@@ -15,7 +15,7 @@ def get_args
   if arg =~ /http/
     args[:filing_url] = arg
   else
-    args[:stock_symbol] = arg
+    args[:stock_symbol] = arg.downcase
   end
 
   return args
@@ -37,10 +37,15 @@ end
 
 def print_income_statement(filing)
   period = filing.income_statement.net_income_calculation.periods.yearly.last
-  filing.income_statement.net_income_calculation.summary(period).print
+  items = filing.income_statement.net_income_calculation.leaf_items(period)
+  items.each do |item|
+    puts item.pretty_name
+  end
+  puts
 end
 
+FinModeling::IncomeStatementItem.load_vectors_and_train("specs/vectors/income_statement_training_vectors.txt")
 args = get_args
 filing_url = args[:filing_url] || get_company_filing_url(args[:stock_symbol])
 filing = get_filing(filing_url)
-print_income_statement(filing) if filing.is_valid?
+print_income_statement(filing) #if filing.is_valid?
