@@ -186,6 +186,7 @@ module FinModeling
                          {:isi_type=>:oe, :item_string=>"Research And Development Expense"}, 
                          {:isi_type=>:oe, :item_string=>"General And Administrative Expense"}, 
                          {:isi_type=>:oe, :item_string=>"Amortization Of Intangible Assets"}, 
+                         {:isi_type=>:oibt, :item_string=>"Other Cost And Expense Operating"}, 
                          {:isi_type=>:fibt, :item_string=>"Costmethod Investments Other Than Temporary Impairment"}, 
                          {:isi_type=>:fibt, :item_string=>"Investment Income Interest"}, 
                          {:isi_type=>:fibt, :item_string=>"Interest Expense"}, 
