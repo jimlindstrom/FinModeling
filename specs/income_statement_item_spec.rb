@@ -5,7 +5,7 @@ require 'spec_helper'
 describe FinModeling::IncomeStatementItem do
 
   before(:all) do
-    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
+    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::IncomeStatementItem::TRAINING_VECTORS)
   end
 
   describe "new" do
@@ -25,7 +25,7 @@ describe FinModeling::IncomeStatementItem do
     it "returns a hash with the confidence in each ISI type" do
       isi = FinModeling::IncomeStatementItem.new("Cost of Services")
 
-      FinModeling::IncomeStatementItem::ISI_TYPES.each do |isi_type|
+      FinModeling::IncomeStatementItem::TYPES.each do |isi_type|
         isi.classification_estimates.keys.include?(isi_type).should be_true
       end
     end
@@ -56,7 +56,7 @@ describe FinModeling::IncomeStatementItem do
     it "classifies >95% correctly" do
       num_items = 0
       errors = []
-      FinModeling::ISI_TRAINING_VECTORS.each do |vector|
+      FinModeling::IncomeStatementItem::TRAINING_VECTORS.each do |vector|
         num_items += 1
         isi = FinModeling::IncomeStatementItem.new(vector[:item_string])
         if isi.classify != vector[:isi_type]

@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe FinModeling::NetIncomeCalculation  do
   before(:all) do
-    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::ISI_TRAINING_VECTORS)
+    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::IncomeStatementItem::TRAINING_VECTORS)
 
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
@@ -18,7 +18,7 @@ describe FinModeling::NetIncomeCalculation  do
       @ni.summary(@period).should be_an_instance_of FinModeling::CalculationSummary
     end
     it "tags each row with an Income Statement Type" do
-      FinModeling::IncomeStatementItem::ISI_TYPES.include?(@ni.summary(@period).rows.first[:type]).should be_true
+      FinModeling::IncomeStatementItem::TYPES.include?(@ni.summary(@period).rows.first[:type]).should be_true
     end
   end
 end

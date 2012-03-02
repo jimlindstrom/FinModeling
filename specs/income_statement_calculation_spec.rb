@@ -21,9 +21,11 @@ describe FinModeling::IncomeStatementCalculation  do
 
   describe "is_valid?" do
     it "returns false if none of the net income leaf nodes contains the term 'tax'" do
+      # FIXME: need an example of this. the EA one actually *does* have a tax item.
       ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
       filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-      filing.income_statement.is_valid?.should be_false
+      #filing.income_statement.is_valid?.should be_false
+      pending
     end
     it "returns false if none of the net income leaf nodes contains the terms 'sales' or 'revenue'" do
       timewarner_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1105705/000119312512077072/0001193125-12-077072-index.htm"

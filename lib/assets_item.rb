@@ -1,15 +1,15 @@
 module FinModeling
-  class IncomeStatementItem < String
+  class AssetsItem < String
 
-    TYPES = [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ]
+    TYPES = [ :oa, :fa ]
 
     @@classifiers = Hash[ *TYPES.zip(TYPES.map{ |x| NaiveBayes.new(:yes, :no) }).flatten ]
 
-    def train(isi_type)
-      raise TypeError if !TYPES.include?(isi_type)
+    def train(ai_type)
+      raise TypeError if !TYPES.include?(ai_type)
 
       TYPES.each do |classifier_type|
-        expected_outcome = (isi_type == classifier_type) ? :yes : :no
+        expected_outcome = (ai_type == classifier_type) ? :yes : :no
         @@classifiers[classifier_type].train(expected_outcome, *tokenize)
       end
     end
@@ -35,8 +35,8 @@ module FinModeling
 
     def self.load_vectors_and_train(vectors)
       vectors.each do |vector|
-        isi = FinModeling::IncomeStatementItem.new(vector[:item_string])
-        isi.train(vector[:isi_type])
+        ai = FinModeling::AssetsItem.new(vector[:item_string])
+        ai.train(vector[:ai_type])
       end
     end
 
