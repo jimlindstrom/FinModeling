@@ -38,5 +38,11 @@ describe FinModeling::IncomeStatementCalculation  do
       filing.income_statement.is_valid?.should be_true
     end
   end
+
+  describe "reformulated" do
+    it "takes a period and returns a ReformulatedIncomeStatement" do
+      @inc_stmt.reformulated(@period).should be_an_instance_of FinModeling::ReformulatedIncomeStatement
+    end
+  end
 end
 

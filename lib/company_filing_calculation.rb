@@ -1,27 +1,4 @@
 module FinModeling
-  class CalculationSummary
-    attr_accessor :title, :rows
-
-    KEY_WIDTH = 60
-    VAL_WIDTH = 20
-    def print
-      puts @title
-      @rows.each do |row|
-        justified_key = if !row[:type].nil?
-          ("[#{row[:type]}] " + row[:key]).fixed_width_left_justify(KEY_WIDTH)
-        else
-          row[:key].fixed_width_left_justify(KEY_WIDTH)
-        end
-    
-        val_with_commas = row[:val].to_s.with_thousands_separators
-        justified_val = val_with_commas.fixed_width_right_justify(VAL_WIDTH) 
-    
-        puts "\t" + justified_key + "  " + justified_val
-      end
-      puts
-    end
-  end
-
   class CompanyFilingCalculation
 
     def initialize(taxonomy, calculation)
@@ -66,10 +43,6 @@ module FinModeling
         { :key => item.pretty_name, :val => item.value_with_correct_sign(type_to_flip) }
       end
     
-      total_val = leaf_items_sum(period)
-      total_val = -total_val if flip_total
-      calc_summary.rows.push({ :key => "Total", :val => total_val })
-
       return calc_summary
     end
 

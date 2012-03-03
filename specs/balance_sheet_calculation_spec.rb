@@ -59,5 +59,11 @@ describe FinModeling::BalanceSheetCalculation  do
     end
   end
 
+  describe "reformulated" do
+    it "takes a period and returns a ReformulatedBalanceSheet" do
+      @balance_sheet.reformulated(@period).should be_an_instance_of FinModeling::ReformulatedBalanceSheet
+    end
+  end
+
 end
 

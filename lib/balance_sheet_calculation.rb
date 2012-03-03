@@ -52,5 +52,9 @@ module FinModeling
       return (has_cash_item and has_equity_item and is_balanced)
     end
 
+    def reformulated(period)
+      return ReformulatedBalanceSheet.new(assets_calculation.summary(period), liabs_and_equity_calculation.summary(period))
+    end
+
   end
 end

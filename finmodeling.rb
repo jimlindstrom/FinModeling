@@ -19,6 +19,7 @@ require 'lib/period_array'
 require 'lib/company'
 require 'lib/company_filing'
 require 'lib/annual_report_filing'
+require 'lib/calculation_summary'
 require 'lib/company_filing_calculation'
 require 'lib/balance_sheet_calculation'
 require 'lib/assets_calculation'
@@ -27,11 +28,14 @@ require 'lib/income_statement_calculation'
 require 'lib/income_statement_item_vectors'
 require 'lib/income_statement_item'
 require 'lib/net_income_calculation'
-require 'lib/assets_item_vectors.rb'
+require 'lib/assets_item_vectors'
 require 'lib/assets_item'
-require 'lib/liabs_and_equity_item_vectors.rb'
+require 'lib/liabs_and_equity_item_vectors'
 require 'lib/liabs_and_equity_item'
+require 'lib/reformulated_income_statement'
+require 'lib/reformulated_balance_sheet'
 
+# FIXME: move this into some kind of initializer...
 FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::IncomeStatementItem::TRAINING_VECTORS)
 FinModeling::AssetsItem.load_vectors_and_train(FinModeling::AssetsItem::TRAINING_VECTORS)
 FinModeling::LiabsAndEquityItem.load_vectors_and_train(FinModeling::LiabsAndEquityItem::TRAINING_VECTORS)

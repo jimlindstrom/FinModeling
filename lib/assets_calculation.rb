@@ -7,11 +7,11 @@ module FinModeling
                        :fa => [ :oa, :fa ] }
 
     def summary(period)
-      s = super(period, type_to_flip="credit", flip_total=false)
-    
-      classify_all_rows(s.rows, lookahead=[4, s.rows.length-1].min)
-
-      return s
+      if @summary.nil?
+        @summary = super(period, type_to_flip="credit", flip_total=false)
+        classify_all_rows(@summary.rows, lookahead=[4, @summary.rows.length-1].min)
+      end
+      return @summary
     end
 
     private
@@ -19,7 +19,7 @@ module FinModeling
     # simple viterbi classifier, with 2-element lookahead
     def classify_all_rows(rows, lookahead)
       prev_state = nil
-      rows[0..-2].each_with_index do |row, idx|
+      rows.each_with_index do |row, idx|
         lookahead = [lookahead, rows.length-idx-lookahead].min
         row[:type] = classify_row(rows, idx, prev_state, lookahead)[:state]
         raise RuntimeError.new("couldn't classify....") if row[:type].nil?
