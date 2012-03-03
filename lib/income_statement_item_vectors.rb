@@ -187,11 +187,13 @@ module FinModeling
                          {:isi_type=>:oe, :item_string=>"General And Administrative Expense"}, 
                          {:isi_type=>:oe, :item_string=>"Amortization Of Intangible Assets"}, 
                          {:isi_type=>:oibt, :item_string=>"Other Cost And Expense Operating"}, 
+                         {:isi_type=>:oibt, :item_string=>"Other Operating Income Expense"},
                          {:isi_type=>:fibt, :item_string=>"Costmethod Investments Other Than Temporary Impairment"}, 
                          {:isi_type=>:fibt, :item_string=>"Investment Income Interest"}, 
                          {:isi_type=>:fibt, :item_string=>"Interest Expense"}, 
                          {:isi_type=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:isi_type=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
+                         {:isi_type=>:fiat, :item_string=>"Income Loss From Equity Method Investments"},
   
                          {:isi_type=>:or, :item_string=>"Licenses Revenue"}, 
                          {:isi_type=>:or, :item_string=>"Maintenance Revenue"}, 

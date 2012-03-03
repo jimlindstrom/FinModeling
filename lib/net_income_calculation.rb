@@ -8,7 +8,7 @@ module FinModeling
                        :oe    => [             :oe, :oibt, :fibt, :tax, :ooiat, :fiat ],
                        :oibt  => [                  :oibt, :fibt, :tax, :ooiat, :fiat ], # obit/fibt can cycle back/forth
                        :fibt  => [                  :obit, :fibt, :tax, :ooiat, :fiat ], # obit/fibt can cycle back/forth
-                       :tax   => [                                :tax, :ooiat, :fiat ],
+                       :tax   => [                                      :ooiat, :fiat ], # tax can't go to itself. only 1 such item.
                        :ooiat => [                                      :ooiat, :fiat ], # ooiat/fiat can cycle back/forth
                        :fiat  => [                                      :ooiat, :fiat ] }# ooiat/fiat can cycle back/forth
 

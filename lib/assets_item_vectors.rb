@@ -13,6 +13,10 @@ module FinModeling
                          {:ai_type=>:oa, :item_string=>"Goodwill"},
                          {:ai_type=>:oa, :item_string=>"Intangible Assets Net Excluding OA Goodwill"},
   
+                         {:ai_type=>:oa, :item_string=>"Content Library Net Noncurrent"},
+                         {:ai_type=>:oa, :item_string=>"Content Library Net Noncurrent"},
+                         {:ai_type=>:oa, :item_string=>"Content Library Net Noncurrent"},
+
                          {:ai_type=>:fa, :item_string=>"Cash And Cash Equivalents At Carrying Value"},
                          {:ai_type=>:fa, :item_string=>"Marketable Securities Current"},
                          {:ai_type=>:oa, :item_string=>"Accounts Receivable Net Current"},
