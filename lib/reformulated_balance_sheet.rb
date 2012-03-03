@@ -49,5 +49,17 @@ module FinModeling
       return cs
     end
 
+    def composition_ratio
+      net_operating_assets.total / net_financial_assets.total
+    end
+
+    def noa_growth(prev)
+      (net_operating_assets.total - prev.net_operating_assets.total) / prev.net_operating_assets.total
+    end
+
+    def cse_growth(prev)
+      (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
+    end
+
   end
 end

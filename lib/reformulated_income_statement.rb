@@ -95,5 +95,49 @@ module FinModeling
       return cs
     end
 
+    def gross_margin
+      gross_revenue.total / operating_revenues.total
+    end
+
+    def sales_profit_margin
+      income_from_sales_after_tax.total / operating_revenues.total
+    end
+
+    def operating_profit_margin
+      operating_income_after_tax.total / operating_revenues.total
+    end
+
+    def fi_over_sales
+      net_financing_income.total / operating_revenues.total
+    end
+
+    def ni_over_sales
+      comprehensive_income.total / operating_revenues.total
+    end
+
+    def sales_over_noa(reformed_bal_sheet)
+      operating_revenues.total / reformed_bal_sheet.net_operating_assets.total
+    end
+
+    def fi_over_nfa(reformed_bal_sheet)
+      net_financing_income.total / reformed_bal_sheet.net_financial_assets.total
+    end
+
+    def revenue_growth(prev)
+      (operating_revenues.total - prev.operating_revenues.total) / prev.operating_revenues.total
+    end
+
+    def core_oi_growth(prev)
+      (income_from_sales_after_tax.total - prev.income_from_sales_after_tax.total) / prev.income_from_sales_after_tax.total
+    end
+
+    def oi_growth(prev)
+      (operating_income_after_tax.total - prev.operating_income_after_tax.total) / prev.operating_income_after_tax.total
+    end
+
+    def re_oi(prev_bal_sheet, expected_rate_of_return=0.10)
+      operating_income_after_tax.total - (expected_rate_of_return * prev_bal_sheet.net_operating_assets.total)
+    end
+
   end
 end
