@@ -37,9 +37,9 @@ module FinModeling
       @cogs
     end
 
-    def gross_margin
+    def gross_revenue
       cs = FinModeling::CalculationSummary.new
-      cs.title = "Gross Margin"
+      cs.title = "Gross Revenue"
       cs.rows = [ { :key => "Operating Revenues (OR)", :val => @orev.total },
                   { :key => "Cost of Goods Sold (COGS)", :val => @cogs.total } ]
       return cs

@@ -29,12 +29,12 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
   end
 
-  describe "gross_margin" do
+  describe "gross_revenue" do
     it "returns a CalculationSummary" do
-      @reformed_inc_stmt.gross_margin.should be_an_instance_of FinModeling::CalculationSummary
+      @reformed_inc_stmt.gross_revenue.should be_an_instance_of FinModeling::CalculationSummary
     end
     it "totals up to the right amount" do
-      @reformed_inc_stmt.gross_margin.total.should be_within(0.1).of(24717000000.0)
+      @reformed_inc_stmt.gross_revenue.total.should be_within(0.1).of(24717000000.0)
     end
   end
 

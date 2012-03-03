@@ -70,7 +70,7 @@ def print_reformulated_income_statement(filing)
 
   reformed_inc_stmt  = filing.income_statement.reformulated(period)
 
-  reformed_inc_stmt.gross_margin.print
+  reformed_inc_stmt.gross_revenue.print
   reformed_inc_stmt.income_from_sales_before_tax.print
   reformed_inc_stmt.income_from_sales_after_tax.print
   reformed_inc_stmt.operating_income_after_tax.print
