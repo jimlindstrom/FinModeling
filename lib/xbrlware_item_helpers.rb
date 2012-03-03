@@ -7,7 +7,9 @@ module Xbrlware
 
     def value_with_correct_sign(type_to_flip)
       if self.def.nil?
-        raise RuntimeError.new("item doesn't have xbrl:balance definition, which should be either 'credit' or 'debit'")
+        #raise RuntimeError.new("item \"#{self.name}\" doesn't have xbrl:balance definition, which should be either 'credit' or 'debit'")
+        puts "Warning: item \"#{self.name}\" doesn't have xbrl:balance definition, which should be either 'credit' or 'debit'"
+        return self.value.to_f
       end
 
       return (self.def["xbrli:balance"] == type_to_flip) ? -self.value.to_f : self.value.to_f

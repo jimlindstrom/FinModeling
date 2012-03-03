@@ -44,11 +44,14 @@ module FinModeling
     def leaf_items_sum(period)
       sum = 0.0
       leaf_items(period).each do |item|
-        raise RuntimeError.new("can't find balance definition in #{item.inspect}") if item.def.nil?
-        case item.def["xbrli:balance"]
-          when "debit"  
+        #raise RuntimeError.new("can't find balance definition in #{item.inspect}") if item.def.nil?
+        puts "can't find balance definition in #{item.inspect}" if item.def.nil?
+        case 
+          when item.def.nil?
             sum += item.value.to_f
-          when "credit"
+          when item.def["xbrli:balance"] == "debit"  
+            sum += item.value.to_f
+          when item.def["xbrli:balance"] == "credit"  
             sum -= item.value.to_f
         end
       end
