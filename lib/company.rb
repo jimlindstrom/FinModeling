@@ -20,9 +20,13 @@ module FinModeling
     def name
       @entity.name.gsub(/ \(.*/, '')
     end
-  
+   
     def annual_reports
       @entity.filings.select{ |x| x.term == "10-K" }.sort{ |x,y| x.date <=> y.date }
+    end
+ 
+    def quarterly_reports
+      @entity.filings.select{ |x| x.term == "10-Q" }.sort{ |x,y| x.date <=> y.date }
     end
   end
 end

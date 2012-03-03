@@ -45,4 +45,13 @@ describe FinModeling::Company  do
       company.annual_reports.last.term.should == "10-K"
     end
   end
+
+  describe "quarterly_reports" do
+    it "returns an array of 10-Q filings" do
+      SecQuery::Entity.should_receive(:find).and_return(FinModeling::Mocks::Entity.new)
+
+      company = FinModeling::Company.find "aapl"
+      company.quarterly_reports.last.term.should == "10-Q"
+    end
+  end
 end

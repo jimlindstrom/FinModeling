@@ -1,0 +1,13 @@
+Income Statement
+	- net income != comprehensive income.  pull in items from SSE
+	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
+	  currency exchg, etc)
+	- rename OIBT as OOIBT?
+	- consistency between operating/financing vs. operational/financial?
+	- need to better understand minority interest, noncontrollable blah-blah,
+	  etc.
+
+Balance Sheet
+	- I saw a case (ADBE? ORCL?) in which a non-leaf item had a value, and had 
+	  two children with labels but no values.
+
