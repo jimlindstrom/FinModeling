@@ -15,6 +15,11 @@ class String
     self.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse
   end
 
+  def cap_decimals(num_decimals)
+    r = Regexp.new('(.*\.[0-9]{' + num_decimals.to_s + '})[0-9]*')
+    self.gsub(r, '\1')
+  end
+
   def matches_regexes?(regexes)
     return regexes.inject(false){ |matches, regex| matches or regex =~ self }
   end

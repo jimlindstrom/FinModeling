@@ -29,4 +29,35 @@ describe FinModeling::CalculationSummary do
       @calc_summary.filter_by_type(:oa).rows.map{ |row| row[:type] }.uniq.should == [:oa]
     end
   end
+
+  describe "+" do
+    before(:each) do
+      @cs1 = FinModeling::CalculationSummary.new
+      @cs1.title = "CS 1"
+      @cs1.rows = [ { :key => "First  Row", :val => 1 },
+                    { :key => "Second Row", :val => 2 } ]
+      
+      @cs2 = FinModeling::CalculationSummary.new
+      @cs2.title = "CS 1"
+      @cs2.rows = [ { :key => "First  Row", :val => 1 },
+                    { :key => "Second Row", :val => 2 } ]
+    end
+    it "should return a MultiColumnCalculationSummary" do
+      (@cs1 + @cs2).should be_an_instance_of FinModeling::MultiColumnCalculationSummary
+    end
+    it "should set the title to the first summary's title" do
+      cs3 = (@cs1 + @cs2)
+      cs3.title.should == @cs1.title
+    end
+    it "should set the row labels to the first summary's row labels" do
+      cs3 = (@cs1 + @cs2)
+      cs3.rows.map{ |row| row[:key] }.should == @cs1.rows.map{ |row| row[:key] }
+    end
+    it "should merge the values of summary into an array of values in the result" do
+      cs3 = (@cs1 + @cs2)
+      0.upto(1).each do |row_idx|
+        cs3.rows[row_idx][:vals].should == [ @cs1.rows[row_idx][:val], @cs2.rows[row_idx][:val] ] 
+      end
+    end
+  end
 end
