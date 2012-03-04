@@ -7,23 +7,29 @@ require 'finmodeling'
 def show_usage_and_exit
   puts "usage:"
   puts "\t#{__FILE__} <stock symbol> <10-k|10-q> <0, for most recent|-1 for prevous|-2, etc>"
+  puts "\t#{__FILE__} <stock symbol> <start date, e.g. '2010-01-01'>"
   exit
 end
 
 def get_args
-  show_usage_and_exit if ARGV.length < 3
-  args = { :stock_symbol => nil, :filing_urls => nil, :report_type => nil, :report_offsets => nil }
+  args = { :stock_symbol => nil, :filing_urls => nil, :start_date => nil, :report_type => nil, :report_offsets => nil }
 
+  show_usage_and_exit if ARGV.length < 2
   args[:stock_symbol]  = ARGV[0]
-  args[:report_type]   = case ARGV[1].downcase
-    when "10-k"
-      :annual_report
-    when "10-q"
-      :quarterly_report
-    else
-      show_usage_and_exit
+  begin
+    args[:start_date] = Time.parse(ARGV[1])
+  rescue
+    show_usage_and_exit if ARGV.length < 3
+    args[:report_type]   = case ARGV[1].downcase
+      when "10-k"
+        :annual_report
+      when "10-q"
+        :quarterly_report
+      else
+        show_usage_and_exit
+    end
+    args[:report_offsets] = ARGV[2..-1].map{ |x| x.to_i }
   end
-  args[:report_offsets] = ARGV[2..-1].map{ |x| x.to_i }
 
   return args
 end
@@ -61,7 +67,27 @@ def get_filings(filing_urls, report_type)
   end
 end
 
-def next_balance_sheet_analysis(prev_analysis, prev_filing, filing, report_type)
+def get_company_filings_since_date(stock_symbol, start_date)
+  company = FinModeling::Company.find(stock_symbol)
+  raise RuntimeError.new("couldn't find company") if company.nil?
+  puts "company name: #{company.name}"
+
+  reports  = company.annual_reports.select{ |report| Time.parse(report.date) >= start_date } 
+  reports += company.quarterly_reports.select{ |report| Time.parse(report.date) >= start_date }
+  reports.sort!{ |x, y| Time.parse(x.date) <=> Time.parse(y.date) }
+
+  filings = reports.map do |report|
+    if report.term == "10-Q"
+      FinModeling::QuarterlyReportFiling.download(report.link) 
+    else
+      FinModeling::AnnualReportFiling.download(report.link)
+    end
+  end
+
+  return filings
+end
+
+def next_balance_sheet_analysis(prev_analysis, prev_filing, filing)
   if !prev_filing.nil?
     prev_period = prev_filing.balance_sheet.periods.last
     prev_reformed_bal_sheet = prev_filing.balance_sheet.reformulated(prev_period)
@@ -74,6 +100,9 @@ def next_balance_sheet_analysis(prev_analysis, prev_filing, filing, report_type)
   analysis.title = ""
   analysis.header_row = { :key => "", :val => period.to_pretty_s }
   analysis.rows = []
+  analysis.rows.push(  { :key => "NOA (000's)",       :val => (reformed_bal_sheet.net_operating_assets.total/1000.0).round.to_f })
+  analysis.rows.push(  { :key => "NFA (000's)",       :val => (reformed_bal_sheet.net_financial_assets.total/1000.0).round.to_f })
+  analysis.rows.push(  { :key => "CSE (000's)",       :val => (reformed_bal_sheet.common_shareholders_equity.total/1000.0).round.to_f })
   analysis.rows.push(  { :key => "Composition Ratio", :val => reformed_bal_sheet.composition_ratio })
   if prev_filing.nil?
     analysis.rows.push({ :key => "NOA Growth",        :val => 0 })
@@ -87,12 +116,12 @@ def next_balance_sheet_analysis(prev_analysis, prev_filing, filing, report_type)
   return (                analysis) if  prev_analysis.nil?
 end
 
-def get_balance_sheet_analysis(filings, report_type)
+def get_balance_sheet_analysis(filings)
   prev_filing = nil
   analysis    = nil
 
   filings.each do |filing|
-    analysis    = next_balance_sheet_analysis(analysis, prev_filing, filing, report_type)
+    analysis    = next_balance_sheet_analysis(analysis, prev_filing, filing)
     prev_filing = filing
   end
 
@@ -101,18 +130,26 @@ def get_balance_sheet_analysis(filings, report_type)
   return analysis
 end
 
-def next_income_statement_analysis(prev_analysis, prev_filing, filing, report_type)
+def next_income_statement_analysis(prev_analysis, prev_filing, filing)
   if !prev_filing.nil?
-    prev_is_period = prev_filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
-    prev_is_period = prev_filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+    prev_is_period = case prev_filing
+      when FinModeling::AnnualReportFiling
+        prev_filing.income_statement.net_income_calculation.periods.yearly.last
+      when FinModeling::QuarterlyReportFiling
+        prev_filing.income_statement.net_income_calculation.periods.quarterly.last
+    end
     prev_reformed_inc_stmt = prev_filing.income_statement.reformulated(prev_is_period)
 
     prev_bs_period = prev_filing.balance_sheet.periods.last
     prev_reformed_bal_sheet = prev_filing.balance_sheet.reformulated(prev_bs_period)
   end
 
-  is_period = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
-  is_period = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+  is_period = case filing
+    when FinModeling::AnnualReportFiling
+      filing.income_statement.net_income_calculation.periods.yearly.last
+    when FinModeling::QuarterlyReportFiling
+      filing.income_statement.net_income_calculation.periods.quarterly.last
+  end
   reformed_inc_stmt = filing.income_statement.reformulated(is_period)
 
   bs_period = filing.balance_sheet.periods.last
@@ -127,30 +164,32 @@ def next_income_statement_analysis(prev_analysis, prev_filing, filing, report_ty
   analysis.rows.push(  { :key => "Operating PM",   :val => reformed_inc_stmt.operating_profit_margin })
   analysis.rows.push(  { :key => "FI / Sales",     :val => reformed_inc_stmt.fi_over_sales })
   analysis.rows.push(  { :key => "NI / Sales",     :val => reformed_inc_stmt.ni_over_sales })
-  analysis.rows.push(  { :key => "Sales / NOA",    :val => reformed_inc_stmt.sales_over_noa(reformed_bal_sheet) })
-  analysis.rows.push(  { :key => "FI / NFA",       :val => reformed_inc_stmt.fi_over_nfa(reformed_bal_sheet) })
   if !prev_filing.nil?
+    analysis.rows.push({ :key => "Sales / NOA",    :val => reformed_inc_stmt.sales_over_noa(prev_reformed_bal_sheet) })
+    analysis.rows.push({ :key => "FI / NFA",       :val => reformed_inc_stmt.fi_over_nfa(prev_reformed_bal_sheet) })
     analysis.rows.push({ :key => "Revenue Growth", :val => reformed_inc_stmt.revenue_growth(prev_reformed_inc_stmt) })
     analysis.rows.push({ :key => "Core OI Growth", :val => reformed_inc_stmt.core_oi_growth(prev_reformed_inc_stmt) })
     analysis.rows.push({ :key => "OI Growth",      :val => reformed_inc_stmt.oi_growth(prev_reformed_inc_stmt) })
-    analysis.rows.push({ :key => "ReOI",           :val => reformed_inc_stmt.re_oi(prev_reformed_bal_sheet) })
-  else
+    analysis.rows.push({ :key => "ReOI (000's)",   :val => (reformed_inc_stmt.re_oi(prev_reformed_bal_sheet)/1000.0).round.to_f })
+  else  
+    analysis.rows.push({ :key => "Sales / NOA",    :val => 0 })
+    analysis.rows.push({ :key => "FI / NFA",       :val => 0 })
     analysis.rows.push({ :key => "Revenue Growth", :val => 0 })
     analysis.rows.push({ :key => "Core OI Growth", :val => 0 })
     analysis.rows.push({ :key => "OI Growth",      :val => 0 })
-    analysis.rows.push({ :key => "ReOI",           :val => 0 })
+    analysis.rows.push({ :key => "ReOI (000's)",   :val => 0 })
   end
 
   return (prev_analysis + analysis) if !prev_analysis.nil?
   return (                analysis) if  prev_analysis.nil?
 end
 
-def get_income_statement_analysis(filings, report_type)
+def get_income_statement_analysis(filings)
   prev_filing = nil
   analysis    = nil
 
   filings.each do |filing|
-    analysis    = next_income_statement_analysis(analysis, prev_filing, filing, report_type)
+    analysis    = next_income_statement_analysis(analysis, prev_filing, filing)
     prev_filing = filing
   end
 
@@ -161,9 +200,14 @@ end
 
 
 args = get_args
-args[:filing_urls] = get_company_filing_urls(args[:stock_symbol], args[:report_type], args[:report_offsets])
-filings = get_filings(args[:filing_urls], args[:report_type])
+filings = nil
+if !args[:start_date].nil?
+  filings = get_company_filings_since_date(args[:stock_symbol], args[:start_date])
+else
+  args[:filing_urls] = get_company_filing_urls(args[:stock_symbol], args[:report_type], args[:report_offsets])
+  filings = get_filings(args[:filing_urls], args[:report_type])
+end
 
-get_balance_sheet_analysis(   filings, args[:report_type]).print
-get_income_statement_analysis(filings, args[:report_type]).print
+get_balance_sheet_analysis(   filings).print
+get_income_statement_analysis(filings).print
 

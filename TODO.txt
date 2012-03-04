@@ -1,10 +1,9 @@
 Forecasts
 
-How could I construct a fake quarter from a 10-K and 3 10-Q's
+show_reports.rb
+	- intermingle 10-K's and 10-Q's, to avoid gaps
 
 Income Statement
-	- the growth calculations and ReOI assume annual periods. Need to modify for 
-	  quarters
 	- net income != comprehensive income.  pull in items from SSE
 	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
 	  currency exchg, etc)
