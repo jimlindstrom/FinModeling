@@ -80,7 +80,7 @@ def next_balance_sheet_analysis(prev_analysis, prev_filing, filing, report_type)
     analysis.rows.push({ :key => "CSE Growth",        :val => 0 })
   else
     analysis.rows.push({ :key => "NOA Growth",        :val => reformed_bal_sheet.noa_growth(prev_reformed_bal_sheet) })
-    analysis.rows.push({ :key => "CSE Growth",        :val => reformed_bal_sheet.noa_growth(prev_reformed_bal_sheet) })
+    analysis.rows.push({ :key => "CSE Growth",        :val => reformed_bal_sheet.cse_growth(prev_reformed_bal_sheet) })
   end
 
   return (prev_analysis + analysis) if !prev_analysis.nil?

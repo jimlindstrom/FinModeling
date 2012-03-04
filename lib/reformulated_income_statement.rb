@@ -1,7 +1,9 @@
 module FinModeling
   class ReformulatedIncomeStatement
+    attr_accessor :period
 
-    def initialize(net_income_summary, tax_rate=0.35)
+    def initialize(period, net_income_summary, tax_rate=0.35)
+      @period   = period
       @tax_rate = tax_rate
 
       @orev  = net_income_summary.filter_by_type(:or   )
@@ -124,19 +126,45 @@ module FinModeling
     end
 
     def revenue_growth(prev)
-      (operating_revenues.total - prev.operating_revenues.total) / prev.operating_revenues.total
+      ratio = (operating_revenues.total - prev.operating_revenues.total) / prev.operating_revenues.total
+      return annualize_ratio(prev, ratio)
     end
 
     def core_oi_growth(prev)
-      (income_from_sales_after_tax.total - prev.income_from_sales_after_tax.total) / prev.income_from_sales_after_tax.total
+      ratio = (income_from_sales_after_tax.total - prev.income_from_sales_after_tax.total) / prev.income_from_sales_after_tax.total
+      return annualize_ratio(prev, ratio)
     end
 
     def oi_growth(prev)
-      (operating_income_after_tax.total - prev.operating_income_after_tax.total) / prev.operating_income_after_tax.total
+      ratio = (operating_income_after_tax.total - prev.operating_income_after_tax.total) / prev.operating_income_after_tax.total
+      return annualize_ratio(prev, ratio)
     end
 
     def re_oi(prev_bal_sheet, expected_rate_of_return=0.10)
-      operating_income_after_tax.total - (expected_rate_of_return * prev_bal_sheet.net_operating_assets.total)
+      e_ror = deannualize_ratio(prev_bal_sheet, expected_rate_of_return)
+      return (operating_income_after_tax.total - (e_ror * prev_bal_sheet.net_operating_assets.total))
+    end
+
+    private
+
+    def annualize_ratio(prev, ratio)
+      from_days = case
+        when prev.period.is_instant?
+          Xbrlware::DateUtil.days_between(prev.period.value,             @period.value["end_date"])
+        when prev.period.is_duration?
+          Xbrlware::DateUtil.days_between(prev.period.value["end_date"], @period.value["end_date"])
+      end
+      Rate.new(ratio).annualize(from_days, to_days=365)
+    end
+
+    def deannualize_ratio(prev, ratio)
+      to_days = case
+        when prev.period.is_instant?
+          Xbrlware::DateUtil.days_between(prev.period.value,             @period.value["end_date"])
+        when prev.period.is_duration?
+          Xbrlware::DateUtil.days_between(prev.period.value["end_date"], @period.value["end_date"])
+      end
+      Rate.new(ratio).annualize(from_days=365, to_days)
     end
 
   end

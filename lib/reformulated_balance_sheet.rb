@@ -1,7 +1,9 @@
 module FinModeling
   class ReformulatedBalanceSheet
+    attr_accessor :period
 
-    def initialize(assets_summary, liabs_and_equity_summary)
+    def initialize(period, assets_summary, liabs_and_equity_summary)
+      @period = period
       @oa  = assets_summary.filter_by_type(:oa)
       @fa  = assets_summary.filter_by_type(:fa)
       @ol  = liabs_and_equity_summary.filter_by_type(:ol)
@@ -54,11 +56,25 @@ module FinModeling
     end
 
     def noa_growth(prev)
-      (net_operating_assets.total - prev.net_operating_assets.total) / prev.net_operating_assets.total
+      ratio = (net_operating_assets.total - prev.net_operating_assets.total) / prev.net_operating_assets.total
+      return annualize_ratio(prev, ratio)
     end
 
     def cse_growth(prev)
-      (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
+      ratio = (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
+      return annualize_ratio(prev, ratio)
+    end
+
+    private
+
+    def annualize_ratio(prev, ratio)
+      from_days = Xbrlware::DateUtil.days_between(prev.period.value, @period.value)
+      return Rate.new(ratio).annualize(from_days, to_days=365)
+    end
+
+    def deannualize_ratio(prev, ratio)
+      to_days = Xbrlware::DateUtil.days_between(prev.period.value,   @period.value)
+      return Rate.new(ratio).annualize(from_days=365, to_days)
     end
 
   end

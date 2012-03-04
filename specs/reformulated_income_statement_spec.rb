@@ -183,8 +183,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2010).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
-      growth = @reformed_inc_stmt_2011.operating_revenues.total - @reformed_inc_stmt_2010.operating_revenues.total
-      growth = growth / @reformed_inc_stmt_2010.operating_revenues.total
+      growth = 0.26598193551973104
       @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2010).should be_within(0.1).of(growth)
     end
   end
@@ -194,8 +193,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2010).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
-      growth = @reformed_inc_stmt_2011.income_from_sales_after_tax.total - @reformed_inc_stmt_2010.income_from_sales_after_tax.total
-      growth = growth / @reformed_inc_stmt_2010.income_from_sales_after_tax.total
+      growth = 0.22278931581347616
       @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2010).should be_within(0.1).of(growth)
     end
   end
@@ -205,8 +203,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2010).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
-      growth = @reformed_inc_stmt_2011.operating_income_after_tax.total - @reformed_inc_stmt_2010.operating_income_after_tax.total
-      growth = growth / @reformed_inc_stmt_2010.operating_income_after_tax.total
+      growth = 0.20209204336564834
       @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2010).should be_within(0.1).of(growth)
     end
   end
@@ -219,10 +216,8 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2010, @expected_rate_of_return).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
-      last_years_noa = @reformed_bal_sheet_2010.net_operating_assets.total
-      expected_rate_of_return = 0.10
-      re_oi = @reformed_inc_stmt_2011.operating_income_after_tax.total - (expected_rate_of_return * last_years_noa)
-      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2010, @expected_rate_of_return).should be_within(0.1).of(re_oi)
+      re_oi = 6868337409.999998
+      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2010, @expected_rate_of_return).should be_within(1.0).of(re_oi)
     end
   end
 

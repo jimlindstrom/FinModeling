@@ -1,4 +1,7 @@
+Forecasts
+
 How could I construct a fake quarter from a 10-K and 3 10-Q's
+
 Income Statement
 	- the growth calculations and ReOI assume annual periods. Need to modify for 
 	  quarters

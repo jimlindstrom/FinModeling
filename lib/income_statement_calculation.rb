@@ -31,7 +31,7 @@ module FinModeling
     end
 
     def reformulated(period)
-      return ReformulatedIncomeStatement.new(net_income_calculation.summary(period))
+      return ReformulatedIncomeStatement.new(period, net_income_calculation.summary(period))
     end
  
   end

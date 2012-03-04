@@ -53,7 +53,7 @@ module FinModeling
     end
 
     def reformulated(period)
-      return ReformulatedBalanceSheet.new(assets_calculation.summary(period), liabs_and_equity_calculation.summary(period))
+      return ReformulatedBalanceSheet.new(period, assets_calculation.summary(period), liabs_and_equity_calculation.summary(period))
     end
 
   end

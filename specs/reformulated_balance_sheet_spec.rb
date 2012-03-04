@@ -18,8 +18,8 @@ describe FinModeling::ReformulatedBalanceSheet  do
   end
 
   describe "new" do
-    it "takes an assets calculation and a liabs_and_equity calculation and returns a CalculationSummary" do
-      rbs = FinModeling::ReformulatedBalanceSheet.new(@bal_sheet.assets_calculation.summary(@period), @bal_sheet.liabs_and_equity_calculation.summary(@period))
+    it "takes an assets calculation and a liabs_and_equity calculation and a period and returns a CalculationSummary" do
+      rbs = FinModeling::ReformulatedBalanceSheet.new(@period, @bal_sheet.assets_calculation.summary(@period), @bal_sheet.liabs_and_equity_calculation.summary(@period))
       rbs.should be_an_instance_of FinModeling::ReformulatedBalanceSheet
     end
   end
@@ -102,8 +102,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
       @reformed_bal_sheet.noa_growth(@prev_reformed_bal_sheet).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
-      growth = @reformed_bal_sheet.net_operating_assets.total - @prev_reformed_bal_sheet.net_operating_assets.total
-      growth = growth / @prev_reformed_bal_sheet.net_operating_assets.total
+      growth = 0.32796203839078597
       @reformed_bal_sheet.noa_growth(@prev_reformed_bal_sheet).should be_within(0.1).of(growth)
     end
   end
@@ -113,8 +112,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
       @reformed_bal_sheet.cse_growth(@prev_reformed_bal_sheet).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
-      growth = @reformed_bal_sheet.common_shareholders_equity.total - @prev_reformed_bal_sheet.common_shareholders_equity.total
-      growth = growth / @prev_reformed_bal_sheet.common_shareholders_equity.total
+      growth = 0.2708065948414209
       @reformed_bal_sheet.cse_growth(@prev_reformed_bal_sheet).should be_within(0.1).of(growth)
     end
   end
