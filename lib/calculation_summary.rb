@@ -13,8 +13,8 @@ module FinModeling
       end
     end
 
-    KEY_WIDTH = 30
-    VAL_WIDTH = 10
+    KEY_WIDTH = 25
+    VAL_WIDTH = 20
     MAX_DECIMALS = 4
     def print
       puts @title
