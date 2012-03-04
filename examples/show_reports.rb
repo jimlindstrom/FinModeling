@@ -72,6 +72,7 @@ def next_balance_sheet_analysis(prev_analysis, prev_filing, filing, report_type)
 
   analysis = FinModeling::CalculationSummary.new
   analysis.title = ""
+  analysis.header_row = { :key => "", :val => period.to_pretty_s }
   analysis.rows = []
   analysis.rows.push(  { :key => "Composition Ratio", :val => reformed_bal_sheet.composition_ratio })
   if prev_filing.nil?
@@ -95,28 +96,31 @@ def get_balance_sheet_analysis(filings, report_type)
     prev_filing = filing
   end
 
+  analysis.totals_row_enabled = false
+
   return analysis
 end
 
 def next_income_statement_analysis(prev_analysis, prev_filing, filing, report_type)
   if !prev_filing.nil?
-    prev_period = prev_filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
-    prev_period = prev_filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
-    prev_reformed_inc_stmt = prev_filing.income_statement.reformulated(prev_period)
+    prev_is_period = prev_filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
+    prev_is_period = prev_filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+    prev_reformed_inc_stmt = prev_filing.income_statement.reformulated(prev_is_period)
 
-    prev_period = prev_filing.balance_sheet.periods.last
-    prev_reformed_bal_sheet = prev_filing.balance_sheet.reformulated(prev_period)
+    prev_bs_period = prev_filing.balance_sheet.periods.last
+    prev_reformed_bal_sheet = prev_filing.balance_sheet.reformulated(prev_bs_period)
   end
 
-  period = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
-  period = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
-  reformed_inc_stmt = filing.income_statement.reformulated(period)
+  is_period = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
+  is_period = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+  reformed_inc_stmt = filing.income_statement.reformulated(is_period)
 
-  period = filing.balance_sheet.periods.last
-  reformed_bal_sheet = filing.balance_sheet.reformulated(period)
+  bs_period = filing.balance_sheet.periods.last
+  reformed_bal_sheet = filing.balance_sheet.reformulated(bs_period)
 
   analysis = FinModeling::CalculationSummary.new
   analysis.title = ""
+  analysis.header_row = { :key => "", :val => bs_period.to_pretty_s }
   analysis.rows = []
   analysis.rows.push(  { :key => "Gross Margin",   :val => reformed_inc_stmt.gross_margin })
   analysis.rows.push(  { :key => "Sales PM",       :val => reformed_inc_stmt.sales_profit_margin })
@@ -149,6 +153,8 @@ def get_income_statement_analysis(filings, report_type)
     analysis    = next_income_statement_analysis(analysis, prev_filing, filing, report_type)
     prev_filing = filing
   end
+
+  analysis.totals_row_enabled = false
 
   return analysis
 end
