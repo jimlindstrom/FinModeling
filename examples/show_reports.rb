@@ -76,40 +76,37 @@ def get_company_filings_since_date(stock_symbol, start_date)
   reports += company.quarterly_reports.select{ |report| Time.parse(report.date) >= start_date }
   reports.sort!{ |x, y| Time.parse(x.date) <=> Time.parse(y.date) }
 
-  filings = reports.map do |report|
-    if report.term == "10-Q"
-      FinModeling::QuarterlyReportFiling.download(report.link) 
-    else
-      FinModeling::AnnualReportFiling.download(report.link)
+  filings = []
+  reports.each do |report|
+    begin
+      filing = FinModeling::QuarterlyReportFiling.download(report.link) if report.term == "10-Q"
+      filing = FinModeling::AnnualReportFiling.download(   report.link) if report.term == "10-K"
+      filings.push filing if !filing.nil?
+    rescue
+      # *ReportFiling.download() will throw errors if it doesn't contain xbrl data.
     end
   end
 
   return filings
 end
 
-def next_balance_sheet_analysis(prev_analysis, prev_filing, filing)
-  if !prev_filing.nil?
-    prev_period = prev_filing.balance_sheet.periods.last
-    prev_reformed_bal_sheet = prev_filing.balance_sheet.reformulated(prev_period)
-  end
-
-  period = filing.balance_sheet.periods.last
-  reformed_bal_sheet = filing.balance_sheet.reformulated(period)
-
+def next_balance_sheet_analysis(prev_analysis, prev_re_bs, re_bs)
   analysis = FinModeling::CalculationSummary.new
+
   analysis.title = ""
-  analysis.header_row = { :key => "", :val => period.to_pretty_s }
+  analysis.header_row= { :key => "",                  :val =>  re_bs.period.to_pretty_s }
+
   analysis.rows = []
-  analysis.rows.push(  { :key => "NOA (000's)",       :val => (reformed_bal_sheet.net_operating_assets.total/1000.0).round.to_f })
-  analysis.rows.push(  { :key => "NFA (000's)",       :val => (reformed_bal_sheet.net_financial_assets.total/1000.0).round.to_f })
-  analysis.rows.push(  { :key => "CSE (000's)",       :val => (reformed_bal_sheet.common_shareholders_equity.total/1000.0).round.to_f })
-  analysis.rows.push(  { :key => "Composition Ratio", :val => reformed_bal_sheet.composition_ratio })
-  if prev_filing.nil?
-    analysis.rows.push({ :key => "NOA Growth",        :val => 0 })
-    analysis.rows.push({ :key => "CSE Growth",        :val => 0 })
+  analysis.rows.push(  { :key => "NOA (000's)",       :val => (re_bs.net_operating_assets.total/      1000.0).round.to_f })
+  analysis.rows.push(  { :key => "NFA (000's)",       :val => (re_bs.net_financial_assets.total/      1000.0).round.to_f })
+  analysis.rows.push(  { :key => "CSE (000's)",       :val => (re_bs.common_shareholders_equity.total/1000.0).round.to_f })
+  analysis.rows.push(  { :key => "Composition Ratio", :val =>  re_bs.composition_ratio })
+  if prev_re_bs.nil?
+    analysis.rows.push({ :key => "NOA Growth",        :val =>  0 })
+    analysis.rows.push({ :key => "CSE Growth",        :val =>  0 })
   else
-    analysis.rows.push({ :key => "NOA Growth",        :val => reformed_bal_sheet.noa_growth(prev_reformed_bal_sheet) })
-    analysis.rows.push({ :key => "CSE Growth",        :val => reformed_bal_sheet.cse_growth(prev_reformed_bal_sheet) })
+    analysis.rows.push({ :key => "NOA Growth",        :val =>  re_bs.noa_growth(prev_re_bs) })
+    analysis.rows.push({ :key => "CSE Growth",        :val =>  re_bs.cse_growth(prev_re_bs) })
   end
 
   return (prev_analysis + analysis) if !prev_analysis.nil?
@@ -117,12 +114,15 @@ def next_balance_sheet_analysis(prev_analysis, prev_filing, filing)
 end
 
 def get_balance_sheet_analysis(filings)
-  prev_filing = nil
-  analysis    = nil
+  prev_re_bs   = nil
+  analysis     = nil
 
   filings.each do |filing|
-    analysis    = next_balance_sheet_analysis(analysis, prev_filing, filing)
-    prev_filing = filing
+    period     = filing.balance_sheet.periods.last
+    re_bs      = filing.balance_sheet.reformulated(period)
+
+    analysis   = next_balance_sheet_analysis(analysis, prev_re_bs, re_bs)
+    prev_re_bs = re_bs
   end
 
   analysis.totals_row_enabled = false
@@ -130,47 +130,31 @@ def get_balance_sheet_analysis(filings)
   return analysis
 end
 
-def next_income_statement_analysis(prev_analysis, prev_filing, filing)
-  if !prev_filing.nil?
-    prev_is_period = case prev_filing
-      when FinModeling::AnnualReportFiling
-        prev_filing.income_statement.net_income_calculation.periods.yearly.last
-      when FinModeling::QuarterlyReportFiling
-        prev_filing.income_statement.net_income_calculation.periods.quarterly.last
-    end
-    prev_reformed_inc_stmt = prev_filing.income_statement.reformulated(prev_is_period)
-
-    prev_bs_period = prev_filing.balance_sheet.periods.last
-    prev_reformed_bal_sheet = prev_filing.balance_sheet.reformulated(prev_bs_period)
-  end
-
-  is_period = case filing
-    when FinModeling::AnnualReportFiling
-      filing.income_statement.net_income_calculation.periods.yearly.last
-    when FinModeling::QuarterlyReportFiling
-      filing.income_statement.net_income_calculation.periods.quarterly.last
-  end
-  reformed_inc_stmt = filing.income_statement.reformulated(is_period)
-
-  bs_period = filing.balance_sheet.periods.last
-  reformed_bal_sheet = filing.balance_sheet.reformulated(bs_period)
-
+def next_income_statement_analysis(prev_analysis, prev_re_bs, prev_re_is, re_bs, re_is)
   analysis = FinModeling::CalculationSummary.new
+
   analysis.title = ""
-  analysis.header_row = { :key => "", :val => bs_period.to_pretty_s }
+  analysis.header_row= { :key => "",               :val => re_bs.period.to_pretty_s }
+
   analysis.rows = []
-  analysis.rows.push(  { :key => "Gross Margin",   :val => reformed_inc_stmt.gross_margin })
-  analysis.rows.push(  { :key => "Sales PM",       :val => reformed_inc_stmt.sales_profit_margin })
-  analysis.rows.push(  { :key => "Operating PM",   :val => reformed_inc_stmt.operating_profit_margin })
-  analysis.rows.push(  { :key => "FI / Sales",     :val => reformed_inc_stmt.fi_over_sales })
-  analysis.rows.push(  { :key => "NI / Sales",     :val => reformed_inc_stmt.ni_over_sales })
-  if !prev_filing.nil?
-    analysis.rows.push({ :key => "Sales / NOA",    :val => reformed_inc_stmt.sales_over_noa(prev_reformed_bal_sheet) })
-    analysis.rows.push({ :key => "FI / NFA",       :val => reformed_inc_stmt.fi_over_nfa(prev_reformed_bal_sheet) })
-    analysis.rows.push({ :key => "Revenue Growth", :val => reformed_inc_stmt.revenue_growth(prev_reformed_inc_stmt) })
-    analysis.rows.push({ :key => "Core OI Growth", :val => reformed_inc_stmt.core_oi_growth(prev_reformed_inc_stmt) })
-    analysis.rows.push({ :key => "OI Growth",      :val => reformed_inc_stmt.oi_growth(prev_reformed_inc_stmt) })
-    analysis.rows.push({ :key => "ReOI (000's)",   :val => (reformed_inc_stmt.re_oi(prev_reformed_bal_sheet)/1000.0).round.to_f })
+  analysis.rows.push(  { :key => "Revenue (000's)",:val => (re_is.operating_revenues.total/         1000.0).round.to_f })
+  analysis.rows.push(  { :key => "Core OI (000's)",:val => (re_is.income_from_sales_after_tax.total/1000.0).round.to_f })
+  analysis.rows.push(  { :key => "OI (000's)",     :val => (re_is.operating_income_after_tax.total/ 1000.0).round.to_f })
+  analysis.rows.push(  { :key => "FI (000's)",     :val => (re_is.net_financing_income.total/       1000.0).round.to_f })
+  analysis.rows.push(  { :key => "NI (000's)",     :val => (re_is.comprehensive_income.total/       1000.0).round.to_f })
+  analysis.rows.push(  { :key => "Gross Margin",   :val =>  re_is.gross_margin })
+  analysis.rows.push(  { :key => "Sales PM",       :val =>  re_is.sales_profit_margin })
+  analysis.rows.push(  { :key => "Operating PM",   :val =>  re_is.operating_profit_margin })
+  analysis.rows.push(  { :key => "FI / Sales",     :val =>  re_is.fi_over_sales })
+  analysis.rows.push(  { :key => "NI / Sales",     :val =>  re_is.ni_over_sales })
+
+  if !prev_re_bs.nil? && !prev_re_is.nil?
+    analysis.rows.push({ :key => "Sales / NOA",    :val =>  re_is.sales_over_noa(prev_re_bs) })
+    analysis.rows.push({ :key => "FI / NFA",       :val =>  re_is.fi_over_nfa(   prev_re_bs) })
+    analysis.rows.push({ :key => "Revenue Growth", :val =>  re_is.revenue_growth(prev_re_is) })
+    analysis.rows.push({ :key => "Core OI Growth", :val =>  re_is.core_oi_growth(prev_re_is) })
+    analysis.rows.push({ :key => "OI Growth",      :val =>  re_is.oi_growth(     prev_re_is) })
+    analysis.rows.push({ :key => "ReOI (000's)",   :val => (re_is.re_oi(         prev_re_bs)/1000.0).round.to_f })
   else  
     analysis.rows.push({ :key => "Sales / NOA",    :val => 0 })
     analysis.rows.push({ :key => "FI / NFA",       :val => 0 })
@@ -185,12 +169,24 @@ def next_income_statement_analysis(prev_analysis, prev_filing, filing)
 end
 
 def get_income_statement_analysis(filings)
-  prev_filing = nil
   analysis    = nil
+  prev_re_bs  = nil
+  prev_re_is  = nil
 
   filings.each do |filing|
-    analysis    = next_income_statement_analysis(analysis, prev_filing, filing)
-    prev_filing = filing
+    is_period  = case filing.class.to_s
+      when "FinModeling::AnnualReportFiling"    then filing.income_statement.net_income_calculation.periods.yearly.last
+      when "FinModeling::QuarterlyReportFiling" then filing.income_statement.net_income_calculation.periods.quarterly.last
+    end
+    re_is      = filing.income_statement.reformulated(is_period)
+  
+    bs_period  = filing.balance_sheet.periods.last
+    re_bs      = filing.balance_sheet.reformulated(bs_period)
+
+    analysis   = next_income_statement_analysis(analysis, prev_re_bs, prev_re_is, re_bs, re_is)
+
+    prev_re_bs = re_bs
+    prev_re_is = re_is
   end
 
   analysis.totals_row_enabled = false
