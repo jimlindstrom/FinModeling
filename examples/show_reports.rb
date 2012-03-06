@@ -44,21 +44,32 @@ class Filings < Array
     analysis    = nil
     prev_re_bs  = nil
     prev_re_is  = nil
+    prev_filing = nil
   
     self.each do |filing|
-      is_period  = case filing.class.to_s
+      is_period   = case filing.class.to_s
         when "FinModeling::AnnualReportFiling"    then filing.income_statement.net_income_calculation.periods.yearly.last
         when "FinModeling::QuarterlyReportFiling" then filing.income_statement.net_income_calculation.periods.quarterly.last
       end
-      re_is      = filing.income_statement.reformulated(is_period)
+      re_is       = filing.income_statement.reformulated(is_period)
+      if filing.class.to_s == "FinModeling::AnnualReportFiling"
+        begin
+          period_1q_thru_3q = prev_filing.income_statement.net_income_calculation.periods.threequarterly.last
+          prev3q  = prev_filing.income_statement.reformulated(period_1q_thru_3q)
+          re_is   = re_is - prev3q
+        rescue
+          puts "Warning: failed to turn an Annual Report (#{is_period.to_pretty_s}) into a Quarterly Report..."
+        end
+      end
     
-      bs_period  = filing.balance_sheet.periods.last
-      re_bs      = filing.balance_sheet.reformulated(bs_period)
+      bs_period   = filing.balance_sheet.periods.last
+      re_bs       = filing.balance_sheet.reformulated(bs_period)
   
-      analysis   = next_income_statement_analysis(analysis, prev_re_bs, prev_re_is, re_bs, re_is)
+      analysis    = next_income_statement_analysis(analysis, prev_re_bs, prev_re_is, re_bs, re_is)
   
-      prev_re_bs = re_bs
-      prev_re_is = re_is
+      prev_re_bs  = re_bs
+      prev_re_is  = re_is
+      prev_filing = filing
     end
   
     analysis.totals_row_enabled = false
@@ -84,7 +95,7 @@ class Filings < Array
       analysis.rows.push({ :key => "CSE Growth",        :val =>  0 })
     else
       analysis.rows.push({ :key => "NOA Growth",        :val =>  re_bs.noa_growth(prev_re_bs) })
-      analysis.rows.push({ :key => "CSE Growth",        :val =>  re_bs.cse_growth(prev_re_bs) })
+      analysis.rows.push({ :key => "CSE Growth",        :val =>  re_bs.cse_growth(prev_re_bs) }) # this is too high on NFLX's 2011 10K
     end
   
     return (prev_analysis + analysis) if !prev_analysis.nil?
