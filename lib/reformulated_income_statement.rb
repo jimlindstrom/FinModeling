@@ -2,6 +2,65 @@ module FinModeling
   class ReformulatedIncomeStatement
     attr_accessor :period
 
+    class FakeNetIncomeSummary
+      def initialize(ris1, ris2)
+        @ris1 = ris1
+        @ris2 = ris2
+      end
+      def filter_by_type(key)
+        case key
+          when :or
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Operating Revenues"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_revenues.total },
+                         { :key => "Second Row", :val => -@ris2.operating_revenues.total } ]
+            return @cs
+          when :cogs
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Cost of Revenues"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.cost_of_revenues.total },
+                         { :key => "Second Row", :val => -@ris2.cost_of_revenues.total } ]
+            return @cs
+          when :oe
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Operating Expenses"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_expenses.total },
+                         { :key => "Second Row", :val => -@ris2.operating_expenses.total } ]
+            return @cs
+          when :oibt
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Operating Income from Sales, Before taxes"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_income_after_tax.rows[1][:val] },
+                         { :key => "Second Row", :val => -@ris2.operating_income_after_tax.rows[1][:val] } ]
+            return @cs
+          when :fibt
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Financing Income, Before Taxes"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.net_financing_income.rows[0][:val] },
+                         { :key => "Second Row", :val => -@ris2.net_financing_income.rows[0][:val] } ]
+            return @cs
+          when :tax
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Taxes"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.income_from_sales_after_tax.rows[1][:val] },
+                         { :key => "Second Row", :val => -@ris2.income_from_sales_after_tax.rows[1][:val] } ]
+            return @cs
+          when :ooiat
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Other Operating Income, After Taxes"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_income_after_tax.rows[3][:val] },
+                         { :key => "Second Row", :val => -@ris2.operating_income_after_tax.rows[3][:val] } ]
+            return @cs
+          when :fiat
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Financing Income, After Taxes"
+            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.net_financing_income.rows[2][:val] },
+                         { :key => "Second Row", :val => -@ris2.net_financing_income.rows[2][:val] } ]
+            return @cs
+        end
+      end
+    end
+
     def initialize(period, net_income_summary, tax_rate=0.35)
       @period   = period
       @tax_rate = tax_rate
@@ -28,7 +87,11 @@ module FinModeling
       @oi = @oisat + @oibt.total - @oibt_tax_effect + @ooiat.total
     
       @ci = @nfi + @oi
-    
+    end
+
+    def -(ris2)
+      net_income_summary = FakeNetIncomeSummary.new(self, ris2)
+      return ReformulatedIncomeStatement.new(@period, net_income_summary, @tax_rate)
     end
 
     def operating_revenues
