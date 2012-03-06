@@ -54,4 +54,15 @@ describe FinModeling::Company  do
       company.quarterly_reports.last.term.should == "10-Q"
     end
   end
+
+  describe "filings_since_date" do
+    it "returns an array of 10-Q and/or 10-K filings filed after the given date" do
+      SecQuery::Entity.should_receive(:find).and_return(FinModeling::Mocks::Entity.new)
+
+      company = FinModeling::Company.find "aapl"
+      company.filings_since_date(Time.parse("1994-01-01")).length.should == 2
+      company.filings_since_date(Time.parse("1995-01-01")).length.should == 1
+      company.filings_since_date(Time.parse("1996-01-01")).length.should == 0
+    end
+  end
 end

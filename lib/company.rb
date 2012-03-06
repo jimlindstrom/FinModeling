@@ -28,5 +28,24 @@ module FinModeling
     def quarterly_reports
       @entity.filings.select{ |x| x.term == "10-Q" }.sort{ |x,y| x.date <=> y.date }
     end
+
+    def filings_since_date(start_date)
+      reports  = self.annual_reports.select{ |report| Time.parse(report.date) >= start_date }
+      reports += self.quarterly_reports.select{ |report| Time.parse(report.date) >= start_date }
+      reports.sort!{ |x, y| Time.parse(x.date) <=> Time.parse(y.date) }
+
+      filings = []
+      reports.each do |report|
+        begin
+          filing = FinModeling::QuarterlyReportFiling.download(report.link) if report.term == "10-Q"
+          filing = FinModeling::AnnualReportFiling.download(   report.link) if report.term == "10-K"
+          filings.push filing if !filing.nil?
+        rescue
+          # *ReportFiling.download() will throw errors if it doesn't contain xbrl data.
+        end
+      end
+
+      return filings
+    end
   end
 end
