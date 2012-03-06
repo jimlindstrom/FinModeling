@@ -8,11 +8,13 @@ module FinModeling
                        :cse => [      :fl, :cse ] }
 
     def summary(period)
-      if @summary.nil?
-        @summary = super(period, type_to_flip="debit", flip_total=true)
-        classify_all_rows(@summary.rows, lookahead=[4, @summary.rows.length-1].min)
+      @summary = { } if @summary.nil?
+      pretty_period = period.to_pretty_s
+      if @summary[pretty_period].nil?
+        @summary[pretty_period] = super(period, type_to_flip="debit", flip_total=true)
+        classify_all_rows(@summary[pretty_period].rows, lookahead=[4, @summary[pretty_period].rows.length-1].min)
       end
-      return @summary
+      return @summary[pretty_period]
     end
 
     private
