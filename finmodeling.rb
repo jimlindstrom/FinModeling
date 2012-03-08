@@ -14,6 +14,7 @@ require 'naive_bayes'
 $LOAD_PATH << "."
 
 require 'lib/string_helpers'
+require 'lib/xbrlware_item_vectors'
 require 'lib/xbrlware_item_helpers'
 require 'lib/period_array'
 require 'lib/rate'
@@ -42,3 +43,5 @@ require 'lib/reformulated_balance_sheet'
 FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::IncomeStatementItem::TRAINING_VECTORS)
 FinModeling::AssetsItem.load_vectors_and_train(FinModeling::AssetsItem::TRAINING_VECTORS)
 FinModeling::LiabsAndEquityItem.load_vectors_and_train(FinModeling::LiabsAndEquityItem::TRAINING_VECTORS)
+Xbrlware::Item.load_vectors_and_train(FinModeling::XbrlwareItem::TRAINING_VECTORS)
+

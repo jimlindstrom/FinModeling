@@ -1,16 +1,4 @@
 Bugs
-	- wrong sign on COGS:
-		- ./examples/show_report.rb iaci 10-q -3
-			Net Income (Loss) Attributable to Parent (NetIncomeLoss_0)
-				[or] Revenues                                                        421,652,000.0
-				[cogs] Cost Of Revenue                                              -148,558,000.0   (NEGATIVE; CORRECT)
-		- ./examples/show_report.rb iaci 10-q 0
-			Net Income (Loss) Attributable to Parent (NetIncomeLoss_0)
-				[or] Revenues                                                        516,884,000.0
-				[cogs] Cost Of Services Excluding Depreciation Depletion ...         188,642,000.0   (POSITIVE; INCORRECT)
-		- looks like there's a warning:
-			Warning: item "CostOfServicesExcludingDepreciationDepletionAndAmortization" doesn't have xbrl:balance 
-			definition, which should be either 'credit' or 'debit'
 	- show_reports doesn't check filing validity
 	- show_reports should fall back to NOT showing items if there's 10k->10q error or if not valid
 
