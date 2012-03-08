@@ -1,5 +1,15 @@
 module Xbrlware
 
+  module Linkbase
+    class Linkbase
+      class Link
+        def clean_downcased_title
+          @title.gsub(/([A-Z]) ([A-Z])/, '\1\2').gsub(/([A-Z]) ([A-Z])/, '\1\2').downcase
+        end
+      end
+    end
+  end
+
   class Item
     def pretty_name
       self.name.gsub(/([a-z])([A-Z])/, '\1 \2')
