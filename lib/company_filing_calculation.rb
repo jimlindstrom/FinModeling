@@ -1,5 +1,6 @@
 module FinModeling
   class CompanyFilingCalculation
+    attr_accessor :taxonomy, :calculation # FIXME: get rid of this
 
     def initialize(taxonomy, calculation)
       @taxonomy = taxonomy
