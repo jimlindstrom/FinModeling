@@ -7,7 +7,11 @@ describe FinModeling::ReformulatedIncomeStatement  do
     google_2010_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312510030774/0001193125-10-030774-index.htm"
     filing_2010 = FinModeling::AnnualReportFiling.download google_2010_annual_rpt
 
-    @inc_stmt_2010 = filing_2010.income_statement
+    if RSpec.configuration.use_income_statement_factory?
+      @inc_stmt_2010 = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2009-12-31') # FIXME: we're lying here....
+    else
+      @inc_stmt_2010 = filing_2010.income_statement
+    end
     is_period_2010 = @inc_stmt_2010.periods.last
     @reformed_inc_stmt_2010 = filing_2010.income_statement.reformulated(is_period_2010)
 
@@ -18,7 +22,11 @@ describe FinModeling::ReformulatedIncomeStatement  do
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     filing_2011 = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
 
-    @inc_stmt_2011 = filing_2011.income_statement
+    if RSpec.configuration.use_income_statement_factory?
+      @inc_stmt_2011 = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31')
+    else
+      @inc_stmt_2011 = filing_2011.income_statement
+    end
     is_period_2011 = @inc_stmt_2011.periods.last
     @reformed_inc_stmt_2011 = filing_2011.income_statement.reformulated(is_period_2011)
 
