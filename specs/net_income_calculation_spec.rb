@@ -4,11 +4,13 @@ require 'spec_helper'
 
 describe FinModeling::NetIncomeCalculation  do
   before(:all) do
-    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::IncomeStatementItem::TRAINING_VECTORS)
-
-    google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
-    filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
-    @inc_stmt = filing.income_statement
+    if RSpec.configuration.use_income_statement_factory?
+      @inc_stmt = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31')
+    else
+      google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
+      filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
+      @inc_stmt = filing.income_statement
+    end
     @period = @inc_stmt.periods.last
     @ni = @inc_stmt.net_income_calculation
   end

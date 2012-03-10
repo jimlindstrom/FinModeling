@@ -74,6 +74,7 @@ module FinModeling
       end
 
       if children.empty?
+        raise RuntimeError.new("#{node} (#{node.label}) has nil items!") if node.items.nil?
         items = node.items.select{ |x| x.context.entity.segment.nil? }
         # FIXME: I don't fully understand the '.context.entity.segment' 
         # attribute. It appears, though, that items that have this attribute are
