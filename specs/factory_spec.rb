@@ -32,6 +32,26 @@ describe FinModeling::Factory  do
         expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
         @is.net_income_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
       end
+      context "when :delete_tax_item => true" do
+        before(:all) do
+          @is = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31',
+                                                                :delete_tax_item => true)
+        end
+        it "does not include the income tax item" do
+          keys = @is.net_income_calculation.summary(@period).rows.map{ |x| x[:key].to_s }
+          keys.select{ |key| key.downcase =~ /tax/ }.should == []
+        end
+      end
+      context "when :delete_sales_item => true" do
+        before(:all) do
+          @is = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31',
+                                                                :delete_sales_item => true)
+        end
+        it "does not include the revenues item" do
+          keys = @is.net_income_calculation.summary(@period).rows.map{ |x| x[:key].to_s }
+          keys.select{ |key| key.downcase =~ /(sales)|(revenue)/ }.should == []
+        end
+      end
     end
 
     context "when :sheet => 'google 10-k 2009-12-31'" do

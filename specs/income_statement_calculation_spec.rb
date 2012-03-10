@@ -24,22 +24,26 @@ describe FinModeling::IncomeStatementCalculation  do
   end
 
   describe "is_valid?" do
-    it "returns false if none of the net income leaf nodes contains the term 'tax'" do
-      # FIXME: need an example of this. the EA one actually *does* have a tax item.
-      ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-      filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-      #filing.income_statement.is_valid?.should be_false
-      pending
+    context "when no node contains the term 'tax'" do
+      before(:all) do
+        @inc_stmt_no_taxes = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31',
+                                                                             :delete_tax_item => true)
+      end
+      it "returns false if none of the net income leaf nodes contains the term 'tax'" do
+        @inc_stmt_no_taxes.is_valid?.should be_false
+      end
     end
-    it "returns false if none of the net income leaf nodes contains the terms 'sales' or 'revenue'" do
-      timewarner_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1105705/000119312512077072/0001193125-12-077072-index.htm"
-      filing = FinModeling::AnnualReportFiling.download timewarner_2011_annual_rpt
-      filing.income_statement.is_valid?.should be_false
+    context "when no node contains the terms 'sales' or 'revenue'" do
+      before(:all) do
+        @inc_stmt_no_sales = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31',
+                                                                             :delete_sales_item => true)
+      end
+      it "returns false if none of the net income leaf nodes contains the term 'tax'" do
+        @inc_stmt_no_sales.is_valid?.should be_false
+      end
     end
     it "returns true otherwise" do
-      google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
-      filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
-      filing.income_statement.is_valid?.should be_true
+      @inc_stmt.is_valid?.should be_true
     end
   end
 

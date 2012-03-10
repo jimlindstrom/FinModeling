@@ -98,8 +98,10 @@ module FinModeling
             # 
           when "Costs And Expenses"
             arc.children = []
-            arc.children.push self.CalculationArc(:sheet => args[:sheet],
-                                                  :label => "Cost Of Revenue")
+            if !(args[:delete_sales_item] == true)
+              arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                    :label => "Cost Of Revenue")
+            end
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
                                                   :label => "Research And Development Expense")
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
@@ -111,32 +113,43 @@ module FinModeling
           when "Income Loss From Continuing Operations Before Income Taxes Minority Interest And Income Loss From Equity Method Investments"
             arc.children = []
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :delete_sales_item => args[:delete_sales_item],
                                                   :label => "Operating Income Loss")
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
                                                   :label => "Nonoperating Income Expense")
           when "Net Income Loss"
             arc.children = []
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :delete_sales_item => args[:delete_sales_item],
                                                   :label => "Income Loss From Continuing Operations Before Income "+
                                                            "Taxes Minority Interest And Income Loss From Equity Method Investments")
-            arc.children.push self.CalculationArc(:sheet => args[:sheet],
-                                                  :label => "Income Tax Expense Benefit")
+            if !(args[:delete_tax_item] == true)
+              arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                    :label => "Income Tax Expense Benefit")
+            end
           when "Operating Income Loss"
             arc.children = []
+            if !(args[:delete_sales_item] == true)
+              arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                    :delete_sales_item => args[:delete_sales_item],
+                                                    :label => "Sales Revenue Net")
+            end
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
-                                                  :label => "Sales Revenue Net")
-            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :delete_sales_item => args[:delete_sales_item],
                                                   :label => "Costs And Expenses")
           when "Income Loss From Continuing Operations Before Income Taxes Minority Interest And Income Loss From Equity Method Investments"
             arc.children = []
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :delete_sales_item => args[:delete_sales_item],
                                                   :label => "Operating Income Loss")
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
                                                   :label => "Nonoperating Income Expense")
           when "Costs And Expenses"
             arc.children = []
-            arc.children.push self.CalculationArc(:sheet => args[:sheet],
-                                                  :label => "Cost Of Revenue")
+            if !(args[:delete_sales_item] == true)
+              arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                    :label => "Cost Of Revenue")
+            end
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
                                                   :label => "Research And Development Expense")
             arc.children.push self.CalculationArc(:sheet => args[:sheet],
@@ -465,13 +478,18 @@ module FinModeling
           href = "Role_StatementOfIncome"
     
           arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :delete_sales_item => args[:delete_sales_item],
                                         :label => "Costs And Expenses")
           arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :delete_sales_item => args[:delete_sales_item],
                                         :label => "Income Loss From Continuing Operations Before Income Taxes Minority Interest " +
                                                   "And Income Loss From Equity Method Investments")
           arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :delete_sales_item => args[:delete_sales_item],
+                                        :delete_tax_item => args[:delete_tax_item],
                                         :label => "Net Income Loss")
           arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :delete_sales_item => args[:delete_sales_item],
                                         :label => "Operating Income Loss")
         when "google 10-k 2009-12-31"
           entity_details = {"name"=>"Google Inc.", 
