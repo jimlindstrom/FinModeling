@@ -1,9 +1,31 @@
 module FinModeling
   class Factory
+    def self.Period(value)
+      period = Xbrlware::Context::Period.new(value)
+
+      return period
+    end
+
+    def self.Entity(args = {})
+      entity = Xbrlware::Entity.new(args[:identifier], args[:segment])
+
+      return entity
+    end
+
+    def self.Context(args = {})
+      id = args[:id] || ""
+      entity = args[:entity] || self.Entity()
+      period = args[:period]
+      scenario = args[:scenario]
+      context = Xbrlware::Context.new(id, entity, period, scenario)
+
+      return context
+    end
+
     def self.Item(args = {})
       instance = nil
       name = args[:name] || ""
-      context = nil
+      context = args[:context] || self.Context(:args => (args[:period] || nil) )
       value = args[:value] || ""
       unit = args[:unit]
       precision = args[:precision]
@@ -78,26 +100,101 @@ module FinModeling
           when "Income Loss From Continuing Operations Before Income Taxes Minority Interest And Income Loss From Equity Method Investments"
             arc.children.add self.CalculationArc(:label => "Operating Income Loss")
             arc.children.add self.CalculationArc(:label => "Nonoperating Income Expense")
-          when "Income Tax Expense Benefit"
-            # has 3 items
-          when "Nonoperating Income Expense"
-            # has 3 items
           when "Costs And Expenses"
             arc.children.add self.CalculationArc(:label => "Cost Of Revenue")
             arc.children.add self.CalculationArc(:label => "Research And Development Expense")
             arc.children.add self.CalculationArc(:label => "Selling And Marketing Expense")
             arc.children.add self.CalculationArc(:label => "General And Administrative Expense")
             arc.children.add self.CalculationArc(:label => "Charge Related To Resolution Of Investigation" )
+
+          when "Sales Revenue Net"
+            arc.items = []
+            arc.items.push self.Item(:name => "SalesRevenueNet",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "SalesRevenueNet",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "SalesRevenueNet",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
           when "Cost Of Revenue"
-            # has ? items
+            arc.items = []
+            arc.items.push self.Item(:name => "CostOfRevenue",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "CostOfRevenue",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "CostOfRevenue",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
           when "Research And Development Expense"
-            # has ? items
+            arc.items = []
+            arc.items.push self.Item(:name => "ResearchAndDevelopmentExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "ResearchAndDevelopmentExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "ResearchAndDevelopmentExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
           when "Selling And Marketing Expense"
-            # has ? items
+            arc.items = []
+            arc.items.push self.Item(:name => "SellingAndMarketingExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "SellingAndMarketingExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "SellingAndMarketingExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
           when "General And Administrative Expense"
-            # has ? items
+            arc.items = []
+            arc.items.push self.Item(:name => "GeneralAndAdministrativeExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "GeneralAndAdministrativeExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "GeneralAndAdministrativeExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
           when "Charge Related To Resolution Of Investigation"
-            # has ? items
+            arc.items = []
+            arc.items.push self.Item(:name => "ChargeRelatedToResolutionOfInvestigation",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "ChargeRelatedToResolutionOfInvestigation",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "ChargeRelatedToResolutionOfInvestigation",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
+          when "Nonoperating Income Expense"
+            arc.items = []
+            arc.items.push self.Item(:name => "NonoperatingIncomeExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "NonoperatingIncomeExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "NonoperatingIncomeExpense",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
+          when "Income Tax Expense Benefit"
+            arc.items = []
+            arc.items.push self.Item(:name => "IncomeTaxExpenseBenefit",
+                                     :period => self.Period( {"start_date"=>Date.parse("2009-01-01"), 
+                                                              "end_date"  =>Date.parse("2009-12-31")} ) )
+            arc.items.push self.Item(:name => "IncomeTaxExpenseBenefit",
+                                     :period => self.Period( {"start_date"=>Date.parse("2010-01-01"), 
+                                                              "end_date"  =>Date.parse("2010-12-31")} ) )
+            arc.items.push self.Item(:name => "IncomeTaxExpenseBenefit",
+                                     :period => self.Period( {"start_date"=>Date.parse("2011-01-01"), 
+                                                              "end_date"  =>Date.parse("2011-12-31")} ) )
         end
       end
 
