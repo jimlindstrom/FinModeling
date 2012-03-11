@@ -1,9 +1,8 @@
 module FinModeling
   class CompanyFilingCalculation
-    attr_accessor :taxonomy, :calculation # FIXME: get rid of this
+    attr_accessor :calculation # FIXME: get rid of this (it was just to enable testing)
 
-    def initialize(taxonomy, calculation)
-      @taxonomy = taxonomy
+    def initialize(calculation)
       @calculation = calculation
     end
    

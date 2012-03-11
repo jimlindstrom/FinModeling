@@ -15,6 +15,20 @@ module Xbrlware
       self.name.gsub(/([a-z])([A-Z])/, '\1 \2')
     end
 
+    def write_constructor(file, item_name)
+      item_context_name = item_name + "_context"
+      if self.context.nil?
+        file.puts "#{item_context_name} = nil"
+      else
+        self.context.write_constructor(file, item_context_name)
+      end
+
+      file.puts "#{item_name} = FinModeling::Factory.Item(:name     => \"#{self.name}\","     +
+                "                                         :decimals => \"#{self.decimals}\"," +
+                "                                         :context  => #{item_context_name}," +
+                "                                         :value    => \"#{self.value}\")"
+    end
+
     def value_with_correct_sign(type_to_flip)
       balance_defn = nil
       if self.def.nil?
@@ -79,7 +93,49 @@ module Xbrlware
     end
   end
 
+  module Linkbase
+    class CalculationLinkbase
+      class Calculation
+        class CalculationArc
+          def write_constructor(file, arc_name)
+            file.puts "args = {}"
+            file.puts "args[:item_id] = \"#{self.item_id}\""
+            file.puts "args[:label] = \"#{self.label}\""
+            file.puts "#{arc_name} = FinModeling::Factory.CalculationArc(args)"
+            file.puts "#{arc_name}.items = []"
+            self.items.each_with_index do |item, index|
+              item_name = arc_name + "_item#{index}"
+              item.write_constructor(file, item_name)
+              file.puts "#{arc_name}.items.push #{item_name}"
+            end
+            file.puts "#{arc_name}.children = []"
+            self.children.each_with_index do |child, index|
+              child_name = arc_name + "_child#{index}"
+              child.write_constructor(file, child_name)
+              file.puts "#{arc_name}.children.push #{child_name}"
+            end
+          end
+        end
+      end
+    end
+  end
+
   class Context
+    def write_constructor(file, context_name)
+      period_str = "nil"
+      case
+        when self.period.nil?
+        when self.period.is_instant?
+          period_str = "Date.parse(\"#{self.period.value}\")"
+        when self.period.is_duration?
+          period_str = "{"
+          period_str += "\"start_date\" => Date.parse(\"#{self.period.value["start_date"].to_s}\"),"
+          period_str += "\"end_date\" => Date.parse(\"#{self.period.value["end_date"].to_s}\")"
+          period_str += "}"
+      end
+      file.puts "#{context_name} = FinModeling::Factory.Context(:period => #{period_str})"
+    end
+
     class Period
       def to_pretty_s
         case
@@ -106,4 +162,5 @@ module Xbrlware
       end
     end
   end
+
 end

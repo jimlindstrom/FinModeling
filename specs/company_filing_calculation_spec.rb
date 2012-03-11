@@ -20,21 +20,19 @@ describe FinModeling::CompanyFilingCalculation  do
 
   describe "new" do
     before(:each) do
-      @taxonomy = nil
       @calculation = FinModeling::Mocks::Calculation.new
     end
     it "takes a taxonomy and a xbrlware calculation and returns a CompanyFilingCalculation" do
-      FinModeling::CompanyFilingCalculation.new(@taxonomy, @calculation).should be_an_instance_of FinModeling::CompanyFilingCalculation
+      FinModeling::CompanyFilingCalculation.new(@calculation).should be_an_instance_of FinModeling::CompanyFilingCalculation
     end
   end
 
   describe "label" do
     before(:each) do
-      @taxonomy = nil
       @calculation = FinModeling::Mocks::Calculation.new
     end
     it "returns the calculation's label" do
-      cfc = FinModeling::CompanyFilingCalculation.new(@taxonomy, @calculation)
+      cfc = FinModeling::CompanyFilingCalculation.new(@calculation)
       cfc.label.should == @calculation.label
     end
   end

@@ -10,7 +10,7 @@ module FinModeling
           raise RuntimeError.new("Couldn't find balance sheet in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
     
-        @balance_sheet = BalanceSheetCalculation.new(@taxonomy, bal_sheet)
+        @balance_sheet = BalanceSheetCalculation.new(bal_sheet)
       end
       return @balance_sheet
     end
@@ -26,7 +26,7 @@ module FinModeling
           raise RuntimeError.new("Couldn't find income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
     
-        @income_stmt = IncomeStatementCalculation.new(@taxonomy, inc_stmt)
+        @income_stmt = IncomeStatementCalculation.new(inc_stmt)
       end
       return @income_stmt
     end

@@ -19,7 +19,7 @@ module FinModeling
     def self.Item(args = {})
       instance = nil
       name = args[:name] || ""
-      context = self.Context(:period => args[:period])
+      context = args[:context] || self.Context(:period => args[:period])
       value = args[:value] || ""
       unit = args[:unit]
       precision = args[:precision]
@@ -1091,7 +1091,7 @@ module FinModeling
       end
 
       calculation = Xbrlware::Linkbase::CalculationLinkbase::Calculation.new(entity_details, title, role, href, arcs, contexts)
-      return FinModeling::IncomeStatementCalculation.new(taxonomy=nil, calculation)
+      return FinModeling::IncomeStatementCalculation.new(calculation)
     end
 
     def self.BalanceSheetCalculation(args = {})
@@ -1155,7 +1155,7 @@ module FinModeling
       end
 
       calculation = Xbrlware::Linkbase::CalculationLinkbase::Calculation.new(entity_details, title, role, href, arcs, contexts)
-      return FinModeling::BalanceSheetCalculation.new(taxonomy=nil, calculation)
+      return FinModeling::BalanceSheetCalculation.new(calculation)
     end
   end
 end
