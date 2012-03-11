@@ -63,5 +63,29 @@ describe FinModeling::BalanceSheetCalculation  do
     end
   end
 
+  describe "write_constructor" do
+    before(:all) do
+      file_name = "/tmp/finmodeling-bal-sheet.rb"
+      item_name = "@bal_sheet"
+      file = File.open(file_name, "w")
+      @balance_sheet.write_constructor(file, item_name)
+      file.close
+
+      eval(File.read(file_name))
+
+      @loaded_bs = eval(item_name)
+    end
+
+    it "writes itself to a file, and when reloaded, has the same periods" do
+      expected_periods = @balance_sheet.periods.map{|x| x.to_pretty_s}.join(',')
+      @loaded_bs.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
+    end
+    it "writes itself to a file, and when reloaded, has the same net operating assets" do
+      period = @balance_sheet.periods.last
+      expected_noa = @balance_sheet.reformulated(period).net_operating_assets.total
+      @loaded_bs.reformulated(period).net_operating_assets.total.should be_within(1.0).of(expected_noa)
+    end
+  end
+
 end
 

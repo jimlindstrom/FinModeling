@@ -34,5 +34,11 @@ module FinModeling
       return ReformulatedIncomeStatement.new(period, net_income_calculation.summary(period))
     end
  
+    def write_constructor(file, item_name)
+      item_calc_name = item_name + "_calc"
+      @calculation.write_constructor(file, item_calc_name)
+      file.puts "#{item_name} = FinModeling::IncomeStatementCalculation.new(#{item_calc_name})"
+    end
+
   end
 end

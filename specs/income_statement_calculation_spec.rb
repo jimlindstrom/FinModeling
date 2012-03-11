@@ -52,5 +52,30 @@ describe FinModeling::IncomeStatementCalculation  do
       @inc_stmt.reformulated(@period).should be_an_instance_of FinModeling::ReformulatedIncomeStatement
     end
   end
+
+  describe "write_constructor" do
+    before(:all) do
+      file_name = "/tmp/finmodeling-inc-stmt.rb"
+      item_name = "@inc_stmt"
+      file = File.open(file_name, "w")
+      @inc_stmt.write_constructor(file, item_name)
+      file.close
+
+      eval(File.read(file_name))
+
+      @loaded_is = eval(item_name)
+    end
+
+    it "writes itself to a file, and when reloaded, has the same periods" do
+      expected_periods = @inc_stmt.periods.map{|x| x.to_pretty_s}.join(',')
+      @loaded_is.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
+    end
+    it "writes itself to a file, and when reloaded, has the same net financing income" do
+      period = @inc_stmt.periods.yearly.last
+      expected_nfi = @inc_stmt.reformulated(period).net_financing_income.total
+      @loaded_is.reformulated(period).net_financing_income.total.should be_within(1.0).of(expected_nfi)
+    end
+  end
+
 end
 

@@ -132,36 +132,33 @@ describe Xbrlware::Item do
 end
 
 describe Xbrlware::Linkbase::CalculationLinkbase::Calculation::CalculationArc do
-
   describe "write_constructor" do
-    context "when it has arcs, but no items" do
-      before(:all) do
-        file_name = "/tmp/finmodeling-calc-arc.rb"
-        item_name = "@item"
-        file = File.open(file_name, "w")
-        @orig_item = FinModeling::Factory.CalculationArc(:sheet => "google 10-k 2009-12-31 income statement",
-                                                         :label => "Operating Income Loss")
-        @orig_item.write_constructor(file, item_name)
-        file.close
-  
-        eval(File.read(file_name))
-  
-        @loaded_item = eval(item_name)
-      end
-  
-      it "writes itself to a file, and when reloaded, has the same item_id" do
-        @loaded_item.item_id.should == @orig_item.item_id
-      end
-      it "writes itself to a file, and when reloaded, has the same label" do
-        @loaded_item.label.should == @orig_item.label
-      end
-      it "writes itself to a file, and when reloaded, has the same number of children" do
-        @loaded_item.children.length.should == @orig_item.children.length
-      end
-      it "writes itself to a file, and when reloaded, has the same number of items" do
-        @loaded_item.items.length.should == @orig_item.items.length
-      end
+    before(:all) do
+      file_name = "/tmp/finmodeling-calc-arc.rb"
+      item_name = "@item"
+      file = File.open(file_name, "w")
+      @orig_item = FinModeling::Factory.CalculationArc(:sheet => "google 10-k 2009-12-31 income statement",
+                                                       :label => "Operating Income Loss")
+      @orig_item.write_constructor(file, item_name)
+      file.close
+
+      eval(File.read(file_name))
+
+      @loaded_item = eval(item_name)
+    end
+
+    it "writes itself to a file, and when reloaded, has the same item_id" do
+      @loaded_item.item_id.should == @orig_item.item_id
+    end
+    it "writes itself to a file, and when reloaded, has the same label" do
+      @loaded_item.label.should == @orig_item.label
+    end
+    it "writes itself to a file, and when reloaded, has the same number of children" do
+      @loaded_item.children.length.should == @orig_item.children.length
+    end
+    it "writes itself to a file, and when reloaded, has the same number of items" do
+      @loaded_item.items.length.should == @orig_item.items.length
     end
   end
-
 end
+

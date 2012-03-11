@@ -27,6 +27,10 @@ module Xbrlware
                 "                                         :decimals => \"#{self.decimals}\"," +
                 "                                         :context  => #{item_context_name}," +
                 "                                         :value    => \"#{self.value}\")"
+      if !self.def.nil? and !self.def["xbrli:balance"].nil?
+        file.puts "#{item_name}.def = { } if #{item_name}.def.nil?"
+        file.puts "#{item_name}.def[\"xbrli:balance\"] = \"#{self.def['xbrli:balance']}\""
+      end
     end
 
     def value_with_correct_sign(type_to_flip)
@@ -90,6 +94,24 @@ module Xbrlware
         words.each_cons(words_per_token).to_a.map{|x| x.join(" ") }
       end
       return tokens.flatten
+    end
+  end
+
+  module Linkbase
+    class CalculationLinkbase
+      class Calculation
+        def write_constructor(file, calc_name)
+          file.puts "#{calc_name}_args = {}"
+          file.puts "#{calc_name}_args[:title] = \"#{self.title}\""
+          file.puts "#{calc_name}_args[:arcs] = []"
+          self.arcs.each_with_index do |arc, index|
+            arc_name = calc_name + "_arc#{index}"
+            arc.write_constructor(file, arc_name)
+            file.puts "#{calc_name}_args[:arcs].push #{arc_name}"
+          end
+          file.puts "#{calc_name} = FinModeling::Factory.Calculation(#{calc_name}_args)"
+        end
+      end
     end
   end
 

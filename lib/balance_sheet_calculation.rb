@@ -56,5 +56,11 @@ module FinModeling
       return ReformulatedBalanceSheet.new(period, assets_calculation.summary(period), liabs_and_equity_calculation.summary(period))
     end
 
+    def write_constructor(file, item_name)
+      item_calc_name = item_name + "_calc"
+      @calculation.write_constructor(file, item_calc_name)
+      file.puts "#{item_name} = FinModeling::BalanceSheetCalculation.new(#{item_calc_name})"
+    end
+
   end
 end

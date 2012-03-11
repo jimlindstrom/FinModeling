@@ -1032,6 +1032,17 @@ module FinModeling
       return arc
     end
 
+    def self.Calculation(args = {})
+      entity_details=nil
+      title=args[:title] || ""
+      role=args[:role]
+      href=nil
+      arcs=args[:arcs] || []
+      contexts=nil
+
+      return Xbrlware::Linkbase::CalculationLinkbase::Calculation.new(entity_details, title, role, href, arcs, contexts)
+    end
+
     def self.IncomeStatementCalculation(args = {})
       entity_details = {}
       title = ""
