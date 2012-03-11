@@ -728,6 +728,307 @@ module FinModeling
         end
       end
 
+      if args[:sheet] == "google 10-k 2009-12-31 balance sheet"
+        arc.items = []
+        arc.children = []
+        case args[:label]
+          when "Assets"
+            arc.children = []
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Assets Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Prepaid Revenue Share Expenses And Other Assets Noncurrent")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Deferred Tax Assets Net Noncurrent")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Other Long Term Investments")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Property Plant And Equipment Net")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Intangible Assets Net Excluding Goodwill")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Goodwill")
+          when "Assets Current"
+            arc.children = []
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Cash Cash Equivalents And Short Term Investments")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Accounts Receivable Net Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Deferred Tax Assets Net Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Income Taxes Receivable")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Prepaid Revenue Share Expenses And Other Assets")
+          when "Cash Cash Equivalents And Short Term Investments"
+            arc.children = []
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Cash And Cash Equivalents At Carrying Value")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Marketable Securities Current")
+          ###########################################################################################
+          when "Liabilities And Stockholders Equity"
+            arc.children = []
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Liabilities Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Deferred Revenue Noncurrent")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Liability For Uncertain Tax Positions Noncurrent")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Deferred Tax Liabilities Noncurrent")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Other Liabilities Noncurrent")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Stockholders Equity")
+          when "Liabilities Current"
+            arc.children = []
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Accounts Payable Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Employee Related Liabilities Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Accrued Liabilities Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Accrued Revenue Share")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Deferred Revenue Current")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Accrued Income Taxes Current")
+          when "Stockholders Equity"
+            arc.children = []
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Convertible Preferred Stock Nonredeemable Or Redeemable Issuer Option Value")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Common Stock Value")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Additional Paid In Capital Common Stock")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Accumulated Other Comprehensive Income Loss Net Of Tax")
+            arc.children.push self.CalculationArc(:sheet => args[:sheet],
+                                                  :label => "Retained Earnings Accumulated Deficit")
+          ###########################################################################################
+          when "Cash And Cash Equivalents At Carrying Value"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "10197588000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Marketable Securities Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "14287187000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Accounts Receivable Net Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "3178471000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Deferred Tax Assets Net Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "644406000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Income Taxes Receivable"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "23244000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Prepaid Revenue Share Expenses And Other Assets"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "836062000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Prepaid Revenue Share Expenses And Other Assets Noncurrent"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "416119000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Deferred Tax Assets Net Noncurrent"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "262611000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Other Long Term Investments"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "-128977000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Property Plant And Equipment Net"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "4844610000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Intangible Assets Net Excluding Goodwill"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "774938000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Goodwill"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "4902565000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          ###########################################################################################
+          when "Accounts Payable Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "215867000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Employee Related Liabilities Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "982482000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Accrued Liabilities Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "570080000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Accrued Revenue Share"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "693958000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Deferred Revenue Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "285080000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Accrued Income Taxes Current"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "0.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Deferred Revenue Noncurrent"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "41618000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Liability For Uncertain Tax Positions Noncurrent"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "1392468000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Deferred Tax Liabilities Noncurrent"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "0.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Other Liabilities Noncurrent"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "311001000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Convertible Preferred Stock Nonredeemable Or Redeemable Issuer Option Value"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "0.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Common Stock Value"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "318000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Additional Paid In Capital Common Stock"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "15816738000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Accumulated Other Comprehensive Income Loss Net Of Tax"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "105090000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          when "Retained Earnings Accumulated Deficit"
+            arc.items = []
+            ["2006-12-31", "2007-12-31", "2008-12-31", "2009-12-31"].each do |period_date|
+              arc.items.push self.Item(:name => args[:label],
+                                       :value => "20082078000.0",
+                                       :decimals => "-3",
+                                       :period => Date.parse(period_date)) 
+            end
+          ###########################################################################################
+        end
+      end
+
       return arc
     end
 
@@ -807,6 +1108,31 @@ module FinModeling
                             "ci_key"=>"0001288776", 
                             "doc_type"=>"10-K", 
                             "doc_end_date"=>"2011-12-31", 
+                            "fiscal_end_date"=>"--12-31", 
+                            "common_shares_outstanding"=>"67175694", 
+                            "symbol"=>"GOOG"}
+          title = "Statement Of Financial Position Classified"
+          role = "http://www.google.com/taxonomy/role/StatementOfFinancialPositionClassified"
+          href = "Role_StatementOfFinancialPositionClassified"
+
+          arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :label => "Assets")
+          arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :label => "Assets Current")
+          arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :label => "Cash Cash Equivalents And Short Term Investments")
+          arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :label => "Liabilities And Stockholders Equity")
+          arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :label => "Liabilities Current")
+          arcs.push self.CalculationArc(:sheet => args[:sheet],
+                                        :label => "Stockholders Equity")
+
+        when "google 10-k 2009-12-31 balance sheet"
+          entity_details = {"name"=>"Google Inc.", 
+                            "ci_key"=>"0001288776", 
+                            "doc_type"=>"10-K", 
+                            "doc_end_date"=>"2009-12-31", 
                             "fiscal_end_date"=>"--12-31", 
                             "common_shares_outstanding"=>"67175694", 
                             "symbol"=>"GOOG"}

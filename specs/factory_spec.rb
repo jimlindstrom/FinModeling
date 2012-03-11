@@ -44,6 +44,35 @@ describe FinModeling::Factory  do
         @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
       end
     end
+
+    context "when :sheet => 'google 10-k 2009-12-31 balance sheet'" do
+      before(:all) do
+        @real_bs = @filing_2009.balance_sheet
+        @period = @real_bs.periods.last
+
+        @bs = FinModeling::Factory.BalanceSheetCalculation(:sheet => 'google 10-k 2009-12-31 balance sheet')
+      end
+      it "returns the right periods" do
+        expected_periods = @real_bs.periods.map{|x| x.to_pretty_s}
+        @bs.periods.map{|x| x.to_pretty_s}.should == expected_periods
+      end
+      it "returns the right assets summary rows" do
+        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x[:key] }
+        @bs.assets_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+      end
+      it "returns the right assets summary values" do
+        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
+        @bs.assets_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+      end
+      it "returns the right liabilities and equity summary rows" do
+        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:key] }
+        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+      end
+      it "returns the right liabilities and equity summary values" do
+        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
+        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+      end
+    end
   end
 
   describe "incomeStatementCalculation" do
