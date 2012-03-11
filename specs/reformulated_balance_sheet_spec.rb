@@ -7,14 +7,19 @@ describe FinModeling::ReformulatedBalanceSheet  do
     google_2010_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312510030774/0001193125-10-030774-index.htm"
     filing = FinModeling::AnnualReportFiling.download google_2010_annual_rpt
     @bal_sheet= filing.balance_sheet
+
     @period = @bal_sheet.periods.last
     @prev_reformed_bal_sheet = filing.balance_sheet.reformulated(@period)
 
-    google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
-    filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
-    @bal_sheet= filing.balance_sheet
+    if RSpec.configuration.use_balance_sheet_factory?
+      @bal_sheet = FinModeling::Factory.BalanceSheetCalculation(:sheet => 'google 10-k 2011-12-31 balance sheet')
+    else
+      google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
+      filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
+      @bal_sheet = filing.balance_sheet
+    end
     @period = @bal_sheet.periods.last
-    @reformed_bal_sheet = filing.balance_sheet.reformulated(@period)
+    @reformed_bal_sheet = @bal_sheet.reformulated(@period)
   end
 
   describe "new" do

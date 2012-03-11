@@ -5,7 +5,7 @@ require 'spec_helper'
 describe FinModeling::NetIncomeCalculation  do
   before(:all) do
     if RSpec.configuration.use_income_statement_factory?
-      @inc_stmt = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31')
+      @inc_stmt = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement')
     else
       google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
       filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt

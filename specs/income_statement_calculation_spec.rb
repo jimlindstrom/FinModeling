@@ -5,7 +5,7 @@ require 'spec_helper'
 describe FinModeling::IncomeStatementCalculation  do
   before(:all) do
     if RSpec.configuration.use_income_statement_factory?
-      @inc_stmt = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31')
+      @inc_stmt = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement')
     else
       google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
       filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
@@ -26,7 +26,7 @@ describe FinModeling::IncomeStatementCalculation  do
   describe "is_valid?" do
     context "when no node contains the term 'tax'" do
       before(:all) do
-        @inc_stmt_no_taxes = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31',
+        @inc_stmt_no_taxes = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement',
                                                                              :delete_tax_item => true)
       end
       it "returns false if none of the net income leaf nodes contains the term 'tax'" do
@@ -35,7 +35,7 @@ describe FinModeling::IncomeStatementCalculation  do
     end
     context "when no node contains the terms 'sales' or 'revenue'" do
       before(:all) do
-        @inc_stmt_no_sales = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31',
+        @inc_stmt_no_sales = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement',
                                                                              :delete_sales_item => true)
       end
       it "returns false if none of the net income leaf nodes contains the term 'tax'" do
