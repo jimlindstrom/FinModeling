@@ -1,11 +1,8 @@
 Bugs
 	- show_reports doesn't check filing validity
-	- show_reports should fall back to NOT showing items if there's 10k->10q error or if not valid
-	- the growth ratios are crazy
 
-Performance
-	- save/load the classifiers instead of re-calcing them everytime
-		https://github.com/reddavis/Naive-Bayes/blob/master/lib/naive_bayes.rb
+Cleanup
+	- get rid of factories, now that caching works well.
 
 Forecasts
 

@@ -4,45 +4,27 @@ require 'spec_helper'
 
 describe FinModeling::ReformulatedIncomeStatement  do
   before(:all) do
-    if !RSpec.configuration.use_income_statement_factory? || !RSpec.configuration.use_balance_sheet_factory?
-      # FIXME: actually this is the 2009 report. the 2010 one doesn't parse yet.
-      google_2010_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312510030774/0001193125-10-030774-index.htm"
-      @filing_2010 = FinModeling::AnnualReportFiling.download google_2010_annual_rpt
+    google_2009_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312510030774/0001193125-10-030774-index.htm"
+    @filing_2009 = FinModeling::AnnualReportFiling.download google_2009_annual_rpt
 
-      google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
-      @filing_2011 = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
-    end
+    google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
+    @filing_2011 = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
 
-    if RSpec.configuration.use_income_statement_factory?
-      @inc_stmt_2010 = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2009-12-31 income statement')
-    else
-      @inc_stmt_2010 = @filing_2010.income_statement
-    end
-    is_period_2010 = @inc_stmt_2010.periods.last
-    @reformed_inc_stmt_2010 = @inc_stmt_2010.reformulated(is_period_2010)
+    @years_between_stmts = 2.0
 
-    if RSpec.configuration.use_balance_sheet_factory?
-      @bal_sheet_2010 = FinModeling::Factory.BalanceSheetCalculation(:sheet => 'google 10-k 2009-12-31 balance sheet')
-    else
-      @bal_sheet_2010 = @filing_2010.balance_sheet
-    end
-    bs_period_2010 = @bal_sheet_2010.periods.last
-    @reformed_bal_sheet_2010 = @bal_sheet_2010.reformulated(bs_period_2010)
+    @inc_stmt_2009 = @filing_2009.income_statement
+    is_period_2009 = @inc_stmt_2009.periods.last
+    @reformed_inc_stmt_2009 = @inc_stmt_2009.reformulated(is_period_2009)
 
-    if RSpec.configuration.use_income_statement_factory?
-      @inc_stmt_2011 = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement')
-    else
-      @inc_stmt_2011 = @filing_2011.income_statement
-    end
+    @bal_sheet_2009 = @filing_2009.balance_sheet
+    bs_period_2009 = @bal_sheet_2009.periods.last
+    @reformed_bal_sheet_2009 = @bal_sheet_2009.reformulated(bs_period_2009)
+
+    @inc_stmt_2011 = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement')
     is_period_2011 = @inc_stmt_2011.periods.last
     @reformed_inc_stmt_2011 = @inc_stmt_2011.reformulated(is_period_2011)
 
-    if RSpec.configuration.use_balance_sheet_factory?
-      @bal_sheet_2011 = FinModeling::Factory.BalanceSheetCalculation(:sheet => 'google 10-k 2011-12-31 balance sheet')
-    else
-      @bal_sheet_2011 = @filing_2011.balance_sheet
-    end
-
+    @bal_sheet_2011 = @filing_2011.balance_sheet
     bs_period_2011 = @bal_sheet_2011.periods.last
     @reformed_bal_sheet_2011 = @bal_sheet_2011.reformulated(bs_period_2011)
   end
@@ -134,7 +116,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       gm = @reformed_inc_stmt_2011.gross_revenue.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.gross_margin.should be_within(0.1).of(gm)
+      @reformed_inc_stmt_2011.gross_margin.should be_within(0.001).of(gm)
     end
   end
 
@@ -144,7 +126,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       sales_pm = @reformed_inc_stmt_2011.income_from_sales_after_tax.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.sales_profit_margin.should be_within(0.1).of(sales_pm)
+      @reformed_inc_stmt_2011.sales_profit_margin.should be_within(0.001).of(sales_pm)
     end
   end
 
@@ -154,7 +136,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       pm = @reformed_inc_stmt_2011.operating_income_after_tax.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.operating_profit_margin.should be_within(0.1).of(pm)
+      @reformed_inc_stmt_2011.operating_profit_margin.should be_within(0.001).of(pm)
     end
   end
 
@@ -164,7 +146,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       fi_over_sales = @reformed_inc_stmt_2011.net_financing_income.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.fi_over_sales.should be_within(0.1).of(fi_over_sales)
+      @reformed_inc_stmt_2011.fi_over_sales.should be_within(0.001).of(fi_over_sales)
     end
   end
 
@@ -174,7 +156,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       ni_over_sales = @reformed_inc_stmt_2011.comprehensive_income.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.ni_over_sales.should be_within(0.1).of(ni_over_sales)
+      @reformed_inc_stmt_2011.ni_over_sales.should be_within(0.001).of(ni_over_sales)
     end
   end
 
@@ -184,7 +166,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       sales_over_noa = @reformed_inc_stmt_2011.operating_revenues.total / @reformed_bal_sheet_2011.net_operating_assets.total
-      @reformed_inc_stmt_2011.sales_over_noa(@reformed_bal_sheet_2011).should be_within(0.1).of(sales_over_noa)
+      @reformed_inc_stmt_2011.sales_over_noa(@reformed_bal_sheet_2011).should be_within(0.001).of(sales_over_noa)
     end
   end
 
@@ -194,37 +176,34 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
     it "totals up to the right amount" do
       fi_over_nfa = @reformed_inc_stmt_2011.net_financing_income.total / @reformed_bal_sheet_2011.net_financial_assets.total
-      @reformed_inc_stmt_2011.fi_over_nfa(@reformed_bal_sheet_2011).should be_within(0.1).of(fi_over_nfa)
+      @reformed_inc_stmt_2011.fi_over_nfa(@reformed_bal_sheet_2011).should be_within(0.001).of(fi_over_nfa)
     end
   end
 
   describe "revenue_growth" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2010).should be_an_instance_of Float
-    end
     it "totals up to the right amount" do
-      growth = 0.26598193551973104
-      @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2010).should be_within(0.1).of(growth)
+      rev0 = @reformed_inc_stmt_2009.operating_revenues.total
+      rev1 = @reformed_inc_stmt_2011.operating_revenues.total
+      expected_growth = (rev1 / rev0)**(1.0/@years_between_stmts) - 1.0
+      @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2009).should be_within(0.001).of(expected_growth)
     end
   end
 
   describe "core_oi_growth" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2010).should be_an_instance_of Float
-    end
     it "totals up to the right amount" do
-      growth = 0.22278931581347616
-      @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2010).should be_within(0.1).of(growth)
+      core_oi0 = @reformed_inc_stmt_2009.income_from_sales_after_tax.total
+      core_oi1 = @reformed_inc_stmt_2011.income_from_sales_after_tax.total
+      expected_growth = (core_oi1 / core_oi0)**(1.0/@years_between_stmts) - 1.0
+      @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2009).should be_within(0.001).of(expected_growth)
     end
   end
 
   describe "oi_growth" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2010).should be_an_instance_of Float
-    end
     it "totals up to the right amount" do
-      growth = 0.20209204336564834
-      @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2010).should be_within(0.1).of(growth)
+      core_oi0 = @reformed_inc_stmt_2009.operating_income_after_tax.total
+      core_oi1 = @reformed_inc_stmt_2011.operating_income_after_tax.total
+      expected_growth = (core_oi1 / core_oi0)**(1.0/@years_between_stmts) - 1.0
+      @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2009).should be_within(0.001).of(expected_growth)
     end
   end
 
@@ -233,17 +212,17 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @expected_rate_of_return = 0.10
     end
     it "returns a float" do
-      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2010, @expected_rate_of_return).should be_an_instance_of Float
+      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2009, @expected_rate_of_return).should be_an_instance_of Float
     end
     it "totals up to the right amount" do
       re_oi = 6868337409.999998
-      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2010, @expected_rate_of_return).should be_within(1.0).of(re_oi)
+      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2009, @expected_rate_of_return).should be_within(1.0).of(re_oi)
     end
   end
 
   describe "-" do
     before(:all) do
-      @diff = @reformed_inc_stmt_2011 - @reformed_inc_stmt_2010 
+      @diff = @reformed_inc_stmt_2011 - @reformed_inc_stmt_2009 
     end
     it "returns a new reformulated i.s." do
       @diff.should be_an_instance_of FinModeling::ReformulatedIncomeStatement
@@ -283,22 +262,22 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @diff.ni_over_sales.should be_within(0.01).of(0.2256526862477978)
     end
     it "returns a new reformulated i.s. with the right Sales/NOA" do
-      @diff.sales_over_noa(@reformed_bal_sheet_2010).should be_within(0.01).of(1.2026341892832835)
+      @diff.sales_over_noa(@reformed_bal_sheet_2009).should be_within(0.01).of(1.2026341892832835)
     end
     it "returns a new reformulated i.s. with the right FI/NFA" do
-      @diff.fi_over_nfa(   @reformed_bal_sheet_2010).should be_within(0.01).of(0.013860316182670715)
+      @diff.fi_over_nfa(   @reformed_bal_sheet_2009).should be_within(0.01).of(0.013860316182670715)
     end
     it "returns a new reformulated i.s. with the right Revenue Growth" do
-      @diff.revenue_growth(@reformed_inc_stmt_2010).should be_within(0.01).of(-0.22365583594498228)
+      @diff.revenue_growth(@reformed_inc_stmt_2009).should be_within(0.01).of(-0.22365583594498228)
     end
     it "returns a new reformulated i.s. with the right Core OI growth" do
-      @diff.core_oi_growth(@reformed_inc_stmt_2010).should be_within(0.01).of(-0.29628577471562445)
+      @diff.core_oi_growth(@reformed_inc_stmt_2009).should be_within(0.01).of(-0.29628577471562445)
     end
     it "returns a new reformulated i.s. with the right OI growth" do
-      @diff.oi_growth(     @reformed_inc_stmt_2010).should be_within(0.01).of(-0.3328978483597883)
+      @diff.oi_growth(     @reformed_inc_stmt_2009).should be_within(0.01).of(-0.3328978483597883)
     end
     it "returns a new reformulated i.s. with the right ReOI" do
-      @diff.re_oi(         @reformed_bal_sheet_2010).should be_within(1.0).of(392741360.0)
+      @diff.re_oi(         @reformed_bal_sheet_2009).should be_within(1.0).of(392741360.0)
     end
   end
 

@@ -24,6 +24,8 @@ describe FinModeling::ReformulatedBalanceSheet  do
     end
     @period = @bal_sheet.periods.last
     @reformed_bal_sheet = @bal_sheet.reformulated(@period)
+
+    @years_between_sheets = 2.0
   end
 
   describe "new" do
@@ -97,9 +99,6 @@ describe FinModeling::ReformulatedBalanceSheet  do
   end
 
   describe "composition_ratio" do
-    it "returns a float" do
-      @reformed_bal_sheet.composition_ratio.should be_an_instance_of Float
-    end
     it "totals up to the right amount" do
       ratio = @reformed_bal_sheet.net_operating_assets.total / @reformed_bal_sheet.net_financial_assets.total
       @reformed_bal_sheet.composition_ratio.should be_within(0.1).of(ratio)
@@ -107,22 +106,20 @@ describe FinModeling::ReformulatedBalanceSheet  do
   end
 
   describe "noa_growth" do
-    it "returns a float" do
-      @reformed_bal_sheet.noa_growth(@prev_reformed_bal_sheet).should be_an_instance_of Float
-    end
     it "totals up to the right amount" do
-      growth = 0.32796203839078597
-      @reformed_bal_sheet.noa_growth(@prev_reformed_bal_sheet).should be_within(0.1).of(growth)
+      noa0 = @prev_reformed_bal_sheet.net_operating_assets.total
+      noa1 = @reformed_bal_sheet.net_operating_assets.total
+      expected_growth = (noa1 / noa0)**(1.0/@years_between_sheets) - 1.0
+      @reformed_bal_sheet.noa_growth(@prev_reformed_bal_sheet).should be_within(0.001).of(expected_growth)
     end
   end
 
   describe "cse_growth" do
-    it "returns a float" do
-      @reformed_bal_sheet.cse_growth(@prev_reformed_bal_sheet).should be_an_instance_of Float
-    end
     it "totals up to the right amount" do
-      growth = 0.2708065948414209
-      @reformed_bal_sheet.cse_growth(@prev_reformed_bal_sheet).should be_within(0.1).of(growth)
+      cse0 = @prev_reformed_bal_sheet.common_shareholders_equity.total
+      cse1 = @reformed_bal_sheet.common_shareholders_equity.total
+      expected_growth = (cse1 / cse0)**(1.0/@years_between_sheets) - 1.0
+      @reformed_bal_sheet.cse_growth(@prev_reformed_bal_sheet).should be_within(0.001).of(expected_growth)
     end
   end
 

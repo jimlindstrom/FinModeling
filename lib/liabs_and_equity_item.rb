@@ -33,10 +33,27 @@ module FinModeling
       return best_guess_type
     end
 
+    BASE_FILENAME = "classifiers/laei_"
     def self.load_vectors_and_train(vectors)
+      success = true
+      TYPES.each do |classifier_type|
+        filename = BASE_FILENAME + classifier_type.to_s + ".db"
+        success = success && File.exists?(filename)
+        if success
+          @@classifiers[classifier_type] = NaiveBayes.load(filename)
+        else
+          @@classifiers[classifier_type].db_filepath = filename
+        end
+      end
+      return if success
+
       vectors.each do |vector|
         laei = FinModeling::LiabsAndEquityItem.new(vector[:item_string])
         laei.train(vector[:laei_type])
+      end
+
+      TYPES.each do |classifier_type|
+        @@classifiers[classifier_type].save
       end
     end
 
