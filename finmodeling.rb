@@ -8,12 +8,10 @@ require 'xbrlware'
 
 require 'naive_bayes'
 
-#require 'restclient/components'
-#require 'rack/cache'
-
 $LOAD_PATH << "."
 
 require 'lib/string_helpers'
+require 'lib/factory'
 require 'lib/xbrlware_item_vectors'
 require 'lib/xbrlware_item_helpers'
 require 'lib/period_array'

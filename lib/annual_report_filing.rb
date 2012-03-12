@@ -1,5 +1,25 @@
 module FinModeling
+
   class AnnualReportFiling < CompanyFiling
+
+    CONSTRUCTOR_PATH = "constructors/"
+    def self.download(url)
+      uid = url.split("/")[-2..-1].join('-').gsub(/\.[A-zA-z]*$/, '')
+      constructor_file = CONSTRUCTOR_PATH + uid + '.rb'
+      if File.exists?(constructor_file)
+        eval(File.read(constructor_file))
+        return @filing
+      end
+
+      filing = super(url)
+
+      file = File.open(constructor_file, "w")
+      filing.write_constructor(file, "@filing")
+      file.close
+
+      return filing
+    end
+
     def balance_sheet
       if @balance_sheet.nil?
         calculations=@taxonomy.callb.calculation
@@ -41,23 +61,8 @@ module FinModeling
       self.balance_sheet.write_constructor(file, bs_name)
       self.income_statement.write_constructor(file, is_name)
 
-      # FIXME: this isn't the smartest way to go:
-      # 1. it doesn't have full AnnualReport functionality
-      # 2. it should have specs, and be regular- (non-meta-) programmed
-      file.puts "module FinModeling"
-      file.puts "  class FakeStatement"
-      file.puts "    attr_accessor :balance_sheet, :income_statement"
-      file.puts "    def initialize(bs, is)"
-      file.puts "      @balance_sheet    = bs"
-      file.puts "      @income_statement = is"
-      file.puts "    end"
-      file.puts "    def is_valid?"
-      file.puts "      return (@income_statement.is_valid? and @balance_sheet.is_valid?)"
-      file.puts "    end"
-      file.puts "  end"
-      file.puts "end"
-
-      file.puts "#{item_name} = FinModeling::FakeStatement.new(#{bs_name}, #{is_name})"
+      # FIXME: this isn't the smartest way to go. It should have specs; it doesn't have full functionality
+      file.puts "#{item_name} = FinModeling::FakeFiling.new(#{bs_name}, #{is_name})"
     end
   end
 end

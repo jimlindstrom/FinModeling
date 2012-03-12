@@ -155,7 +155,17 @@ module Xbrlware
           period_str += "\"end_date\" => Date.parse(\"#{self.period.value["end_date"].to_s}\")"
           period_str += "}"
       end
-      file.puts "#{context_name} = FinModeling::Factory.Context(:period => #{period_str})"
+
+      entity_str = "nil"
+      case
+        when self.entity.nil? || self.entity.segment.nil?
+        else
+          identifier_str = "\"#{self.entity.identifier}\""
+          segment_str = "{}"
+          entity_str = "Xbrlware::Entity.new(identifier=#{identifier_str}, segment=#{segment_str})"
+      end
+
+      file.puts "#{context_name} = FinModeling::Factory.Context(:period => #{period_str}, :entity => #{entity_str})"
     end
 
     class Period

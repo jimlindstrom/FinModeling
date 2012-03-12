@@ -1,4 +1,16 @@
 module FinModeling
+
+  class FakeFiling 
+    attr_accessor :balance_sheet, :income_statement
+    def initialize(bs, is)
+      @balance_sheet    = bs
+      @income_statement = is
+    end
+    def is_valid?
+      return (@income_statement.is_valid? and @balance_sheet.is_valid?)
+    end
+  end
+
   module CanBeWalkedRecursively
   
     def walk_subtree(elements, indent_count=0)
@@ -39,7 +51,6 @@ module FinModeling
   
     def self.download(url)
       download_dir = DOWNLOAD_PATH + url.split("/")[-2]
-  
       if !File.exists?(download_dir)
         dl = Edgar::HTMLFeedDownloader.new()
         dl.download(url, download_dir)
