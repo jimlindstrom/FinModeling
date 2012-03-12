@@ -62,7 +62,7 @@ module FinModeling
       self.income_statement.write_constructor(file, is_name)
 
       # FIXME: this isn't the smartest way to go. It should have specs; it doesn't have full functionality
-      file.puts "#{item_name} = FinModeling::FakeFiling.new(#{bs_name}, #{is_name})"
+      file.puts "#{item_name} = FinModeling::FakeAnnualFiling.new(#{bs_name}, #{is_name})"
     end
   end
 end

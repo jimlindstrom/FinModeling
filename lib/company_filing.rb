@@ -1,6 +1,6 @@
 module FinModeling
 
-  class FakeFiling 
+  class FakeAnnualFiling 
     attr_accessor :balance_sheet, :income_statement
     def initialize(bs, is)
       @balance_sheet    = bs
@@ -9,6 +9,8 @@ module FinModeling
     def is_valid?
       return (@income_statement.is_valid? and @balance_sheet.is_valid?)
     end
+  end
+  class FakeQuarterlyFiling < FakeAnnualFiling 
   end
 
   module CanBeWalkedRecursively

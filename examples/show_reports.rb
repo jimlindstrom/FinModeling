@@ -49,10 +49,13 @@ class Filings < Array
     self.each do |filing|
       is_period   = case filing.class.to_s
         when "FinModeling::AnnualReportFiling"    then filing.income_statement.net_income_calculation.periods.yearly.last
+        when "FinModeling::FakeAnnualFiling"      then filing.income_statement.net_income_calculation.periods.yearly.last
+
         when "FinModeling::QuarterlyReportFiling" then filing.income_statement.net_income_calculation.periods.quarterly.last
+        when "FinModeling::FakeQuarterlyFiling"   then filing.income_statement.net_income_calculation.periods.quarterly.last
       end
       re_is       = filing.income_statement.reformulated(is_period)
-      if filing.class.to_s == "FinModeling::AnnualReportFiling"
+      if (filing.class.to_s == "FinModeling::AnnualReportFiling") || (filing.class.to_s == "FinModeling::FakeAnnualFiling")
         begin
           period_1q_thru_3q = prev_filing.income_statement.net_income_calculation.periods.threequarterly.last
           prev3q  = prev_filing.income_statement.reformulated(period_1q_thru_3q)
