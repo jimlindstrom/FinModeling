@@ -6,7 +6,7 @@ describe FinModeling::AnnualReportFiling  do
   before (:all) do
     company = FinModeling::Company.new(FinModeling::Mocks::Entity.new)
     filing_url = company.annual_reports.last.link
-    @filing = FinModeling::AnnualReportFiling.download filing_url
+    @filing = FinModeling::AnnualReportFiling.download(filing_url, caching=false)
   end
 
   describe "balance_sheet" do

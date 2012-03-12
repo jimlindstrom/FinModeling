@@ -3,10 +3,10 @@ module FinModeling
   class AnnualReportFiling < CompanyFiling
 
     CONSTRUCTOR_PATH = "constructors/"
-    def self.download(url)
+    def self.download(url, caching=true)
       uid = url.split("/")[-2..-1].join('-').gsub(/\.[A-zA-z]*$/, '')
       constructor_file = CONSTRUCTOR_PATH + uid + '.rb'
-      if File.exists?(constructor_file)
+      if caching==true && File.exists?(constructor_file)
         eval(File.read(constructor_file))
         return @filing
       end
