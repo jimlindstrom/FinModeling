@@ -4,7 +4,7 @@ module FinModeling
     def assets_calculation
       if @assets.nil?
         friendly_goal = "assets"
-        label_regexes = [ /(^total *|^)assets$/,
+        label_regexes = [ /(^total *|^consolidated *|^)assets$/,
                           /^assets total$/ ]
         id_regexes    = [ /^us-gaap_Assets_\d+/,
                           /^Assets_\d+/ ]
