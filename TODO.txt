@@ -3,10 +3,6 @@ Bugs
 
 Cleanup
 	- get rid of factories, now that caching works well.
-	- the viterbi algorithm needlessly re-calculates the same probabilities 
-	  over and over. Seems like we could flip the order of the loops and save
-	  a ton of time: first generate the probabilities of states for each step;
-	  second, scan through the probabilities and guess at states.
 
 Forecasts
 

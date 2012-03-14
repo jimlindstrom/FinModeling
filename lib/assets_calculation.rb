@@ -49,20 +49,19 @@ module FinModeling
     protected
 
     def classify_all_rows(all_states, next_states, rows, row_item_type, lookahead)
+      item_estimates = rows.map { |row| row_item_type.new(row[:key]).classification_estimates }
+
       prev_state = nil
       rows.each_with_index do |row, idx|
         lookahead = [lookahead, rows.length-idx-lookahead].min
-        row[:type] = classify_row(all_states, next_states, rows, row_item_type, idx, prev_state, lookahead)[:state]
+        row[:type] = classify_row(all_states, next_states, item_estimates, idx, prev_state, lookahead)[:state]
         raise RuntimeError.new("couldn't classify....") if row[:type].nil?
 
         prev_state = row[:type]
       end
     end
 
-    def classify_row(all_states, next_states, rows, row_item_type, idx, prev_state, lookahead)
-      item = row_item_type.new(rows[idx][:key])
-      estimates = item.classification_estimates
-
+    def classify_row(all_states, next_states, item_estimates, idx, prev_state, lookahead)
       best_est           = -10000
       best_state         = nil
 
@@ -70,8 +69,8 @@ module FinModeling
       best_allowed_state = nil
 
       all_states.each do |state|
-        future_error = (lookahead == 0) ?  0.0 : classify_row(all_states, next_states, rows, row_item_type, idx+1, state, lookahead-1)[:error]
-        cur_est = estimates[state] - future_error
+        future_error = (lookahead == 0) ?  0.0 : classify_row(all_states, next_states, item_estimates, idx+1, state, lookahead-1)[:error]
+        cur_est = item_estimates[idx][state] - future_error
 
         if cur_est > best_est
           best_est   = cur_est
