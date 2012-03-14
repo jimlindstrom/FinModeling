@@ -51,6 +51,20 @@ module FinModeling
       return @income_stmt
     end
 
+    def cash_flow_statement
+      if @cash_flow_stmt.nil?
+        calculations=@taxonomy.callb.calculation
+        cash_flow_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*cash.*flows/) }
+                                               #(x.clean_downcased_title =~ /statement[s]*.*of.*net.*income/) }
+        if cash_flow_stmt.nil?
+          raise RuntimeError.new("Couldn't find cash flow statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+        end
+    
+        @cash_flow_stmt = CashFlowStatementCalculation.new(cash_flow_stmt)
+      end
+      return @cash_flow_stmt
+    end
+
     def is_valid?
       return (income_statement.is_valid? and balance_sheet.is_valid?)
     end

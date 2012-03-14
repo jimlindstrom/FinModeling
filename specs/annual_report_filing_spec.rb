@@ -21,6 +21,12 @@ describe FinModeling::AnnualReportFiling  do
     end
   end
 
+  describe "cash_flow_statement" do
+    it "returns the cash flow statement calculation" do
+      @filing.cash_flow_statement.should be_an_instance_of FinModeling::CashFlowStatementCalculation
+    end
+  end
+
   describe "is_valid?" do
     it "returns true if the income statement and balance sheet are both valid" do
       @filing.is_valid?.should == (@filing.income_statement.is_valid? and @filing.balance_sheet.is_valid?)
