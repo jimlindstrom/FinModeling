@@ -6,37 +6,15 @@ module FinModeling
       @balance_sheet    = bs
       @income_statement = is
     end
+
     def is_valid?
       return (@income_statement.is_valid? and @balance_sheet.is_valid?)
     end
   end
+
   class FakeQuarterlyFiling < FakeAnnualFiling 
   end
 
-  module CanBeWalkedRecursively
-  
-    def walk_subtree(elements, indent_count=0)
-      elements.each_with_index do |element, index|
-        indent=" " * indent_count
-    
-        output = "#{indent} #{element.label}"
-        element.items.each do |item|
-          period=item.context.period
-          period_str = period.is_duration? ? "#{period.value["start_date"]} to #{period.value["end_date"]}" : "#{period.value}"
-          output += " [#{item.def["xbrli:balance"]}]" unless item.def.nil?
-          output += " (#{period_str}) = #{item.value}" unless item.nil?
-        end
-    
-        # Print to console
-        puts output
-    
-        # If it has more elements, walk tree, recursively.
-        walk_subtree(element.children, indent_count+1) if element.has_children?
-      end
-    end
-  
-  end
-  
   class CompanyFiling
     DOWNLOAD_PATH = "filings/"
     attr_accessor :instance # FIXME: hide this
@@ -63,26 +41,14 @@ module FinModeling
     end
   
     def print_presentations
-      pres = @taxonomy.prelb.presentation
-      pres.each do |pre|
-        puts "Pres: #{pre.title} (#{pre.role})"
-        walk_subtree(pre.arcs)
-        puts "\n\n"
-      end
+      presentations = @taxonomy.prelb.presentation
+      presentations.each { |pres| pres.print_tree }
     end
   
     def print_calculations
       calculations=@taxonomy.callb.calculation
-      calculations.each do |calc|
-        puts "Calc: #{calc.title} (#{calc.role})"
-        walk_subtree(calc.arcs)
-        puts "\n\n"
-      end
+      calculations.each { |calc| calc.print_tree }
     end
-  
-    private
-  
-    include CanBeWalkedRecursively
   
   end
 end

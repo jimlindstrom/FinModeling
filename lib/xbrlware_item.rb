@@ -23,6 +23,20 @@ module Xbrlware
       end
     end
 
+    def print_tree(indent_count=0)
+      output = "#{indent} #{@label}"
+
+      @items.each do |item|
+        period=item.context.period
+        period_str = period.is_duration? ? "#{period.value["start_date"]} to #{period.value["end_date"]}" : "#{period.value}"
+        output += " [#{item.def["xbrli:balance"]}]" unless item.def.nil?
+        output += " (#{period_str}) = #{item.value}" unless item.nil?
+      end
+      puts indent + output
+
+      @children.each { |child| child.print_tree(indent_count+1) }
+    end
+
     def value_with_correct_sign(type_to_flip)
       balance_defn = nil
       if self.def.nil?
