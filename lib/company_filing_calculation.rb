@@ -31,7 +31,7 @@ module FinModeling
       calc_summary.title = @calculation.label + " (#{@calculation.item_id})"
 
       calc_summary.rows = leaf_items(period).collect do |item| 
-        { :key => item.pretty_name, :val => item.value_with_correct_sign(type_to_flip) }
+        CalculationSummaryRow.new(:key => item.pretty_name, :val => item.value_with_correct_sign(type_to_flip))
       end
     
       return calc_summary

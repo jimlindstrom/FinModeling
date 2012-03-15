@@ -9,7 +9,7 @@ module FinModeling
 
       f = File.open(filename, "r")
       rows.each do |row|
-        row[:type] = f.gets.chomp.to_sym
+        row.type = f.gets.chomp.to_sym
       end
       f.close
       return true
@@ -19,7 +19,7 @@ module FinModeling
       filename = rows_to_filename(base_filename, rows)
       f = File.open(filename, "w")
       rows.each do |row|
-        f.puts row[:type].to_s
+        f.puts row.type.to_s
       end
       f.close
     end
@@ -27,8 +27,8 @@ module FinModeling
     private
 
     def rows_to_filename(base_filename, rows)
-      key = Digest::SHA1.hexdigest(rows.map{ |row| row[:key] }.join)
-      filename = base_filename + key + ".txt"
+      unique_str = Digest::SHA1.hexdigest(rows.map{ |row| row.key }.join)
+      filename = base_filename + unique_str + ".txt"
     end
   end
 
@@ -49,15 +49,15 @@ module FinModeling
     protected
 
     def classify_all_rows(all_states, next_states, rows, row_item_type, lookahead)
-      item_estimates = rows.map { |row| row_item_type.new(row[:key]).classification_estimates }
+      item_estimates = rows.map { |row| row_item_type.new(row.key).classification_estimates }
 
       prev_state = nil
       rows.each_with_index do |row, idx|
         lookahead = [lookahead, rows.length-idx-lookahead].min
-        row[:type] = classify_row(all_states, next_states, item_estimates, idx, prev_state, lookahead)[:state]
-        raise RuntimeError.new("couldn't classify....") if row[:type].nil?
+        row.type = classify_row(all_states, next_states, item_estimates, idx, prev_state, lookahead)[:state]
+        raise RuntimeError.new("couldn't classify....") if row.type.nil?
 
-        prev_state = row[:type]
+        prev_state = row.type
       end
     end
 
@@ -106,19 +106,19 @@ module FinModeling
 
     def summary(period)
       summary_cache_key = period.to_pretty_s
-      summary = lookup_cached_summary(summary_cache_key)
-      return summary if !summary.nil?
+      thesummary = lookup_cached_summary(summary_cache_key)
+      return thesummary if !thesummary.nil?
 
-      summary = super(period, type_to_flip="credit", flip_total=false)
-      if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
-        lookahead = [4, summary.rows.length-1].min
-        classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::AssetsItem, lookahead)
-        save_cached_classifications(BASE_FILENAME, summary.rows)
+      thesummary = super(period, type_to_flip="credit", flip_total=false)
+      if !lookup_cached_classifications(BASE_FILENAME, thesummary.rows)
+        lookahead = [4, thesummary.rows.length-1].min
+        classify_all_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::AssetsItem, lookahead)
+        save_cached_classifications(BASE_FILENAME, thesummary.rows)
       end
 
-      save_cached_summary(summary_cache_key, summary)
+      save_cached_summary(summary_cache_key, thesummary)
 
-      return summary
+      return thesummary
     end
 
   end

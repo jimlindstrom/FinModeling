@@ -30,24 +30,24 @@ module FinModeling
     def net_operating_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Operational Assets"
-      cs.rows = [ { :key => "OA", :val =>  @oa.total },
-                  { :key => "OL", :val => -@ol.total } ]
+      cs.rows = [ CalculationSummaryRow.new( :key => "OA", :val =>  @oa.total ),
+                  CalculationSummaryRow.new( :key => "OL", :val => -@ol.total ) ]
       return cs
     end
 
     def net_financial_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Financial Assets"
-      cs.rows = [ { :key => "FA", :val =>  @fa.total },
-                  { :key => "FL", :val => -@fl.total } ]
+      cs.rows = [ CalculationSummaryRow.new( :key => "FA", :val =>  @fa.total ),
+                  CalculationSummaryRow.new( :key => "FL", :val => -@fl.total ) ]
       return cs
     end
 
     def common_shareholders_equity
       cs = FinModeling::CalculationSummary.new
       cs.title = "Common Shareholders' Equity"
-      cs.rows = [ { :key => "NOA", :val =>  net_operating_assets.total },
-                  { :key => "NFA", :val =>  net_financial_assets.total } ]
+      cs.rows = [ CalculationSummaryRow.new( :key => "NOA", :val =>  net_operating_assets.total ),
+                  CalculationSummaryRow.new( :key => "NFA", :val =>  net_financial_assets.total ) ]
       return cs
     end
 

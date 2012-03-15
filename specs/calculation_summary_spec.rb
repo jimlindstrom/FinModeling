@@ -18,7 +18,7 @@ describe FinModeling::CalculationSummary do
 
   describe "total" do
     before(:all) do
-      @raw_total = @calc_summary.rows.map{ |row| row[:val] }.inject(:+)
+      @raw_total = @calc_summary.rows.map{ |row| row.val }.inject(:+)
     end
     it "should return a floating point total of all values" do
       @calc_summary.total.should be_within(0.1).of(@raw_total)
@@ -30,7 +30,7 @@ describe FinModeling::CalculationSummary do
       @calc_summary.filter_by_type(:oa).should be_an_instance_of FinModeling::CalculationSummary
     end
     it "should return a summary of only the requested type" do
-      @calc_summary.filter_by_type(:oa).rows.map{ |row| row[:type] }.uniq.should == [:oa]
+      @calc_summary.filter_by_type(:oa).rows.map{ |row| row.type }.uniq.should == [:oa]
     end
   end
 
@@ -38,13 +38,13 @@ describe FinModeling::CalculationSummary do
     before(:each) do
       @cs1 = FinModeling::CalculationSummary.new
       @cs1.title = "CS 1"
-      @cs1.rows = [ { :key => "First  Row", :val => 1 },
-                    { :key => "Second Row", :val => 2 } ]
+      @cs1.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 1),
+                    FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 2) ]
       
       @cs2 = FinModeling::CalculationSummary.new
       @cs2.title = "CS 1"
-      @cs2.rows = [ { :key => "First  Row", :val => 1 },
-                    { :key => "Second Row", :val => 2 } ]
+      @cs2.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 1),
+                    FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 2) ]
     end
     it "should return a MultiColumnCalculationSummary" do
       (@cs1 + @cs2).should be_an_instance_of FinModeling::MultiColumnCalculationSummary
@@ -55,12 +55,12 @@ describe FinModeling::CalculationSummary do
     end
     it "should set the row labels to the first summary's row labels" do
       cs3 = (@cs1 + @cs2)
-      cs3.rows.map{ |row| row[:key] }.should == @cs1.rows.map{ |row| row[:key] }
+      cs3.rows.map{ |row| row.key }.should == @cs1.rows.map{ |row| row.key }
     end
     it "should merge the values of summary into an array of values in the result" do
       cs3 = (@cs1 + @cs2)
       0.upto(1).each do |row_idx|
-        cs3.rows[row_idx][:vals].should == [ @cs1.rows[row_idx][:val], @cs2.rows[row_idx][:val] ] 
+        cs3.rows[row_idx].vals.should == [ @cs1.rows[row_idx].val, @cs2.rows[row_idx].val ] 
       end
     end
   end

@@ -6,6 +6,7 @@ module SecQuery
       file.puts "#{item} = SecQuery::Filing.new(filing)"
     end
   end
+
   class Entity
     def write_constructor(filename)
       file = File.open(filename, "w")
@@ -59,24 +60,26 @@ module FinModeling
     end
    
     def annual_reports
-      @entity.filings.select{ |x| x.term == "10-K" }.sort{ |x,y| x.date <=> y.date }
+      sorted_reports_of_type("10-K")
     end
  
     def quarterly_reports
-      @entity.filings.select{ |x| x.term == "10-Q" }.sort{ |x,y| x.date <=> y.date }
+      sorted_reports_of_type("10-Q")
     end
 
     def filings_since_date(start_date)
-      reports  = self.annual_reports.select{ |report| Time.parse(report.date) >= start_date }
-      reports += self.quarterly_reports.select{ |report| Time.parse(report.date) >= start_date }
+      reports  = self.annual_reports
+      reports += self.quarterly_reports
+      reports.select!{ |report| Time.parse(report.date) >= start_date }
       reports.sort!{ |x, y| Time.parse(x.date) <=> Time.parse(y.date) }
 
       filings = []
       reports.each do |report|
         begin
-          filing = FinModeling::QuarterlyReportFiling.download(report.link) if report.term == "10-Q"
-          filing = FinModeling::AnnualReportFiling.download(   report.link) if report.term == "10-K"
-          filings.push filing if !filing.nil?
+          case report.term 
+            when "10-Q" then filings << FinModeling::QuarterlyReportFiling.download(report.link)
+            when "10-K" then filings << FinModeling::AnnualReportFiling.download(   report.link) 
+          end
         rescue
           # *ReportFiling.download() will throw errors if it doesn't contain xbrl data.
         end
@@ -84,5 +87,12 @@ module FinModeling
 
       return filings
     end
+
+    private
+
+    def sorted_reports_of_type(report_type)
+      @entity.filings.select{ |x| x.term == report_type }.sort{ |x,y| x.date <=> y.date }
+    end
+
   end
 end

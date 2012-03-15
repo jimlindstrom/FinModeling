@@ -13,8 +13,8 @@ describe FinModeling::CashChangeCalculation  do
     bs_period_initial = @filing.balance_sheet.periods[-2]
     bs_period_final   = @filing.balance_sheet.periods[-1]
 
-    @cash_initial = @filing.balance_sheet.assets_calculation.summary(bs_period_initial).rows[0][:val]
-    @cash_final   = @filing.balance_sheet.assets_calculation.summary(bs_period_final  ).rows[0][:val]
+    @cash_initial = @filing.balance_sheet.assets_calculation.summary(bs_period_initial).rows[0].val
+    @cash_final   = @filing.balance_sheet.assets_calculation.summary(bs_period_final  ).rows[0].val
     
     puts "initial cash: #{@cash_initial}"
     puts "final cash:   #{@cash_final}"

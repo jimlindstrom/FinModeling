@@ -28,20 +28,20 @@ describe FinModeling::Factory  do
         @bs.periods.map{|x| x.to_pretty_s}.should == expected_periods
       end
       it "returns the right assets summary rows" do
-        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x[:key] }
-        @bs.assets_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x.key }
+        @bs.assets_calculation.summary(@period).rows.map{ |x| x.key }.should == expected_rows
       end
       it "returns the right assets summary values" do
-        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
-        @bs.assets_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x.val.to_s }
+        @bs.assets_calculation.summary(@period).rows.map{ |x| x.val.to_s }.should == expected_rows
       end
       it "returns the right liabilities and equity summary rows" do
-        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:key] }
-        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.key }
+        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.key }.should == expected_rows
       end
       it "returns the right liabilities and equity summary values" do
-        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
-        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.val.to_s }
+        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.val.to_s }.should == expected_rows
       end
     end
 
@@ -57,20 +57,20 @@ describe FinModeling::Factory  do
         @bs.periods.map{|x| x.to_pretty_s}.should == expected_periods
       end
       it "returns the right assets summary rows" do
-        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x[:key] }
-        @bs.assets_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x.key }
+        @bs.assets_calculation.summary(@period).rows.map{ |x| x.key }.should == expected_rows
       end
       it "returns the right assets summary values" do
-        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
-        @bs.assets_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+        expected_rows = @real_bs.assets_calculation.summary(@period).rows.map{ |x| x.val.to_s }
+        @bs.assets_calculation.summary(@period).rows.map{ |x| x.val.to_s }.should == expected_rows
       end
       it "returns the right liabilities and equity summary rows" do
-        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:key] }
-        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.key }
+        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.key }.should == expected_rows
       end
       it "returns the right liabilities and equity summary values" do
-        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
-        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+        expected_rows = @real_bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.val.to_s }
+        @bs.liabs_and_equity_calculation.summary(@period).rows.map{ |x| x.val.to_s }.should == expected_rows
       end
     end
   end
@@ -96,12 +96,12 @@ describe FinModeling::Factory  do
         @is.periods.yearly.map{|x| x.to_pretty_s}.should == expected_periods
       end
       it "returns the right net income summary rows" do
-        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x[:key] }
-        @is.net_income_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x.key }
+        @is.net_income_calculation.summary(@period).rows.map{ |x| x.key }.should == expected_rows
       end
       it "returns the right net income summary values" do
-        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
-        @is.net_income_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x.val.to_s }
+        @is.net_income_calculation.summary(@period).rows.map{ |x| x.val.to_s }.should == expected_rows
       end
       context "when :delete_tax_item => true" do
         before(:all) do
@@ -109,7 +109,7 @@ describe FinModeling::Factory  do
                                                                 :delete_tax_item => true)
         end
         it "does not include the income tax item" do
-          keys = @is.net_income_calculation.summary(@period).rows.map{ |x| x[:key].to_s }
+          keys = @is.net_income_calculation.summary(@period).rows.map{ |x| x.key.to_s }
           keys.select{ |key| key.downcase =~ /tax/ }.should == []
         end
       end
@@ -119,7 +119,7 @@ describe FinModeling::Factory  do
                                                                 :delete_sales_item => true)
         end
         it "does not include the revenues item" do
-          keys = @is.net_income_calculation.summary(@period).rows.map{ |x| x[:key].to_s }
+          keys = @is.net_income_calculation.summary(@period).rows.map{ |x| x.key.to_s }
           keys.select{ |key| key.downcase =~ /(sales)|(revenue)/ }.should == []
         end
       end
@@ -140,12 +140,12 @@ describe FinModeling::Factory  do
         @is.periods.yearly.map{|x| x.to_pretty_s}.should == expected_periods
       end
       it "returns the right net income summary rows" do
-        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x[:key] }
-        @is.net_income_calculation.summary(@period).rows.map{ |x| x[:key] }.should == expected_rows
+        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x.key }
+        @is.net_income_calculation.summary(@period).rows.map{ |x| x.key }.should == expected_rows
       end
       it "returns the right net income summary values" do
-        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x[:val].to_s }
-        @is.net_income_calculation.summary(@period).rows.map{ |x| x[:val].to_s }.should == expected_rows
+        expected_rows = @real_is.net_income_calculation.summary(@period).rows.map{ |x| x.val.to_s }
+        @is.net_income_calculation.summary(@period).rows.map{ |x| x.val.to_s }.should == expected_rows
       end
     end
   end

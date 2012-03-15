@@ -19,19 +19,19 @@ module FinModeling
 
     def summary(period)
       summary_cache_key = period.to_pretty_s
-      summary = lookup_cached_summary(summary_cache_key)
-      return summary if !summary.nil?
+      thesummary = lookup_cached_summary(summary_cache_key)
+      return thesummary if !thesummary.nil?
     
-      summary = super(period, type_to_flip="debit", flip_total=true)
-      if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
-        lookahead = [4, summary.rows.length-1].min
-        classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::IncomeStatementItem, lookahead)
-        save_cached_classifications(BASE_FILENAME, summary.rows)
+      thesummary = super(period, type_to_flip="debit", flip_total=true)
+      if !lookup_cached_classifications(BASE_FILENAME, thesummary.rows)
+        lookahead = [4, thesummary.rows.length-1].min
+        classify_all_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::IncomeStatementItem, lookahead)
+        save_cached_classifications(BASE_FILENAME, thesummary.rows)
       end
 
-      save_cached_summary(summary_cache_key, summary)
+      save_cached_summary(summary_cache_key, thesummary)
 
-      return summary
+      return thesummary
     end
  
   end

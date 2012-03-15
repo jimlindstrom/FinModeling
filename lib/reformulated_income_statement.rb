@@ -12,50 +12,50 @@ module FinModeling
           when :or
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Operating Revenues"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_revenues.total },
-                         { :key => "Second Row", :val => -@ris2.operating_revenues.total } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.operating_revenues.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.operating_revenues.total ) ]
             return @cs
           when :cogs
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Cost of Revenues"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.cost_of_revenues.total },
-                         { :key => "Second Row", :val => -@ris2.cost_of_revenues.total } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.cost_of_revenues.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.cost_of_revenues.total ) ]
             return @cs
           when :oe
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Operating Expenses"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_expenses.total },
-                         { :key => "Second Row", :val => -@ris2.operating_expenses.total } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.operating_expenses.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.operating_expenses.total ) ]
             return @cs
           when :oibt
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Operating Income from Sales, Before taxes"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_income_after_tax.rows[1][:val] },
-                         { :key => "Second Row", :val => -@ris2.operating_income_after_tax.rows[1][:val] } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.operating_income_after_tax.rows[1].val ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.operating_income_after_tax.rows[1].val ) ]
             return @cs
           when :fibt
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Financing Income, Before Taxes"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.net_financing_income.rows[0][:val] },
-                         { :key => "Second Row", :val => -@ris2.net_financing_income.rows[0][:val] } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.net_financing_income.rows[0].val ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.net_financing_income.rows[0].val ) ]
             return @cs
           when :tax
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Taxes"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.income_from_sales_after_tax.rows[1][:val] },
-                         { :key => "Second Row", :val => -@ris2.income_from_sales_after_tax.rows[1][:val] } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.income_from_sales_after_tax.rows[1].val ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.income_from_sales_after_tax.rows[1].val ) ]
             return @cs
           when :ooiat
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Other Operating Income, After Taxes"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.operating_income_after_tax.rows[3][:val] },
-                         { :key => "Second Row", :val => -@ris2.operating_income_after_tax.rows[3][:val] } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.operating_income_after_tax.rows[3].val ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.operating_income_after_tax.rows[3].val ) ]
             return @cs
           when :fiat
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Financing Income, After Taxes"
-            @cs.rows = [ { :key => "First  Row", :val =>  @ris1.net_financing_income.rows[2][:val] },
-                         { :key => "Second Row", :val => -@ris2.net_financing_income.rows[2][:val] } ]
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @ris1.net_financing_income.rows[2].val ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@ris2.net_financing_income.rows[2].val ) ]
             return @cs
         end
       end
@@ -105,8 +105,8 @@ module FinModeling
     def gross_revenue
       cs = FinModeling::CalculationSummary.new
       cs.title = "Gross Revenue"
-      cs.rows = [ { :key => "Operating Revenues (OR)", :val => @orev.total },
-                  { :key => "Cost of Goods Sold (COGS)", :val => @cogs.total } ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Operating Revenues (OR)", :val => @orev.total ),
+                  CalculationSummaryRow.new(:key => "Cost of Goods Sold (COGS)", :val => @cogs.total ) ]
       return cs
 
     end
@@ -118,45 +118,45 @@ module FinModeling
     def income_from_sales_before_tax
       cs = FinModeling::CalculationSummary.new
       cs.title = "Operating Income from sales, before tax (OISBT)"
-      cs.rows = [ { :key => "Gross Margin (GM)", :val => @gm },
-                  { :key => "Operating Expense (OE)", :val => @oe.total } ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Gross Margin (GM)", :val => @gm ),
+                  CalculationSummaryRow.new(:key => "Operating Expense (OE)", :val => @oe.total ) ]
       return cs
     end
 
     def income_from_sales_after_tax
       cs = FinModeling::CalculationSummary.new
       cs.title = "Operating Income from sales, after tax (OISAT)"
-      cs.rows = [ { :key => "Operating income from sales (before tax)", :val => @oisbt },
-                  { :key => "Reported taxes", :val => @tax.total },
-                  { :key => "Taxes on net financing income", :val => @fibt_tax_effect },
-                  { :key => "Taxes on other operating income", :val => @oibt_tax_effect } ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Operating income from sales (before tax)", :val => @oisbt ),
+                  CalculationSummaryRow.new(:key => "Reported taxes", :val => @tax.total ),
+                  CalculationSummaryRow.new(:key => "Taxes on net financing income", :val => @fibt_tax_effect ),
+                  CalculationSummaryRow.new(:key => "Taxes on other operating income", :val => @oibt_tax_effect ) ]
       return cs
     end
 
     def operating_income_after_tax
       cs = FinModeling::CalculationSummary.new
       cs.title = "Operating income, after tax (OI)"
-      cs.rows = [ { :key => "Operating income after sales, after tax (OISAT)", :val => @oisat },
-                  { :key => "Other operating income, before tax (OIBT)", :val => @oibt.total },
-                  { :key => "Tax on other operating income", :val => -@oibt_tax_effect },
-                  { :key => "Other operating income, after tax (OOIAT)", :val => @ooiat.total } ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Operating income after sales, after tax (OISAT)", :val => @oisat ),
+                  CalculationSummaryRow.new(:key => "Other operating income, before tax (OIBT)", :val => @oibt.total ),
+                  CalculationSummaryRow.new(:key => "Tax on other operating income", :val => -@oibt_tax_effect ),
+                  CalculationSummaryRow.new(:key => "Other operating income, after tax (OOIAT)", :val => @ooiat.total ) ]
       return cs
     end
 
     def net_financing_income
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net financing income, after tax (NFI)"
-      cs.rows = [ { :key => "Financing income, before tax (FIBT)", :val => @fibt.total },
-                  { :key => "Tax effect (FIBT_TAX_EFFECT)", :val => -@fibt_tax_effect },
-                  { :key => "Financing income, after tax (FIAT)", :val => @fiat.total } ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Financing income, before tax (FIBT)", :val => @fibt.total ),
+                  CalculationSummaryRow.new(:key => "Tax effect (FIBT_TAX_EFFECT)", :val => -@fibt_tax_effect ),
+                  CalculationSummaryRow.new(:key => "Financing income, after tax (FIAT)", :val => @fiat.total ) ]
       return cs
     end
 
     def comprehensive_income
       cs = FinModeling::CalculationSummary.new
       cs.title = "Comprehensive (CI)"
-      cs.rows = [ { :key => "Operating income, after tax (OI)", :val => @oi },
-                  { :key => "Net financing income, after tax (NFI)", :val => @nfi } ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Operating income, after tax (OI)", :val => @oi ),
+                  CalculationSummaryRow.new(:key => "Net financing income, after tax (NFI)", :val => @nfi ) ]
       return cs
     end
 

@@ -20,7 +20,7 @@ describe FinModeling::NetIncomeCalculation  do
       @ni.summary(@period).should be_an_instance_of FinModeling::CalculationSummary
     end
     it "tags each row with an Income Statement Type" do
-      FinModeling::IncomeStatementItem::TYPES.include?(@ni.summary(@period).rows.first[:type]).should be_true
+      FinModeling::IncomeStatementItem::TYPES.include?(@ni.summary(@period).rows.first.type).should be_true
     end
   end
 end
