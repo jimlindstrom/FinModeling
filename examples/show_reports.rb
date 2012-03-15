@@ -96,19 +96,28 @@ class Filings < Array
     analysis = FinModeling::CalculationSummary.new
   
     analysis.title = ""
-    analysis.header_row= { :key => "",                  :val =>  re_bs.period.to_pretty_s }
+    analysis.header_row= FinModeling::CalculationSummaryHeaderRow.new(:key => "",                  
+                                                         :val =>  re_bs.period.to_pretty_s)
   
     analysis.rows = []
-    analysis.rows.push(  { :key => "NOA (000's)",       :val => (re_bs.net_operating_assets.total/      1000.0).round.to_f })
-    analysis.rows.push(  { :key => "NFA (000's)",       :val => (re_bs.net_financial_assets.total/      1000.0).round.to_f })
-    analysis.rows.push(  { :key => "CSE (000's)",       :val => (re_bs.common_shareholders_equity.total/1000.0).round.to_f })
-    analysis.rows.push(  { :key => "Composition Ratio", :val =>  re_bs.composition_ratio })
+    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "NOA (000's)",       
+                                                :val => (re_bs.net_operating_assets.total/      1000.0).round.to_f)
+    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "NFA (000's)",       
+                                                :val => (re_bs.net_financial_assets.total/      1000.0).round.to_f)
+    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "CSE (000's)",       
+                                                :val => (re_bs.common_shareholders_equity.total/1000.0).round.to_f)
+    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "Composition Ratio", 
+                                                :val =>  re_bs.composition_ratio )
     if prev_re_bs.nil?
-      analysis.rows.push({ :key => "NOA Growth",        :val =>  0 })
-      analysis.rows.push({ :key => "CSE Growth",        :val =>  0 })
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NOA Growth",        
+                                                 :val =>  0 )
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "CSE Growth",        
+                                                 :val =>  0 )
     else
-      analysis.rows.push({ :key => "NOA Growth",        :val =>  re_bs.noa_growth(prev_re_bs) })
-      analysis.rows.push({ :key => "CSE Growth",        :val =>  re_bs.cse_growth(prev_re_bs) }) # this is too high on NFLX's 2011 10K
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NOA Growth",        
+                                                 :val =>  re_bs.noa_growth(prev_re_bs) )
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "CSE Growth",        
+                                                 :val =>  re_bs.cse_growth(prev_re_bs) )# this is too high on NFLX's 2011 10K
     end
   
     return (prev_analysis + analysis) if !prev_analysis.nil?
@@ -121,54 +130,76 @@ class Filings < Array
     analysis.rows = []
 
     if re_bs.nil? 
-      analysis.header_row= { :key => "",               :val => "Unknown..." }
+      analysis.header_row = FinModeling::CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
     else
-      analysis.header_row= { :key => "",               :val => re_bs.period.to_pretty_s }
+      analysis.header_row = FinModeling::CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s)
     end
 
     if re_is.nil?
-      analysis.rows.push(  { :key => "Revenue (000's)",:val => 0 })
-      analysis.rows.push(  { :key => "Core OI (000's)",:val => 0 })
-      analysis.rows.push(  { :key => "OI (000's)",     :val => 0 })
-      analysis.rows.push(  { :key => "FI (000's)",     :val => 0 })
-      analysis.rows.push(  { :key => "NI (000's)",     :val => 0 })
-      analysis.rows.push(  { :key => "Gross Margin",   :val => 0 })
-      analysis.rows.push(  { :key => "Sales PM",       :val => 0 })
-      analysis.rows.push(  { :key => "Operating PM",   :val => 0 })
-      analysis.rows.push(  { :key => "FI / Sales",     :val => 0 })
-      analysis.rows.push(  { :key => "NI / Sales",     :val => 0 })
-      analysis.rows.push(  { :key => "Sales / NOA",    :val => 0 })
-      analysis.rows.push(  { :key => "FI / NFA",       :val => 0 })
-      analysis.rows.push(  { :key => "Revenue Growth", :val => 0 })
-      analysis.rows.push(  { :key => "Core OI Growth", :val => 0 })
-      analysis.rows.push(  { :key => "OI Growth",      :val => 0 })
-      analysis.rows.push(  { :key => "ReOI (000's)",   :val => 0 })
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue (000's)",:val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI (000's)",:val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI (000's)",     :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI (000's)",     :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI (000's)",     :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Gross Margin",   :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales PM",       :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Operating PM",   :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / Sales",     :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI / Sales",     :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales / NOA",    :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / NFA",       :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue Growth", :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI Growth", :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI Growth",      :val => 0)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "ReOI (000's)",   :val => 0)
     else
-      analysis.rows.push(  { :key => "Revenue (000's)",:val => (re_is.operating_revenues.total/         1000.0).round.to_f })
-      analysis.rows.push(  { :key => "Core OI (000's)",:val => (re_is.income_from_sales_after_tax.total/1000.0).round.to_f })
-      analysis.rows.push(  { :key => "OI (000's)",     :val => (re_is.operating_income_after_tax.total/ 1000.0).round.to_f })
-      analysis.rows.push(  { :key => "FI (000's)",     :val => (re_is.net_financing_income.total/       1000.0).round.to_f })
-      analysis.rows.push(  { :key => "NI (000's)",     :val => (re_is.comprehensive_income.total/       1000.0).round.to_f })
-      analysis.rows.push(  { :key => "Gross Margin",   :val =>  re_is.gross_margin })
-      analysis.rows.push(  { :key => "Sales PM",       :val =>  re_is.sales_profit_margin })
-      analysis.rows.push(  { :key => "Operating PM",   :val =>  re_is.operating_profit_margin })
-      analysis.rows.push(  { :key => "FI / Sales",     :val =>  re_is.fi_over_sales })
-      analysis.rows.push(  { :key => "NI / Sales",     :val =>  re_is.ni_over_sales })
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue (000's)", 
+                                                 :val => (re_is.operating_revenues.total/         1000.0).round.to_f)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI (000's)", 
+                                                 :val => (re_is.income_from_sales_after_tax.total/1000.0).round.to_f)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI (000's)",      
+                                                 :val => (re_is.operating_income_after_tax.total/ 1000.0).round.to_f)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI (000's)",      
+                                                 :val => (re_is.net_financing_income.total/       1000.0).round.to_f)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI (000's)",      
+                                                 :val => (re_is.comprehensive_income.total/       1000.0).round.to_f)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Gross Margin",   
+                                                 :val =>  re_is.gross_margin)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales PM",       
+                                                 :val =>  re_is.sales_profit_margin)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Operating PM",   
+                                                 :val =>  re_is.operating_profit_margin)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / Sales",     
+                                                 :val =>  re_is.fi_over_sales)
+      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI / Sales",     
+                                                 :val =>  re_is.ni_over_sales)
     
       if !prev_re_bs.nil? && !prev_re_is.nil?
-        analysis.rows.push({ :key => "Sales / NOA",    :val =>  re_is.sales_over_noa(prev_re_bs) })
-        analysis.rows.push({ :key => "FI / NFA",       :val =>  re_is.fi_over_nfa(   prev_re_bs) })
-        analysis.rows.push({ :key => "Revenue Growth", :val =>  re_is.revenue_growth(prev_re_is) })
-        analysis.rows.push({ :key => "Core OI Growth", :val =>  re_is.core_oi_growth(prev_re_is) })
-        analysis.rows.push({ :key => "OI Growth",      :val =>  re_is.oi_growth(     prev_re_is) })
-        analysis.rows.push({ :key => "ReOI (000's)",   :val => (re_is.re_oi(         prev_re_bs)/1000.0).round.to_f })
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales / NOA",    
+                                                   :val =>  re_is.sales_over_noa(prev_re_bs))
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / NFA",       
+                                                   :val =>  re_is.fi_over_nfa(   prev_re_bs))
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue Growth", 
+                                                   :val =>  re_is.revenue_growth(prev_re_is))
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI Growth", 
+                                                   :val =>  re_is.core_oi_growth(prev_re_is))
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI Growth",      
+                                                   :val =>  re_is.oi_growth(     prev_re_is))
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "ReOI (000's)",   
+                                                   :val => (re_is.re_oi(         prev_re_bs)/1000.0).round.to_f)
       else  
-        analysis.rows.push({ :key => "Sales / NOA",    :val => 0 })
-        analysis.rows.push({ :key => "FI / NFA",       :val => 0 })
-        analysis.rows.push({ :key => "Revenue Growth", :val => 0 })
-        analysis.rows.push({ :key => "Core OI Growth", :val => 0 })
-        analysis.rows.push({ :key => "OI Growth",      :val => 0 })
-        analysis.rows.push({ :key => "ReOI (000's)",   :val => 0 })
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales / NOA",    
+                                                   :val => 0)
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / NFA",       
+                                                   :val => 0)
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue Growth", 
+                                                   :val => 0)
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI Growth", 
+                                                   :val => 0)
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI Growth",      
+                                                   :val => 0)
+        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "ReOI (000's)",   
+                                                   :val => 0)
       end
     end
   

@@ -20,6 +20,15 @@ module FinModeling
     end
   end
 
+  class CalculationSummaryHeaderRow < CalculationSummaryRow
+    def print(key_width=60, val_width=20)
+      justified_key = @key.fixed_width_left_justify(@key_width)
+      justified_val = @val.fixed_width_right_justify(@val_width) 
+    
+      puts "\t" + justified_key + "  " + justified_val
+    end
+  end
+
   class CalculationSummary
     attr_accessor :title, :header_row, :rows
     attr_accessor :key_width, :val_width
@@ -40,14 +49,9 @@ module FinModeling
     def print
       puts @title
 
-      if @header_row
-        justified_key = @header_row.key.fixed_width_left_justify(@key_width)
-        justified_val = @header_row.val.fixed_width_right_justify(@val_width) 
-    
-        puts "\t" + justified_key + "  " + justified_val
-      end
-
-      all_rows = @rows
+      all_rows = []
+      all_rows << @header_row if @header_row
+      all_rows += @rows
       all_rows << total_row
       all_rows.each { |row| row.print(@key_width, @val_width) }
 
@@ -68,19 +72,19 @@ module FinModeling
       multics.title = @title
       multics.num_value_columns = 2
 
-      if !@header_row.nil?
-        multics.header_row = MultiColumnCalculationSummaryRow.new(:key => @header_row.key, :vals => [])
-        multics.header_row.vals.push @header_row.val
-        multics.header_row.vals.push cs.header_row.val
+      if @header_row
+        multics.header_row = MultiColumnCalculationSummaryHeaderRow.new(:key => @header_row.key, :vals => [])
+        multics.header_row.vals << @header_row.val
+        multics.header_row.vals << cs.header_row.val
       end
 
       multics.rows = []
       0.upto(@rows.length-1).each do |idx|
         new_row = MultiColumnCalculationSummaryRow.new(:key => @rows[idx].key, :vals => [])
-        new_row.vals.push @rows[idx].val
-        new_row.vals.push cs.rows[idx].val
+        new_row.vals << @rows[idx].val
+        new_row.vals << cs.rows[idx].val
 
-        multics.rows.push new_row
+        multics.rows << new_row
       end
 
       return multics
