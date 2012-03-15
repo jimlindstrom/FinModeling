@@ -20,7 +20,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     bs_period_2009 = @bal_sheet_2009.periods.last
     @reformed_bal_sheet_2009 = @bal_sheet_2009.reformulated(bs_period_2009)
 
-    @inc_stmt_2011 = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement')
+    @inc_stmt_2011 = @filing_2011.income_statement
     is_period_2011 = @inc_stmt_2011.periods.last
     @reformed_inc_stmt_2011 = @inc_stmt_2011.reformulated(is_period_2011)
 

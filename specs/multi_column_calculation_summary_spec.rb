@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe FinModeling::MultiColumnCalculationSummary do
   describe "+" do
-    before(:each) do
+    before(:all) do
       @cs1 = FinModeling::CalculationSummary.new
       @cs1.title = "CS 1"
       @cs1.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 1),
@@ -21,21 +21,22 @@ describe FinModeling::MultiColumnCalculationSummary do
                     FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 222) ]
 
       @mccs12 = @cs1 + @cs2
+      @mccs123 = @mccs12 + @cs3
     end
-    it "should return a MultiColumnCalculationSummary" do
-      (@mccs12 + @cs3).should be_an_instance_of FinModeling::MultiColumnCalculationSummary
-    end
-    it "should set the title to the MCCS's title" do
-      (@mccs12 + @cs3).title.should == @mccs12.title
-    end
+
+    subject { @mccs123 }
+
+    it { should be_an_instance_of FinModeling::MultiColumnCalculationSummary }
+
+    its(:title) { should == @mccs12.title }
+
     it "should set the row labels to the first summary's row labels" do
-      mccs123 = (@mccs12 + @cs3)
-      mccs123.rows.map{ |row| row.key }.should == @mccs12.rows.map{ |row| row.key }
+      @mccs123.rows.map{ |row| row.key }.should == @mccs12.rows.map{ |row| row.key }
     end
+
     it "should merge the values of summary into an array of values in the result" do
-      mccs123 = (@mccs12 + @cs3)
-      0.upto(1).each do |row_idx|
-        mccs123.rows[row_idx].vals.should == ( @mccs12.rows[row_idx].vals + [ @cs3.rows[row_idx].val ] )
+      0.upto(@mccs123.rows.length-1).each do |row_idx|
+        @mccs123.rows[row_idx].vals.should == ( @mccs12.rows[row_idx].vals + [ @cs3.rows[row_idx].val ] )
       end
     end
   end

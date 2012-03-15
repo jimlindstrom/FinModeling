@@ -134,16 +134,17 @@ end
 describe Xbrlware::Linkbase::CalculationLinkbase::Calculation::CalculationArc do
   describe "write_constructor" do
     before(:all) do
+      google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
+      filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
+      @orig_item = filing.income_statement.calculation.arcs[0]
+
       file_name = "/tmp/finmodeling-calc-arc.rb"
       item_name = "@item"
       file = File.open(file_name, "w")
-      @orig_item = FinModeling::Factory.CalculationArc(:sheet => "google 10-k 2009-12-31 income statement",
-                                                       :label => "Operating Income Loss")
       @orig_item.write_constructor(file, item_name)
       file.close
 
       eval(File.read(file_name))
-
       @loaded_item = eval(item_name)
     end
 

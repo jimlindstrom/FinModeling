@@ -5,7 +5,3 @@ require 'finmodeling'
 require 'mocks/sec_query'
 require 'mocks/calculation'
 
-RSpec.configure do |c|
-  c.add_setting :use_balance_sheet_factory,    :default => true
-  c.add_setting :use_income_statement_factory, :default => true
-end

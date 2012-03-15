@@ -76,15 +76,15 @@ module FinModeling
       multics.num_value_columns = @num_value_columns + 1
 
       if @header_row
-        multics.header_row = MultiColumnCalculationSummaryHeaderRow.new(:key  => @header_row.key, 
-                                                                        :vals => @header_row.vals)
+        multics.header_row = MultiColumnCalculationSummaryHeaderRow.new(:key  => @header_row.key.dup, 
+                                                                        :vals => @header_row.vals.dup)
         multics.header_row.vals << cs.header_row.val
       end
 
       multics.rows = []
       0.upto(@rows.length-1).each do |idx|
-        new_row = MultiColumnCalculationSummaryRow.new(:key  => @rows[idx].key, 
-                                                       :vals => @rows[idx].vals)
+        new_row = MultiColumnCalculationSummaryRow.new(:key  => @rows[idx].key.dup, 
+                                                       :vals => @rows[idx].vals.dup)
 
         new_row.vals << cs.rows[idx].val
 

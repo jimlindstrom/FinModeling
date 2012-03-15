@@ -4,15 +4,10 @@ require 'spec_helper'
 
 describe FinModeling::CompanyFilingCalculation  do
   before(:all) do
-    if !RSpec.configuration.use_income_statement_factory? || !RSpec.configuration.use_balance_sheet_factory?
-      google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
-      @filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
-      @inc_stmt  = @filing.income_statement
-      @bal_sheet = @filing.balance_sheet
-    else
-      @inc_stmt  = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement')
-      @bal_sheet = FinModeling::Factory.BalanceSheetCalculation(   :sheet => 'google 10-k 2011-12-31 balance sheet')
-    end
+    google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
+    @filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
+    @inc_stmt  = @filing.income_statement
+    @bal_sheet = @filing.balance_sheet
 
     vepc_2010_annual_rpt = "http://www.sec.gov/Archives/edgar/data/103682/000119312511049905/d10k.htm"
     @filing_with_mixed_order = FinModeling::AnnualReportFiling.download vepc_2010_annual_rpt
@@ -58,7 +53,7 @@ describe FinModeling::CompanyFilingCalculation  do
       @assets.leaf_items(@period).first.should be_an_instance_of Xbrlware::Item
     end
     it "returns all leaf items, if no period given" do
-      @assets.leaf_items.length.should == 48
+      @assets.leaf_items.length.should == 26
     end
   end
 
