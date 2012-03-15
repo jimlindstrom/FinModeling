@@ -4,16 +4,35 @@ require 'spec_helper'
 
 describe FinModeling::CashChangeCalculation  do
   before(:all) do
-    google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
-    filing = FinModeling::AnnualReportFiling.download(google_2011_annual_rpt, do_caching=false) # FIXME: turn caching back on..
-    @cash_flow_stmt = filing.cash_flow_statement
-    @period = @cash_flow_stmt.periods.last
-    @cash_changes = @cash_flow_stmt.cash_change_calculation
+    goog_2011_q3_report = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511282235/0001193125-11-282235-index.htm"
+    @filing = FinModeling::AnnualReportFiling.download(goog_2011_q3_report, do_caching=false) # FIXME: turn caching back on..
+    @cfs_period_q1_thru_q3 = @filing.cash_flow_statement.periods.threequarterly.last
+
+    @cash_changes = @filing.cash_flow_statement.cash_change_calculation
+
+    bs_period_initial = @filing.balance_sheet.periods[-2]
+    bs_period_final   = @filing.balance_sheet.periods[-1]
+
+    @cash_initial = @filing.balance_sheet.assets_calculation.summary(bs_period_initial).rows[0][:val]
+    @cash_final   = @filing.balance_sheet.assets_calculation.summary(bs_period_final  ).rows[0][:val]
+    
+    puts "initial cash: #{@cash_initial}"
+    puts "final cash:   #{@cash_final}"
+
+    @filing.cash_flow_statement.cash_change_calculation.summary(@cfs_period_q1_thru_q3).print
+
+    @cash_changes.leaf_items(@cfs_period_q1_thru_q3).each do |item|
+      puts "#{item.name}: #{item.def ? item.def["xbrli:balance"] : "nil"}"
+    end
   end
 
-  describe "summary" do
-    it "only requires a period (knows how debts/credits work and whether to flip the total)" do
-      @cash_changes.summary(@period).should be_an_instance_of FinModeling::CalculationSummary
+  describe "summary(period)" do
+    subject{ @cash_changes.summary(@cfs_period_q1_thru_q3) }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+
+    describe ".total" do
+      subject{ @cash_changes.summary(@cfs_period_q1_thru_q3).total }
+      it { should be_within(1.0).of(@cash_final - @cash_initial) }
     end
   end
 end

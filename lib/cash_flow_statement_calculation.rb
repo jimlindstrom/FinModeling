@@ -4,7 +4,8 @@ module FinModeling
     def cash_change_calculation
       if @cash_change.nil?
         friendly_goal = "cash change"
-        label_regexes = [ /^cash and cash equivalents period increase decrease/ ]
+        label_regexes = [ /^cash and cash equivalents period increase decrease/,
+                          /^net increase decrease in cash and cash equivalents/ ]
         id_regexes    = [ /^us-gaap_CashAndCashEquivalentsPeriodIncreaseDecrease_\d+/,
                           /^CashAndCashEquivalentsPeriodIncreaseDecrease\d+/ ]
   

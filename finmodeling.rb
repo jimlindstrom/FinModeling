@@ -13,8 +13,13 @@ $LOAD_PATH << "."
 
 require 'lib/string_helpers'
 require 'lib/factory'
+
 require 'lib/xbrlware_item_vectors'
-require 'lib/xbrlware_item_helpers'
+require 'lib/xbrlware_item'
+require 'lib/xbrlware_linkbase'
+require 'lib/xbrlware_context'
+require 'lib/xbrlware_dateutil'
+
 require 'lib/period_array'
 require 'lib/rate'
 require 'lib/company'

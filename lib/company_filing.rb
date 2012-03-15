@@ -23,6 +23,7 @@ module FinModeling
         element.items.each do |item|
           period=item.context.period
           period_str = period.is_duration? ? "#{period.value["start_date"]} to #{period.value["end_date"]}" : "#{period.value}"
+          output += " [#{item.def["xbrli:balance"]}]" unless item.def.nil?
           output += " (#{period_str}) = #{item.value}" unless item.nil?
         end
     

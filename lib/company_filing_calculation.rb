@@ -11,28 +11,19 @@ module FinModeling
     end
 
     def periods
-      PeriodArray.new(leaf_items.map{ |x| x.context.period }.sort{ |x,y| x.to_pretty_s <=> y.to_pretty_s }.uniq)
+      arr = leaf_items.map{ |x| x.context.period }
+                      .sort{ |x,y| x.to_pretty_s <=> y.to_pretty_s }
+                      .uniq
+      PeriodArray.new(arr)
     end
   
     def leaf_items(period=nil)
       leaf_items_helper(@calculation, period)
     end
 
-    def leaf_items_sum(period)
-      sum = 0.0
-      leaf_items(period).each do |item|
-        #raise RuntimeError.new("can't find balance definition in #{item.inspect}") if item.def.nil?
-        puts "can't find balance definition in #{item.inspect}" if item.def.nil?
-        case 
-          when item.def.nil?
-            sum += item.value.to_f
-          when item.def["xbrli:balance"] == "debit"  
-            sum += item.value.to_f
-          when item.def["xbrli:balance"] == "credit"  
-            sum -= item.value.to_f
-        end
-      end
-      return sum
+    def leaf_items_sum(period, type_to_flip="credit")
+      values = leaf_items(period).map{ |item| item.value_with_correct_sign(type_to_flip) }
+      values.inject(:+)
     end
 
     def summary(period, type_to_flip, flip_total)
