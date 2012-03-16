@@ -13,10 +13,10 @@ describe FinModeling::NetIncomeCalculation  do
 
   describe "summary" do
     it "only requires a period (knows how debts/credits work and whether to flip the total)" do
-      @ni.summary(@period).should be_an_instance_of FinModeling::CalculationSummary
+      @ni.summary(:period=>@period).should be_an_instance_of FinModeling::CalculationSummary
     end
     it "tags each row with an Income Statement Type" do
-      FinModeling::IncomeStatementItem::TYPES.include?(@ni.summary(@period).rows.first.type).should be_true
+      FinModeling::IncomeStatementItem::TYPES.include?(@ni.summary(:period=>@period).rows.first.type).should be_true
     end
   end
 end

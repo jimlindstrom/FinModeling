@@ -17,21 +17,23 @@ module FinModeling
       PeriodArray.new(arr)
     end
   
-    def leaf_items(period=nil)
-      leaf_items_helper(@calculation, period)
+    def leaf_items(args={})
+      @calculation.leaf_items(args[:period])
     end
 
-    def leaf_items_sum(period, type_to_flip="credit")
-      values = leaf_items(period).map{ |item| item.value_with_correct_sign(type_to_flip) }
+    def leaf_items_sum(args)
+      leaves = leaf_items(:period => args[:period])
+      values = leaves.map{ |item| item.value(args[:mapping]) }
       values.inject(:+)
     end
 
-    def summary(period, type_to_flip, flip_total)
+    def summary(args)
       calc_summary = CalculationSummary.new
       calc_summary.title = @calculation.label + " (#{@calculation.item_id})"
 
-      calc_summary.rows = leaf_items(period).collect do |item| 
-        CalculationSummaryRow.new(:key => item.pretty_name, :val => item.value_with_correct_sign(type_to_flip))
+      calc_summary.rows = leaf_items(args).collect do |item| 
+        CalculationSummaryRow.new(:key => item.pretty_name, 
+                                  :val => item.value(args[:mapping]))
       end
     
       return calc_summary
@@ -52,34 +54,6 @@ module FinModeling
       end
 
       return calc
-    end
-
-    private
-
-    def leaf_items_helper(node, period)
-      children = if node.class == Xbrlware::Linkbase::CalculationLinkbase::Calculation
-        node.arcs
-      else
-        node.children
-      end
-
-      if children.empty?
-        raise RuntimeError.new("#{node} (#{node.label}) has nil items!") if node.items.nil?
-        items = node.items.select{ |x| x.context.entity.segment.nil? }
-        # FIXME: I don't fully understand the '.context.entity.segment' 
-        # attribute. It appears, though, that items that have this attribute are
-        # sub-elements of other leaf nodes, broken out to provide more detail.
-        if !period.nil?
-          items = items.select{ |x| x.context.period.to_pretty_s == period.to_pretty_s }
-        end
-        return items
-      end
-
-      leaf_items = [ ]
-      children.each do |child|
-        leaf_items += leaf_items_helper(child, period)
-      end
-      return leaf_items
     end
 
   end

@@ -1,5 +1,5 @@
-module FinModeling
-  module XbrlwareItem
+module Xbrlware
+  class ValueMapping
     TRAINING_VECTORS = [ { :balance_defn=>:debit, :item_string=>"Cash And Cash Equivalents At Carrying Value" },
                          { :balance_defn=>:debit, :item_string=>"Cash And Cash Equivalents At Carrying Value" },
                          { :balance_defn=>:debit, :item_string=>"Cash And Cash Equivalents At Carrying Value" },

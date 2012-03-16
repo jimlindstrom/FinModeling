@@ -33,7 +33,8 @@ module FinModeling
     end
 
     def reformulated(period)
-      return ReformulatedIncomeStatement.new(period, net_income_calculation.summary(period))
+      return ReformulatedIncomeStatement.new(period, 
+                                             net_income_calculation.summary(:period=>period))
     end
  
     def write_constructor(file, item_name)

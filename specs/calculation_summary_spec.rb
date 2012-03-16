@@ -9,7 +9,7 @@ describe FinModeling::CalculationSummary do
     @bal_sheet = filing.balance_sheet
     @period = @bal_sheet.periods.last
     @a = @bal_sheet.assets_calculation
-    @calc_summary = @a.summary(@period)
+    @calc_summary = @a.summary(:period=>@period)
   end
 
   describe "total" do

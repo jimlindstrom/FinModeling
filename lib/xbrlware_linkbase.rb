@@ -13,7 +13,7 @@ module Xbrlware
       class Calculation
         def write_constructor(file, calc_name)
           file.puts "#{calc_name}_args = {}"
-          file.puts "#{calc_name}_args[:title] = \"#{self.title}\""
+          file.puts "#{calc_name}_args[:title] = \"#{@title}\""
           file.puts "#{calc_name}_args[:arcs] = []"
           @arcs.each_with_index do |arc, index|
             arc_name = calc_name + "_arc#{index}"
@@ -32,11 +32,24 @@ module Xbrlware
           puts indent + "\n\n"
         end
 
+        def leaf_items(period)
+          if @arcs.empty?
+            raise RuntimeError.new("#{self.inspect} (#{@label}) has nil items!") if @items.nil?
+
+            items = @items.select{ |x| !x.is_sub_leaf? }
+            items.select!{ |x| x.context.period.to_pretty_s == period.to_pretty_s } if period
+
+            return items
+          end
+    
+          return @arcs.collect { |child| child.leaf_items(period) }.flatten
+        end
+    
         class CalculationArc
           def write_constructor(file, arc_name)
             file.puts "args = {}"
-            file.puts "args[:item_id] = \"#{self.item_id}\""
-            file.puts "args[:label] = \"#{self.label}\""
+            file.puts "args[:item_id] = \"#{@item_id}\""
+            file.puts "args[:label] = \"#{@label}\""
             file.puts "#{arc_name} = FinModeling::Factory.CalculationArc(args)"
             file.puts "#{arc_name}.items = []"
             @items.each_with_index do |item, index|
@@ -57,7 +70,7 @@ module Xbrlware
             output = "#{indent} #{@label}"
 
             @items.each do |item|
-              period=item.context.period
+              period = item.context.period
               period_str = period.is_duration? ? "#{period.value["start_date"]} to #{period.value["end_date"]}" : "#{period.value}"
               output += " [#{item.def["xbrli:balance"]}]" unless item.def.nil?
               output += " (#{period_str}) = #{item.value}" unless item.nil?
@@ -65,6 +78,18 @@ module Xbrlware
             puts indent + output
 
             @children.each { |child| child.print_tree(indent_count+1) }
+          end
+
+          def leaf_items(period)
+            if @children.empty?
+              raise RuntimeError.new("#{self} (#{@label}) has nil items!") if @items.nil?
+              items = @items.select{ |x| !x.is_sub_leaf? }
+              raise RuntimeError.new("#{self} (#{@label}) has a Hash for a period") if period and period.class==Hash
+              items.select!{ |x| x.context.period.to_pretty_s == period.to_pretty_s } if period
+              return items
+            end
+      
+            return @children.collect { |child| child.leaf_items(period) }.flatten
           end
         end
       end

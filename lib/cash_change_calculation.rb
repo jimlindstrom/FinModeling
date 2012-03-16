@@ -12,12 +12,15 @@ module FinModeling
     #                :oa => [ :oa, :fa ],
     #                :fa => [ :oa, :fa ] }
 
-    def summary(period)
+    def summary(args)
       #summary_cache_key = period.to_pretty_s
       #summary = lookup_cached_summary(summary_cache_key)
       #return summary if !summary.nil?
 
-      summary = super(period, type_to_flip="debit", flip_total=false)
+      mapping = Xbrlware::ValueMapping.new
+      mapping.policy[:debit] = :flip
+
+      summary = super(:period => args[:period], :mapping => mapping)
       #if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
       #  lookahead = [4, summary.rows.length-1].min
       #  classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::AssetsItem, lookahead)

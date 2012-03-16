@@ -13,7 +13,7 @@ describe FinModeling::LiabsAndEquityCalculation  do
 
   describe "summary" do
     it "only requires a period (knows how debts/credits work and whether to flip the total)" do
-      @lse.summary(@period).should be_an_instance_of FinModeling::CalculationSummary
+      @lse.summary(:period=>@period).should be_an_instance_of FinModeling::CalculationSummary
     end
   end
 end

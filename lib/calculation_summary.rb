@@ -22,8 +22,8 @@ module FinModeling
 
   class CalculationSummaryHeaderRow < CalculationSummaryRow
     def print(key_width=60, val_width=20)
-      justified_key = @key.fixed_width_left_justify(@key_width)
-      justified_val = @val.fixed_width_right_justify(@val_width) 
+      justified_key = @key.fixed_width_left_justify(key_width)
+      justified_val = @val.fixed_width_right_justify(val_width) 
     
       puts "\t" + justified_key + "  " + justified_val
     end

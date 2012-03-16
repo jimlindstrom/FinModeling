@@ -22,7 +22,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
 
   describe "new" do
     it "takes an assets calculation and a liabs_and_equity calculation and a period and returns a CalculationSummary" do
-      rbs = FinModeling::ReformulatedBalanceSheet.new(@period, @bal_sheet.assets_calculation.summary(@period), @bal_sheet.liabs_and_equity_calculation.summary(@period))
+      rbs = FinModeling::ReformulatedBalanceSheet.new(@period, @bal_sheet.assets_calculation.summary(:period=>@period), @bal_sheet.liabs_and_equity_calculation.summary(:period=>@period))
       rbs.should be_an_instance_of FinModeling::ReformulatedBalanceSheet
     end
   end

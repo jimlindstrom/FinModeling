@@ -42,8 +42,8 @@ module FinModeling
         end
       end
 
-      left = assets_calculation.leaf_items_sum(periods.last)
-      right = liabs_and_equity_calculation.leaf_items_sum(periods.last)
+      left = assets_calculation.leaf_items_sum(:period => periods.last)
+      right = liabs_and_equity_calculation.leaf_items_sum(:period => periods.last)
       allowed_error = 1.0
       is_balanced = (left + right) < allowed_error
 
@@ -53,7 +53,9 @@ module FinModeling
     end
 
     def reformulated(period)
-      return ReformulatedBalanceSheet.new(period, assets_calculation.summary(period), liabs_and_equity_calculation.summary(period))
+      return ReformulatedBalanceSheet.new(period, 
+                                          assets_calculation.summary(:period=>period), 
+                                          liabs_and_equity_calculation.summary(:period=>period))
     end
 
     def write_constructor(file, item_name)

@@ -17,12 +17,15 @@ module FinModeling
                     :ooiat => [                                      :ooiat, :fiat ], # ooiat/fiat can cycle back/forth
                     :fiat  => [                                      :ooiat, :fiat ] }# ooiat/fiat can cycle back/forth
 
-    def summary(period)
-      summary_cache_key = period.to_pretty_s
+    def summary(args)
+      summary_cache_key = args[:period].to_pretty_s
       thesummary = lookup_cached_summary(summary_cache_key)
       return thesummary if !thesummary.nil?
-    
-      thesummary = super(period, type_to_flip="debit", flip_total=true)
+ 
+      mapping = Xbrlware::ValueMapping.new
+      mapping.policy[:debit] = :flip
+
+      thesummary = super(:period => args[:period], :mapping => mapping) # FIXME: flip_total should == true!
       if !lookup_cached_classifications(BASE_FILENAME, thesummary.rows)
         lookahead = [4, thesummary.rows.length-1].min
         classify_all_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::IncomeStatementItem, lookahead)
