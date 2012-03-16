@@ -45,10 +45,11 @@ module FinModeling
       left = assets_calculation.leaf_items_sum(:period => periods.last)
       right = liabs_and_equity_calculation.leaf_items_sum(:period => periods.last)
       allowed_error = 1.0
-      is_balanced = (left + right) < allowed_error
+      is_balanced = (left - right) < allowed_error
 
       puts "balance sheet's assets calculation lacks cash item" if !has_cash_item 
       puts "balance sheet's liabilities and equity calculation lacks equity item" if !has_equity_item 
+      puts "balance sheet's isn't balanced (#{left}, #{right})" if !is_balanced
       return (has_cash_item and has_equity_item and is_balanced)
     end
 
