@@ -43,7 +43,8 @@ module FinModeling
 
     def find_and_tag_special_items(args)
       leaf_items(:period => args[:period]).each do |item|
-        if item.name =~ /NetIncomeLoss/
+        if item.name.matches_regexes?([ /NetIncomeLoss/,
+                                        /ProfitLoss/ ])
           item.def = {} if !item.def
           item.def["xbrli:balance"] = "netincome"
         end

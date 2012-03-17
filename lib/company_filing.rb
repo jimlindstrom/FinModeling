@@ -1,14 +1,15 @@
 module FinModeling
 
   class FakeAnnualFiling 
-    attr_accessor :balance_sheet, :income_statement
-    def initialize(bs, is)
-      @balance_sheet    = bs
-      @income_statement = is
+    attr_accessor :balance_sheet, :income_statement, :cash_flow_statement
+    def initialize(bs, is, cfs)
+      @balance_sheet       = bs
+      @income_statement    = is
+      @cash_flow_statement = cfs
     end
 
     def is_valid?
-      return (@income_statement.is_valid? and @balance_sheet.is_valid?)
+      return (@income_statement.is_valid? and @balance_sheet.is_valid? and @cash_flow_statement.is_valid?)
     end
   end
 

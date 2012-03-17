@@ -36,6 +36,7 @@ describe FinModeling::AnnualReportFiling  do
   describe "write_constructor" do
     before(:all) do
       file_name = "/tmp/finmodeling-annual-rpt.rb"
+      schema_version_item_name = "@schema_version"
       item_name = "@annual_rpt"
       file = File.open(file_name, "w")
       @filing.write_constructor(file, item_name)
@@ -43,9 +44,13 @@ describe FinModeling::AnnualReportFiling  do
 
       eval(File.read(file_name))
 
+      @schema_version = eval(schema_version_item_name)
       @loaded_filing = eval(item_name)
     end
 
+    it "writes itself to a file, and saves a schema version that's at least 1.0" do
+      @schema_version.should be >= 1.0
+    end
     it "writes itself to a file, and when reloaded, has the same periods" do
       expected_periods = @filing.balance_sheet.periods.map{|x| x.to_pretty_s}.join(',')
       @loaded_filing.balance_sheet.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
@@ -59,6 +64,11 @@ describe FinModeling::AnnualReportFiling  do
       period = @filing.income_statement.periods.last
       expected_nfi = @filing.income_statement.reformulated(period).net_financing_income.total
       @loaded_filing.income_statement.reformulated(period).net_financing_income.total.should be_within(1.0).of(expected_nfi)
+    end
+    it "writes itself to a file, and when reloaded, has the same net change in cash" do
+      period = @filing.cash_flow_statement.periods.last
+	  expected_cash_change = @filing.cash_flow_statement.cash_change_calculation.summary(:period=>period).total
+	  @loaded_filing.cash_flow_statement.cash_change_calculation.summary(:period=>period).total.should be_within(1.0).of(expected_cash_change)
     end
   end
 end

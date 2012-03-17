@@ -79,8 +79,8 @@ def print_balance_sheet(filing, report_type)
   period = filing.balance_sheet.periods.last
   puts "Balance Sheet (#{period.to_pretty_s})"
   
-  filing.balance_sheet.assets_calculation.summary(period).print
-  filing.balance_sheet.liabs_and_equity_calculation.summary(period).print
+  filing.balance_sheet.assets_calculation.summary(:period => period).print
+  filing.balance_sheet.liabs_and_equity_calculation.summary(:period => period).print
 end
 
 def print_reformulated_balance_sheet(filing, report_type)
@@ -98,7 +98,7 @@ def print_income_statement(filing, report_type)
   period  = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
   puts "Income Statement (#{period.to_pretty_s})"
 
-  filing.income_statement.net_income_calculation.summary(period).print
+  filing.income_statement.net_income_calculation.summary(:period => period).print
 end
 
 def print_reformulated_income_statement(filing, report_type)
@@ -115,6 +115,15 @@ def print_reformulated_income_statement(filing, report_type)
   reformed_inc_stmt.comprehensive_income.print
 end
 
+def print_cash_flow_statement(filing, report_type)
+  period = filing.cash_flow_statement.periods.yearly.last    if report_type == :annual_report
+  period = filing.cash_flow_statement.periods.quarterly.last if report_type == :quarterly_report
+  puts "Cash Flow Statement (#{period.to_pretty_s})"
+  
+  filing.cash_flow_statement.cash_change_calculation.summary(:period => period).print
+end
+
+
 
 args = get_args
 if args[:filing_url].nil?
@@ -127,5 +136,6 @@ print_balance_sheet(                filing, args[:report_type])
 print_reformulated_balance_sheet(   filing, args[:report_type])
 print_income_statement(             filing, args[:report_type])
 print_reformulated_income_statement(filing, args[:report_type])
+print_cash_flow_statement(          filing, args[:report_type])
 
 raise RuntimeError.new("filing is not valid") if !filing.is_valid?
