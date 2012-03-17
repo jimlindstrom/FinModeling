@@ -18,7 +18,14 @@ module FinModeling
       #return summary if !summary.nil?
 
       mapping = Xbrlware::ValueMapping.new
-      mapping.policy[:debit] = :flip
+      mapping.policy[:unknown]          = :flip
+      mapping.policy[:credit]           = :flip 
+      mapping.policy[:debit]            = :no_action 
+      mapping.policy[:netincome]        = :no_action 
+      mapping.policy[:taxes]            = :no_action
+      mapping.policy[:proceedsfromdebt] = :no_action
+
+      find_and_tag_special_items(args)
 
       summary = super(:period => args[:period], :mapping => mapping)
       #if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
@@ -30,6 +37,27 @@ module FinModeling
       #save_cached_summary(summary_cache_key, summary)
 
       return summary
+    end
+
+    private
+
+    def find_and_tag_special_items(args)
+      leaf_items(:period => args[:period]).each do |item|
+        if item.name =~ /NetIncomeLoss/
+          item.def = {} if !item.def
+          item.def["xbrli:balance"] = "netincome"
+        end
+
+        if item.name =~ /IncreaseDecreaseInIncomeTaxes/
+          item.def = {} if !item.def
+          item.def["xbrli:balance"] = "taxes"
+        end
+
+        if item.name =~ /ProceedsFromDebtNetOfIssuanceCosts/
+          item.def = {} if !item.def
+          item.def["xbrli:balance"] = "proceedsfromdebt"
+        end
+      end
     end
 
   end

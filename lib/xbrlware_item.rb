@@ -142,9 +142,9 @@ module Xbrlware
 
     def value(mapping=nil)
       definition = case
-        when @def.nil? then :unknown
-        when @def["xbrli:balance"] == "credit" then :credit
-        when @def["xbrli:balance"] == "debit" then :debit
+        when @def.nil?                  then :unknown
+        when @def["xbrli:balance"].nil? then :unknown
+        else                                 @def["xbrli:balance"].to_sym
       end
 
       mapping = mapping || ValueMapping.new
