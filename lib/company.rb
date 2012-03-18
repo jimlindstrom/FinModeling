@@ -60,11 +60,11 @@ module FinModeling
     end
    
     def annual_reports
-      sorted_reports_of_type("10-K")
+      CompanyFilings.new(sorted_reports_of_type("10-K"))
     end
  
     def quarterly_reports
-      sorted_reports_of_type("10-Q")
+      CompanyFilings.new(sorted_reports_of_type("10-Q"))
     end
 
     def filings_since_date(start_date)
@@ -85,7 +85,7 @@ module FinModeling
         end
       end
 
-      return filings
+      return CompanyFilings.new(filings)
     end
 
     private

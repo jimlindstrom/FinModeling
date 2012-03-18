@@ -11,6 +11,7 @@ require 'naive_bayes'
 
 $LOAD_PATH << "."
 
+require 'lib/float_helpers'
 require 'lib/string_helpers'
 require 'lib/factory'
 
@@ -26,6 +27,7 @@ require 'lib/period_array'
 require 'lib/rate'
 require 'lib/company'
 
+require 'lib/company_filings'
 require 'lib/company_filing'
 require 'lib/annual_report_filing'
 require 'lib/quarterly_report_filing'
