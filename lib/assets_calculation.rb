@@ -45,53 +45,6 @@ module FinModeling
     end
   end
 
-  module CanClassifyRows # simple viterbi classifier, with N-element lookahead
-    protected
-
-    def classify_all_rows(all_states, next_states, rows, row_item_type, lookahead)
-      item_estimates = rows.map { |row| row_item_type.new(row.key).classification_estimates }
-
-      prev_state = nil
-      rows.each_with_index do |row, idx|
-        lookahead = [lookahead, rows.length-idx-lookahead].min
-        row.type = classify_row(all_states, next_states, item_estimates, idx, prev_state, lookahead)[:state]
-        raise RuntimeError.new("couldn't classify....") if row.type.nil?
-
-        prev_state = row.type
-      end
-    end
-
-    def classify_row(all_states, next_states, item_estimates, idx, prev_state, lookahead)
-      best_est           = -10000
-      best_state         = nil
-
-      best_allowed_est   = -10000
-      best_allowed_state = nil
-
-      all_states.each do |state|
-        future_error = (lookahead == 0) ?  0.0 : classify_row(all_states, next_states, item_estimates, idx+1, state, lookahead-1)[:error]
-        cur_est = item_estimates[idx][state] - future_error
-
-        if cur_est > best_est
-          best_est   = cur_est
-          best_state = state
-        end
-
-        if !next_states[prev_state].nil? and next_states[prev_state].include?(state)
-          if cur_est > best_allowed_est
-            best_allowed_est   = cur_est
-            best_allowed_state = state
-          end
-        end
-
-      end
-
-      return { :state => best_allowed_state,
-               :error => best_est - best_allowed_est }
-    end
-
-  end
-
   class AssetsCalculation < CompanyFilingCalculation
     include CanCacheClassifications
     include CanCacheSummaries
@@ -115,7 +68,7 @@ module FinModeling
       thesummary = super(:period => args[:period], :mapping => mapping)
       if !lookup_cached_classifications(BASE_FILENAME, thesummary.rows)
         lookahead = [4, thesummary.rows.length-1].min
-        classify_all_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::AssetsItem, lookahead)
+        classify_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::AssetsItem, lookahead)
         save_cached_classifications(BASE_FILENAME, thesummary.rows)
       end
 

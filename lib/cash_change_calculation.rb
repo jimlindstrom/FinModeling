@@ -32,7 +32,7 @@ module FinModeling
       summary = super(:period => args[:period], :mapping => mapping)
       if !lookup_cached_classifications(BASE_FILENAME, summary.rows) or true # FIXME: get rid of "or true"
         lookahead = [4, summary.rows.length-1].min
-        classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::CashChangeItem, lookahead)
+        classify_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::CashChangeItem, lookahead)
         save_cached_classifications(BASE_FILENAME, summary.rows)
       end
 

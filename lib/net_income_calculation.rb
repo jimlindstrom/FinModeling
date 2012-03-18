@@ -28,7 +28,7 @@ module FinModeling
       thesummary = super(:period => args[:period], :mapping => mapping) # FIXME: flip_total should == true!
       if !lookup_cached_classifications(BASE_FILENAME, thesummary.rows)
         lookahead = [4, thesummary.rows.length-1].min
-        classify_all_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::IncomeStatementItem, lookahead)
+        classify_rows(ALL_STATES, NEXT_STATES, thesummary.rows, FinModeling::IncomeStatementItem, lookahead)
         save_cached_classifications(BASE_FILENAME, thesummary.rows)
       end
 

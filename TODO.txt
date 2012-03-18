@@ -1,8 +1,7 @@
 Bugs
 	- show_reports doesn't check filing validity
-
-Cleanup
-	- get rid of factories, now that caching works well.
+	- Not all filings have quarterly summaries. Need a generalized way of 
+      constructing quarterly summaries from whatever latest periods *do* exist.
 
 Forecasts
 
@@ -15,12 +14,7 @@ Income Statement
 	- net income != comprehensive income.  pull in items from SSE
 	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
 	  currency exchg, etc)
-	- rename OIBT as OOIBT?
+	- naming consistency (e.g., rename OIBT as OOIBT?)
 	- consistency between operating/financing vs. operational/financial?
 	- need to better understand minority interest, noncontrollable blah-blah,
 	  etc.
-
-Balance Sheet
-	- I saw a case (ADBE? ORCL?) in which a non-leaf item had a value, and had 
-	  two children with labels but no values.
-
