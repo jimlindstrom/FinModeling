@@ -25,8 +25,8 @@ describe FinModeling::LiabsAndEquityItem do
     it "returns a hash with the confidence in each LiabsAndEquityItem type" do
       laei = FinModeling::LiabsAndEquityItem.new("Accounts Payable Current")
 
-      FinModeling::LiabsAndEquityItem::TYPES.each do |laei_type|
-        laei.classification_estimates.keys.include?(laei_type).should be_true
+      FinModeling::LiabsAndEquityItem::TYPES.each do |klass|
+        laei.classification_estimates.keys.include?(klass).should be_true
       end
     end
   end
@@ -49,8 +49,8 @@ describe FinModeling::LiabsAndEquityItem do
       FinModeling::LiabsAndEquityItem::TRAINING_VECTORS.each do |vector|
         num_items += 1
         laei = FinModeling::LiabsAndEquityItem.new(vector[:item_string])
-        if laei.classify != vector[:laei_type]
-          errors.push({ :laei=>laei.to_s, :expected=>vector[:laei_type], :got=>laei.classify })
+        if laei.classify != vector[:klass]
+          errors.push({ :laei=>laei.to_s, :expected=>vector[:klass], :got=>laei.classify })
         end
       end
 

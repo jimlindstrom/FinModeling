@@ -25,8 +25,8 @@ describe FinModeling::IncomeStatementItem do
     it "returns a hash with the confidence in each ISI type" do
       isi = FinModeling::IncomeStatementItem.new("Cost of Services")
 
-      FinModeling::IncomeStatementItem::TYPES.each do |isi_type|
-        isi.classification_estimates.keys.include?(isi_type).should be_true
+      FinModeling::IncomeStatementItem::TYPES.each do |klass|
+        isi.classification_estimates.keys.include?(klass).should be_true
       end
     end
   end
@@ -59,8 +59,8 @@ describe FinModeling::IncomeStatementItem do
       FinModeling::IncomeStatementItem::TRAINING_VECTORS.each do |vector|
         num_items += 1
         isi = FinModeling::IncomeStatementItem.new(vector[:item_string])
-        if isi.classify != vector[:isi_type]
-          errors.push({ :isi=>isi.to_s, :expected=>vector[:isi_type], :got=>isi.classify })
+        if isi.classify != vector[:klass]
+          errors.push({ :isi=>isi.to_s, :expected=>vector[:klass], :got=>isi.classify })
         end
       end
 

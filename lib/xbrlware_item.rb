@@ -36,7 +36,11 @@ module Xbrlware
       end
     end
 
-    def self.load_vectors_and_train(vectors)
+    def self.load_vectors_and_train
+      self._load_vectors_and_train(Xbrlware::ValueMapping::TRAINING_VECTORS)
+    end
+
+    def self._load_vectors_and_train(vectors)
       success = true
       BALANCE_DEFNS.each do |classifier_type|
         filename = BASE_FILENAME + classifier_type.to_s + ".db"

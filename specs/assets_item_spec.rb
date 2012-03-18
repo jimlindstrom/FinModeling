@@ -25,8 +25,8 @@ describe FinModeling::AssetsItem do
     it "returns a hash with the confidence in each AssetsItem type" do
       ai = FinModeling::AssetsItem.new("Property Plant And Equipment Net")
 
-      FinModeling::AssetsItem::TYPES.each do |ai_type|
-        ai.classification_estimates.keys.include?(ai_type).should be_true
+      FinModeling::AssetsItem::TYPES.each do |klass|
+        ai.classification_estimates.keys.include?(klass).should be_true
       end
     end
   end
@@ -49,8 +49,8 @@ describe FinModeling::AssetsItem do
       FinModeling::AssetsItem::TRAINING_VECTORS.each do |vector|
         num_items += 1
         ai = FinModeling::AssetsItem.new(vector[:item_string])
-        if ai.classify != vector[:ai_type]
-          errors.push({ :ai=>ai.to_s, :expected=>vector[:ai_type], :got=>ai.classify })
+        if ai.classify != vector[:klass]
+          errors.push({ :ai=>ai.to_s, :expected=>vector[:klass], :got=>ai.classify })
         end
       end
 

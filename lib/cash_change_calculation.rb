@@ -5,17 +5,19 @@ module FinModeling
     include CanCacheSummaries
     include CanClassifyRows
 
-    #BASE_FILENAME = "summaries/ai_"
+    BASE_FILENAME = "summaries/cash_"
 
-    #ALL_STATES  =          [ :oa, :fa ]
-    #NEXT_STATES = { nil => [ :oa, :fa ],
-    #                :oa => [ :oa, :fa ],
-    #                :fa => [ :oa, :fa ] }
+    ALL_STATES  =          [ :c, :i, :d, :f ]
+    NEXT_STATES = { nil => [ :c             ],
+                    :c  => [ :c, :i, :d, :f ],
+                    :i  => [     :i, :d, :f ],
+                    :d  => [     :i, :d, :f ],
+                    :f  => [         :d, :f ] }
 
     def summary(args)
-      #summary_cache_key = period.to_pretty_s
-      #summary = lookup_cached_summary(summary_cache_key)
-      #return summary if !summary.nil?
+      summary_cache_key = args[:period].to_pretty_s
+      summary = lookup_cached_summary(summary_cache_key)
+      return summary if !summary.nil?
 
       mapping = Xbrlware::ValueMapping.new
       mapping.policy[:unknown]          = :flip
@@ -28,13 +30,13 @@ module FinModeling
       find_and_tag_special_items(args)
 
       summary = super(:period => args[:period], :mapping => mapping)
-      #if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
-      #  lookahead = [4, summary.rows.length-1].min
-      #  classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::AssetsItem, lookahead)
-      #  save_cached_classifications(BASE_FILENAME, summary.rows)
-      #end
+      if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
+        lookahead = [4, summary.rows.length-1].min
+        classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::CashChangeItem, lookahead)
+        save_cached_classifications(BASE_FILENAME, summary.rows)
+      end
 
-      #save_cached_summary(summary_cache_key, summary)
+      save_cached_summary(summary_cache_key, summary)
 
       return summary
     end
