@@ -5,12 +5,14 @@ Bugs
 
 Forecasts
 
-Cash Flow Statemen
+Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
 	  transactions.  All 3 of these items are listed in supplementary disclosures.
 	- the classifier's success rate isn't that high.
+	- "I" is defined inversely.
 
 Income Statement
+	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
 	- net income != comprehensive income.  pull in items from SSE
 	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
 	  currency exchg, etc)
@@ -18,3 +20,6 @@ Income Statement
 	- consistency between operating/financing vs. operational/financial?
 	- need to better understand minority interest, noncontrollable blah-blah,
 	  etc.
+
+Balance Sheet
+	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
