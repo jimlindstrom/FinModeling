@@ -123,6 +123,20 @@ def print_cash_flow_statement(filing, report_type)
   filing.cash_flow_statement.cash_change_calculation.summary(:period => period).print
 end
 
+def print_reformulated_cash_flow_statement(filing, report_type)
+  period = filing.cash_flow_statement.periods.yearly.last    if report_type == :annual_report
+  period = filing.cash_flow_statement.periods.quarterly.last if report_type == :quarterly_report
+  
+  reformed_cash_flow_stmt  = filing.cash_flow_statement.reformulated(period)
+
+  reformed_cash_flow_stmt.cash_from_operations.print
+  reformed_cash_flow_stmt.cash_investments_in_operations.print
+  reformed_cash_flow_stmt.payments_to_debtholders.print
+  reformed_cash_flow_stmt.payments_to_stockholders.print
+  reformed_cash_flow_stmt.free_cash_flow.print
+  reformed_cash_flow_stmt.financing_flows.print
+end
+
 
 
 args = get_args
@@ -130,12 +144,13 @@ if args[:filing_url].nil?
   args[:filing_url] = get_company_filing_url(args[:stock_symbol], args[:report_type], args[:report_offset])
 end
 
-filing = get_filing(     args[:filing_url], args[:report_type])
+filing = get_filing(        args[:filing_url], args[:report_type])
 
-print_balance_sheet(                filing, args[:report_type])
-print_reformulated_balance_sheet(   filing, args[:report_type])
-print_income_statement(             filing, args[:report_type])
-print_reformulated_income_statement(filing, args[:report_type])
-print_cash_flow_statement(          filing, args[:report_type])
+print_balance_sheet(                   filing, args[:report_type])
+print_reformulated_balance_sheet(      filing, args[:report_type])
+print_income_statement(                filing, args[:report_type])
+print_reformulated_income_statement(   filing, args[:report_type])
+print_cash_flow_statement(             filing, args[:report_type])
+print_reformulated_cash_flow_statement(filing, args[:report_type])
 
 raise RuntimeError.new("filing is not valid") if !filing.is_valid?

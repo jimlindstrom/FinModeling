@@ -17,7 +17,7 @@ module FinModeling
     def summary(args)
       summary_cache_key = args[:period].to_pretty_s
       summary = lookup_cached_summary(summary_cache_key)
-      return summary if !summary.nil?
+      return summary if !summary.nil? and false # FIXME: get rid of "and false"
 
       mapping = Xbrlware::ValueMapping.new
       mapping.policy[:unknown]          = :flip
@@ -30,7 +30,7 @@ module FinModeling
       find_and_tag_special_items(args)
 
       summary = super(:period => args[:period], :mapping => mapping)
-      if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
+      if !lookup_cached_classifications(BASE_FILENAME, summary.rows) or true # FIXME: get rid of "or true"
         lookahead = [4, summary.rows.length-1].min
         classify_all_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::CashChangeItem, lookahead)
         save_cached_classifications(BASE_FILENAME, summary.rows)

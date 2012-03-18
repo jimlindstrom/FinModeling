@@ -208,6 +208,74 @@ module FinModeling
       return (operating_income_after_tax.total - (e_ror * prev_bal_sheet.net_operating_assets.total))
     end
 
+    def self.empty_analysis
+      analysis = CalculationSummary.new
+      analysis.title = ""
+      analysis.rows = []
+
+      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
+
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)",:val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)",:val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",     :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",     :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI (000's)",     :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Gross Margin",   :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Sales PM",       :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Operating PM",   :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI / Sales",     :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI / Sales",     :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",    :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",       :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth", :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth", :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",      :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",   :val => 0)
+
+      return analysis
+    end
+
+    def analysis(re_bs, prev_re_is, prev_re_bs)
+      analysis = CalculationSummary.new
+      analysis.title = ""
+      analysis.rows = []
+  
+      if re_bs.nil?
+        analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
+      else
+        analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s)
+      end
+  
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)", :val => (operating_revenues.total/         1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)", :val => (income_from_sales_after_tax.total/1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",      :val => (operating_income_after_tax.total/ 1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",      :val => (net_financing_income.total/       1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI (000's)",      :val => (comprehensive_income.total/       1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "Gross Margin",    :val =>  gross_margin)
+      analysis.rows << CalculationSummaryRow.new(:key => "Sales PM",        :val =>  sales_profit_margin)
+      analysis.rows << CalculationSummaryRow.new(:key => "Operating PM",    :val =>  operating_profit_margin)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI / Sales",      :val =>  fi_over_sales)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI / Sales",      :val =>  ni_over_sales)
+
+      if !prev_re_bs.nil? && !prev_re_is.nil?
+        analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",   :val =>  sales_over_noa(prev_re_bs))
+        analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",      :val =>  fi_over_nfa(   prev_re_bs))
+        analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val =>  revenue_growth(prev_re_is))
+        analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val =>  core_oi_growth(prev_re_is))
+        analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val =>  oi_growth(     prev_re_is))
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => (re_oi(         prev_re_bs)/1000.0).round.to_f)
+      else
+        analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",   :val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",      :val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => 0)
+      end
+  
+      return analysis
+    end
+
     private
 
     def annualize_ratio(prev, ratio)

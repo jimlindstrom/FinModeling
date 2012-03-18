@@ -10,14 +10,14 @@ module FinModeling
       @d = cash_change_summary.filter_by_type(:d)
       @f = cash_change_summary.filter_by_type(:f)
 
-      @i.rows << CalculationSummaryRow.new(:key => "",
-                                           :type => :i,
-                                           :val => cash_change_summary.total)
-    end
+      @c.title = "Cash from operations"
+      @i.title = "Cash investments in operations"
+      @d.title = "Payments to debtholders"
+      @f.title = "Payments to stockholders"
 
-    def -(ris2)
-      cash_change_summary = FakeCashChangeSummary.new(self, ris2)
-      return ReformulatedCashFlowStatement.new(@period, cash_change_summary)
+      @d.rows << CalculationSummaryRow.new(:key => "Investment in Cash and Equivalents",
+                                           :type => :d,
+                                           :val => -cash_change_summary.total)
     end
 
     def cash_from_operations
@@ -39,17 +39,47 @@ module FinModeling
     def free_cash_flow
       cs = FinModeling::CalculationSummary.new
       cs.title = "Free Cash Flow"
-      cs.rows = [ CalculationSummaryRow.new(:key => "Cash from Operations (C)", :val => @c ),
-                  CalculationSummaryRow.new(:key => "Cash Investment in Operations (I)", :val => @i ) ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Cash from Operations (C)", :val => @c.total ),
+                  CalculationSummaryRow.new(:key => "Cash Investment in Operations (I)", :val => @i.total ) ]
       return cs
     end
 
     def financing_flows
       cs = FinModeling::CalculationSummary.new
       cs.title = "Financing Flows"
-      cs.rows = [ CalculationSummaryRow.new(:key => "Payments to debtholders (d)", :val => @d ),
-                  CalculationSummaryRow.new(:key => "Payments to stockholders (F)", :val => @f ) ]
+      cs.rows = [ CalculationSummaryRow.new(:key => "Payments to debtholders (d)", :val => @d.total ),
+                  CalculationSummaryRow.new(:key => "Payments to stockholders (F)", :val => @f.total ) ]
       return cs
+    end
+  
+    def self.empty_analysis
+      analysis = CalculationSummary.new
+  
+      analysis.title = ""
+      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  "Unknown...")
+  
+      analysis.rows = []
+      analysis.rows << CalculationSummaryRow.new(:key => "C (000's)", :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "I (000's)", :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "d (000's)", :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "F (000's)", :val => 0)
+ 
+      return analysis
+    end
+
+    def analysis
+      analysis = CalculationSummary.new
+  
+      analysis.title = ""
+      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  @period.value["end_date"].to_s)
+  
+      analysis.rows = []
+      analysis.rows << CalculationSummaryRow.new(:key => "C (000's)", :val => (cash_from_operations.total/          1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "I (000's)", :val => (cash_investments_in_operations.total/1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "d (000's)", :val => (payments_to_debtholders.total/       1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "F (000's)", :val => (payments_to_stockholders.total/      1000.0).round.to_f)
+ 
+      return analysis
     end
 
   end

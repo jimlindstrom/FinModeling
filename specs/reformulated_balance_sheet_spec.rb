@@ -115,5 +115,16 @@ describe FinModeling::ReformulatedBalanceSheet  do
     end
   end
 
+  describe "analysis" do
+    subject {@reformed_bal_sheet.analysis(@prev_reformed_bal_sheet) }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it "contains the expected rows" do
+      expected_keys = ["NOA (000's)", "NFA (000's)", "CSE (000's)",
+                       "Composition Ratio", "NOA Growth", "CSE Growth" ]
+
+      subject.rows.map{ |row| row.key }.should == expected_keys
+    end
+  end
+
 end
 

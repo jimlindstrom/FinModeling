@@ -12,7 +12,8 @@ module FinModeling
     def print(key_width=60, val_width=20)
       justified_key = ""
       justified_key += "[#{@type}] " if @type
-      justified_key += @key.fixed_width_left_justify(key_width)
+      justified_key += @key
+      justified_key = justified_key.fixed_width_left_justify(key_width)
   
       justified_val = @val.to_s.with_thousands_separators.fixed_width_right_justify(val_width) 
   

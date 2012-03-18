@@ -79,8 +79,9 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     subject { @reformed_cash_flow_stmt.free_cash_flow }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up cash from operations and cash investments in operations" do
-      subject.total.should == ( @reformed_cash_flow_stmt.cash_from_operations.total + 
-                                @reformed_cash_flow_stmt.cash_investments_in_operations.total )
+      sum = @reformed_cash_flow_stmt.cash_from_operations.total
+      sum = sum + @reformed_cash_flow_stmt.cash_investments_in_operations.total
+      subject.total.should == sum
     end
   end
 
@@ -88,8 +89,20 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     subject { @reformed_cash_flow_stmt.financing_flows }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up payments to both debtholders and stockholders" do
-      subject.total.should == ( @reformed_cash_flow_stmt.payments_to_debtholders.total + 
-                                @reformed_cash_flow_stmt.payments_to_stockholders.total )
+      sum = @reformed_cash_flow_stmt.payments_to_debtholders.total
+      sum = sum + @reformed_cash_flow_stmt.payments_to_stockholders.total
+      subject.total.should == sum
+    end
+  end
+
+  describe "analysis" do
+    subject { @reformed_cash_flow_stmt.analysis }
+
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it "contains the expected rows" do
+      expected_keys = [ "C (000's)", "I (000's)", "d (000's)", "F (000's)" ]
+
+      subject.rows.map{ |row| row.key }.should == expected_keys
     end
   end
 

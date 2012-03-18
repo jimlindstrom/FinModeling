@@ -64,6 +64,28 @@ module FinModeling
       ratio = (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
       return annualize_ratio(prev, ratio)
     end
+  
+    def analysis(prev)
+      analysis = CalculationSummary.new
+  
+      analysis.title = ""
+      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  @period.to_pretty_s)
+  
+      analysis.rows = []
+      analysis.rows << CalculationSummaryRow.new(:key => "NOA (000's)", :val => (net_operating_assets.total/      1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "NFA (000's)", :val => (net_financial_assets.total/      1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "CSE (000's)", :val => (common_shareholders_equity.total/1000.0).round.to_f)
+      analysis.rows << CalculationSummaryRow.new(:key => "Composition Ratio", :val => composition_ratio )
+      if prev.nil?
+        analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => 0 )
+        analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => 0 )
+      else
+        analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => noa_growth(prev) )
+        analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => cse_growth(prev) )
+      end
+  
+      return analysis
+    end
 
     private
 

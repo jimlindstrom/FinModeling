@@ -20,27 +20,11 @@ describe FinModeling::CashFlowStatementCalculation  do
   end
 
   describe "is_valid?" do
-#    it "returns false if none of the asset leaf nodes contains the term 'cash'" do
-#      #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-#      #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-#      #filing.balance_sheet.is_valid?.should be_false
-#      pending
-#    end
-#    it "returns false if none of the liability/equity net income leaf nodes contains the term 'equity'" do
-#      #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-#      #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-#      #filing.balance_sheet.is_valid?.should be_false
-#      pending
-#    end
-#    it "returns false if the assets total does not match the liabilities and equity total" do
-#      #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-#      #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-#      #filing.balance_sheet.is_valid?.should be_false
-#      pending
-#    end
-#    it "returns true otherwise" do
-#      @balance_sheet.is_valid?.should be_true
-#    end
+    it "returns true if free cash flow == financing flows" do
+      flows_are_balanced = (   @cash_flow_stmt.reformulated(@period).free_cash_flow.total == 
+                            -1*@cash_flow_stmt.reformulated(@period).financing_flows.total)
+      @cash_flow_stmt.is_valid?.should == flows_are_balanced
+    end
   end
 
   describe "reformulated" do

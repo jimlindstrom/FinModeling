@@ -47,33 +47,7 @@ class Filings < Array
     prev_filing = nil
   
     self.each do |filing|
-      begin
-        is_period = case filing.class.to_s
-          when "FinModeling::AnnualReportFiling"    then filing.income_statement.net_income_calculation.periods.yearly.last
-          when "FinModeling::FakeAnnualFiling"      then filing.income_statement.net_income_calculation.periods.yearly.last
-  
-          when "FinModeling::QuarterlyReportFiling" then filing.income_statement.net_income_calculation.periods.quarterly.last
-          when "FinModeling::FakeQuarterlyFiling"   then filing.income_statement.net_income_calculation.periods.quarterly.last
-          else raise "unexpected class: #{filing.class.to_s}"
-        end
-        raise "couldn't get period from #{filing.class.to_s}, #{filing.income_statement.net_income_calculation.periods.inspect}" if is_period.nil?
-        re_is       = filing.income_statement.reformulated(is_period)
-        if (filing.class.to_s == "FinModeling::AnnualReportFiling") || (filing.class.to_s == "FinModeling::FakeAnnualFiling")
-          begin
-            period_1q_thru_3q = prev_filing.income_statement.net_income_calculation.periods.threequarterly.last
-            prev3q  = prev_filing.income_statement.reformulated(period_1q_thru_3q)
-            re_is   = re_is - prev3q
-          rescue
-            puts "Warning: failed to turn an Annual Report (#{is_period.to_pretty_s}) into a Quarterly Report..."
-            re_is   = nil
-          end
-        end
-      rescue Exception => e  
-        puts "Warning: failed to parse income statement."
-        puts "\t" + e.message  
-        puts "\t" + e.backtrace.inspect.gsub(/, /, "\n\t ")
-        re_is   = nil
-      end
+      re_is = get_or_construct_latest_quarterly_re_is(filing, prev_filing)
    
       bs_period   = filing.balance_sheet.periods.last
       re_bs       = filing.balance_sheet.reformulated(bs_period)
@@ -90,133 +64,130 @@ class Filings < Array
     return analysis
   end
 
+  def cash_flow_statement_analysis
+    prev_re_cfs   = nil
+    analysis      = nil
+    prev_filing   = nil
+  
+    self.each do |filing|
+      re_cfs      = get_or_construct_latest_quarterly_re_cfs(filing, prev_filing)
+  
+      analysis    = next_cash_flow_statement_analysis(analysis, prev_re_cfs, re_cfs)
+      prev_re_cfs = re_cfs
+      prev_filing = filing
+    end
+  
+    analysis.totals_row_enabled = false
+  
+    return analysis
+  end
+
   private
 
   def next_balance_sheet_analysis(prev_analysis, prev_re_bs, re_bs)
-    analysis = FinModeling::CalculationSummary.new
+    analysis = re_bs.analysis(prev_re_bs)
   
-    analysis.title = ""
-    analysis.header_row= FinModeling::CalculationSummaryHeaderRow.new(:key => "",                  
-                                                         :val =>  re_bs.period.to_pretty_s)
-  
-    analysis.rows = []
-    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "NOA (000's)",       
-                                                :val => (re_bs.net_operating_assets.total/      1000.0).round.to_f)
-    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "NFA (000's)",       
-                                                :val => (re_bs.net_financial_assets.total/      1000.0).round.to_f)
-    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "CSE (000's)",       
-                                                :val => (re_bs.common_shareholders_equity.total/1000.0).round.to_f)
-    analysis.rows <<  FinModeling::CalculationSummaryRow.new(:key => "Composition Ratio", 
-                                                :val =>  re_bs.composition_ratio )
-    if prev_re_bs.nil?
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NOA Growth",        
-                                                 :val =>  0 )
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "CSE Growth",        
-                                                 :val =>  0 )
-    else
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NOA Growth",        
-                                                 :val =>  re_bs.noa_growth(prev_re_bs) )
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "CSE Growth",        
-                                                 :val =>  re_bs.cse_growth(prev_re_bs) )# this is too high on NFLX's 2011 10K
-    end
-  
-    return (prev_analysis + analysis) if !prev_analysis.nil?
-    return (                analysis) if  prev_analysis.nil?
+    return (prev_analysis + analysis) if  prev_analysis
+    return (                analysis) if !prev_analysis
   end
-  
+   
   def next_income_statement_analysis(prev_analysis, prev_re_bs, prev_re_is, re_bs, re_is)
-    analysis = FinModeling::CalculationSummary.new
-    analysis.title = ""
-    analysis.rows = []
-
-    if re_bs.nil? 
-      analysis.header_row = FinModeling::CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
-    else
-      analysis.header_row = FinModeling::CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s)
-    end
-
-    if re_is.nil?
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue (000's)",:val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI (000's)",:val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI (000's)",     :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI (000's)",     :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI (000's)",     :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Gross Margin",   :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales PM",       :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Operating PM",   :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / Sales",     :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI / Sales",     :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales / NOA",    :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / NFA",       :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue Growth", :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI Growth", :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI Growth",      :val => 0)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "ReOI (000's)",   :val => 0)
-    else
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue (000's)", 
-                                                 :val => (re_is.operating_revenues.total/         1000.0).round.to_f)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI (000's)", 
-                                                 :val => (re_is.income_from_sales_after_tax.total/1000.0).round.to_f)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI (000's)",      
-                                                 :val => (re_is.operating_income_after_tax.total/ 1000.0).round.to_f)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI (000's)",      
-                                                 :val => (re_is.net_financing_income.total/       1000.0).round.to_f)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI (000's)",      
-                                                 :val => (re_is.comprehensive_income.total/       1000.0).round.to_f)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Gross Margin",   
-                                                 :val =>  re_is.gross_margin)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales PM",       
-                                                 :val =>  re_is.sales_profit_margin)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Operating PM",   
-                                                 :val =>  re_is.operating_profit_margin)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / Sales",     
-                                                 :val =>  re_is.fi_over_sales)
-      analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "NI / Sales",     
-                                                 :val =>  re_is.ni_over_sales)
-    
-      if !prev_re_bs.nil? && !prev_re_is.nil?
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales / NOA",    
-                                                   :val =>  re_is.sales_over_noa(prev_re_bs))
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / NFA",       
-                                                   :val =>  re_is.fi_over_nfa(   prev_re_bs))
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue Growth", 
-                                                   :val =>  re_is.revenue_growth(prev_re_is))
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI Growth", 
-                                                   :val =>  re_is.core_oi_growth(prev_re_is))
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI Growth",      
-                                                   :val =>  re_is.oi_growth(     prev_re_is))
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "ReOI (000's)",   
-                                                   :val => (re_is.re_oi(         prev_re_bs)/1000.0).round.to_f)
-      else  
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Sales / NOA",    
-                                                   :val => 0)
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "FI / NFA",       
-                                                   :val => 0)
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Revenue Growth", 
-                                                   :val => 0)
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "Core OI Growth", 
-                                                   :val => 0)
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "OI Growth",      
-                                                   :val => 0)
-        analysis.rows << FinModeling::CalculationSummaryRow.new(:key => "ReOI (000's)",   
-                                                   :val => 0)
-      end
-    end
+    analysis = FinModeling::ReformulatedIncomeStatement.empty_analysis if !re_is
+    analysis = re_is.analysis(re_bs, prev_re_is, prev_re_bs)           if  re_is
   
-    return (prev_analysis + analysis) if !prev_analysis.nil?
-    return (                analysis) if  prev_analysis.nil?
+    return (prev_analysis + analysis) if  prev_analysis
+    return (                analysis) if !prev_analysis
   end
+
+  def next_cash_flow_statement_analysis(prev_analysis, prev_re_cfs, re_cfs)
+    analysis = FinModeling::ReformulatedCashFlowStatement.empty_analysis if !re_cfs
+    analysis = re_cfs.analysis                                           if  re_cfs
+  
+    return (prev_analysis + analysis) if  prev_analysis
+    return (                analysis) if !prev_analysis
+  end
+
+  def latest_quarterly_or_yearly_period(filing, periods)
+    period = case filing.class.to_s
+      when "FinModeling::AnnualReportFiling"    then periods.yearly.last
+      when "FinModeling::FakeAnnualFiling"      then periods.yearly.last
+
+      when "FinModeling::QuarterlyReportFiling" then periods.quarterly.last
+      when "FinModeling::FakeQuarterlyFiling"   then periods.quarterly.last
+      else raise "unexpected class: #{filing.class.to_s}"
+    end
+    raise "couldn't get period from #{filing.class.to_s}, #{periods.inspect}" if !period
+
+    return period
+  end
+
+  def get_or_construct_latest_quarterly_re_is(filing, prev_filing)
+    begin
+      is_period   = latest_quarterly_or_yearly_period(filing, filing.income_statement.net_income_calculation.periods)
+      re_is       = filing.income_statement.reformulated(is_period)
+
+      if (filing.class.to_s == "FinModeling::AnnualReportFiling") || (filing.class.to_s == "FinModeling::FakeAnnualFiling")
+        begin
+          period_1q_thru_3q = prev_filing.income_statement.net_income_calculation.periods.threequarterly.last
+          prev3q  = prev_filing.income_statement.reformulated(period_1q_thru_3q)
+          re_is   = re_is - prev3q
+        rescue
+          puts "Warning: failed to turn an Annual Report (#{is_period.to_pretty_s}) into a Quarterly Report..."
+          re_is   = nil
+        end
+      end
+    rescue Exception => e  
+      puts "Warning: failed to parse income statement."
+      puts "\t" + e.message  
+      puts "\t" + e.backtrace.inspect.gsub(/, /, "\n\t ")
+      re_is   = nil
+    end
+
+    return re_is 
+  end
+
+  def get_or_construct_latest_quarterly_re_cfs(filing, prev_filing)
+    if filing.cash_flow_statement.cash_change_calculation.periods.quarterly.any?
+      cfs_period = filing.cash_flow_statement.cash_change_calculation.periods.quarterly.last
+      return filing.cash_flow_statement.reformulated(cfs_period)
+    end
+
+    begin
+      cfs_period   = latest_quarterly_or_yearly_period(filing, filing.cash_flow_statement.cash_change_calculation.periods)
+      re_cfs       = filing.cash_flow_statement.reformulated(cfs_period)
+
+      if (filing.class.to_s == "FinModeling::AnnualReportFiling") || (filing.class.to_s == "FinModeling::FakeAnnualFiling")
+        begin
+          period_1q_thru_3q = prev_filing.cash_flow_statement.cash_change_calculation.periods.threequarterly.last
+          prev3q  = prev_filing.cash_flow_statement.reformulated(period_1q_thru_3q)
+          re_cfs  = re_cfs - prev3q
+        rescue
+          puts "Warning: failed to turn an Annual Report (#{cfs_period.to_pretty_s}) into a Quarterly Report..."
+          re_cfs   = nil
+        end
+      end
+    rescue Exception => e  
+      puts "Warning: failed to parse cash flow statement."
+      puts "\t" + e.message  
+      puts "\t" + e.backtrace.inspect.gsub(/, /, "\n\t ")
+      re_cfs   = nil
+    end
+
+    return re_cfs 
+  end
+
 end
 
 
 args = Arguments.parse(ARGV)
 
 company = FinModeling::Company.find(args[:stock_symbol])
-raise RuntimeError.new("couldn't find company") if company.nil?
+raise RuntimeError.new("couldn't find company") if !company
 puts "company name: #{company.name}"
 
 filings = Filings.new(company.filings_since_date(args[:start_date]))
 
 filings.balance_sheet_analysis.print
 filings.income_statement_analysis.print
+filings.cash_flow_statement_analysis.print
 

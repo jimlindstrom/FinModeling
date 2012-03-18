@@ -220,6 +220,20 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
   end
 
+  describe "analysis" do
+    subject {@reformed_inc_stmt_2011.analysis(@reformed_bal_sheet_2011, @reformed_inc_stmt_2009, @reformed_bal_sheet_2009) }
+
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it "contains the expected rows" do
+      expected_keys = [ "Revenue (000's)", "Core OI (000's)", "OI (000's)", "FI (000's)",
+                        "NI (000's)", "Gross Margin", "Sales PM", "Operating PM",
+                        "FI / Sales", "NI / Sales", "Sales / NOA", "FI / NFA",
+                        "Revenue Growth", "Core OI Growth", "OI Growth", "ReOI (000's)" ]
+
+      subject.rows.map{ |row| row.key }.should == expected_keys
+    end
+  end
+
   describe "-" do
     before(:all) do
       @diff = @reformed_inc_stmt_2011 - @reformed_inc_stmt_2009 

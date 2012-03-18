@@ -5,7 +5,7 @@ module FinModeling
       if @cash_change.nil?
         friendly_goal = "cash change"
         label_regexes = [ /^cash and cash equivalents period increase decrease/,
-                          /^net (increase|decrease|increase decrease) in cash and cash equivalents/,
+                          /^net (change|increase|decrease|increase decrease) in cash and cash equivalents/,
                           /^net cash provided by used in continuing operations/]
         id_regexes    = [ /^us-gaap_CashAndCashEquivalentsPeriodIncreaseDecrease_\d+/,
                           /^CashAndCashEquivalentsPeriodIncreaseDecrease\d+/ ]
@@ -17,7 +17,10 @@ module FinModeling
     end
   
     def is_valid?
-      return true # FIXME
+      period = periods.last
+      flows_are_balanced = (   reformulated(period).free_cash_flow.total ==
+                            -1*reformulated(period).financing_flows.total)
+      return flows_are_balanced
     end
 
     def reformulated(period)
