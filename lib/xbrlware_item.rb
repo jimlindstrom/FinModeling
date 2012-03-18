@@ -8,7 +8,7 @@ module Xbrlware
 
       @policy = { :credit  => :no_action,
                   :debit   => :no_action,
-                  :unknown => :no_action }
+                  :unknown => :no_action } # FIXME: a classifier could be used here....
     end
 
     def value(name, defn, val)
@@ -18,88 +18,6 @@ module Xbrlware
         when :no_action then val
         when :flip then -val
       end
-    end
-  end
-
-  class ValueMappingWithClassifier < ValueMapping
-    BASE_FILENAME = "classifiers/item_"
-    BALANCE_DEFNS = [ :credit, :debit ]
-
-    @@classifiers = Hash[ *BALANCE_DEFNS.zip(BALANCE_DEFNS.map{ |x| NaiveBayes.new(:yes, :no) }).flatten ]
-
-    def value(name, defn, val)
-      defn = classify(name) if defn == :unknown
-
-      case @policy[defn]
-        when :no_action then val
-        when :flip then -val
-      end
-    end
-
-    def self.load_vectors_and_train
-      self._load_vectors_and_train(Xbrlware::ValueMapping::TRAINING_VECTORS)
-    end
-
-    def self._load_vectors_and_train(vectors)
-      success = true
-      BALANCE_DEFNS.each do |classifier_type|
-        filename = BASE_FILENAME + classifier_type.to_s + ".db"
-        success = success && File.exists?(filename)
-        if success
-          @@classifiers[classifier_type] = NaiveBayes.load(filename)
-        else
-          @@classifiers[classifier_type].db_filepath = filename
-        end
-      end
-      return if success
-
-      vectors.each do |vector|
-        item = Xbrlware::Item.new(instance=nil, name=vector[:item_string], context=nil, value="123456.0")
-        item.train(vector[:balance_defn])
-      end
-
-      BALANCE_DEFNS.each do |classifier_type|
-        @@classifiers[classifier_type].save
-      end
-    end
-
-    private
-
-    def train(name, balance_defn)
-      raise TypeError if !BALANCE_DEFNS.include?(balance_defn)
-
-      BALANCE_DEFNS.each do |classifier_type|
-        expected_outcome = (balance_defn == classifier_type) ? :yes : :no
-        @@classifiers[classifier_type].train(expected_outcome, *tokenize(name))
-      end
-    end
-
-    def classification_estimates(name)
-      tokens = tokenize(name)
-
-      estimates = {}
-      BALANCE_DEFNS.each do |classifier_type|
-        ret = @@classifiers[classifier_type].classify(*tokens)
-        result = {:outcome=>ret[0], :confidence=>ret[1]}
-        estimates[classifier_type] = (result[:outcome] == :yes) ? result[:confidence] : -result[:confidence]
-      end
-
-      return estimates
-    end
-
-    def classify
-      estimates = classification_estimates
-      best_guess_type = estimates.keys.sort{ |x,y| estimates[x] <=> estimates[y] }.last
-      return best_guess_type
-    end
-
-    def tokenize(name)
-      words = ["^"] + name.downcase.split(" ") + ["$"]
-
-      tokens = [1, 2, 3].collect do |words_per_token|
-        words.each_cons(words_per_token).to_a.map{|x| x.join(" ") }
-      end
-      return tokens.flatten
     end
   end
 
