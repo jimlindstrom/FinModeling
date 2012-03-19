@@ -11,25 +11,72 @@ describe FinModeling::CashFlowStatementCalculation  do
   end
 
   describe "cash_change_calculation" do
-    it "returns an CashChangeCalculation" do
-      @cash_flow_stmt.cash_change_calculation.should be_an_instance_of FinModeling::CashChangeCalculation
-    end
+    subject { @cash_flow_stmt.cash_change_calculation }
+    it { should be_an_instance_of FinModeling::CashChangeCalculation }
     it "returns the root node of the cash change calculation" do
       @cash_flow_stmt.cash_change_calculation.label.downcase.should match /^cash/
     end
   end
 
   describe "is_valid?" do
-    it "returns true if free cash flow == financing flows" do
-      flows_are_balanced = (   @cash_flow_stmt.reformulated(@period).free_cash_flow.total == 
-                            -1*@cash_flow_stmt.reformulated(@period).financing_flows.total)
-      @cash_flow_stmt.is_valid?.should == flows_are_balanced
+    it "returns true if free cash flow matches financing flows and none are zero" do
+      re_cfs = @cash_flow_stmt.reformulated(@period)
+      flows_are_balanced = (re_cfs.free_cash_flow.total == (-1*re_cfs.financing_flows.total))
+      none_are_zero = (re_cfs.cash_from_operations.total           != 0) &&
+                      (re_cfs.cash_investments_in_operations.total != 0) &&
+                      (re_cfs.payments_to_debtholders.total        != 0) &&
+                      (re_cfs.payments_to_stockholders.total       != 0)
+      @cash_flow_stmt.is_valid?.should == (flows_are_balanced && none_are_zero)
     end
   end
 
   describe "reformulated" do
-    it "takes a period and returns a ReformulatedCashFlowStatement" do
-      @cash_flow_stmt.reformulated(@period).should be_an_instance_of FinModeling::ReformulatedCashFlowStatement
+    subject { @cash_flow_stmt.reformulated(@period) }
+    it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+  end
+
+  describe "latest_quarterly_reformulated" do
+    before(:all) do
+      google_2011_q1_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511134428/0001193125-11-134428-index.htm"
+      @cash_flow_stmt_2011_q1 = FinModeling::AnnualReportFiling.download(google_2011_q1_rpt).cash_flow_statement
+
+      google_2011_q2_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511199078/0001193125-11-199078-index.htm"
+      @cash_flow_stmt_2011_q2 = FinModeling::AnnualReportFiling.download(google_2011_q2_rpt).cash_flow_statement
+
+      google_2011_q3_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511282235/0001193125-11-282235-index.htm"
+      @cash_flow_stmt_2011_q3 = FinModeling::AnnualReportFiling.download(google_2011_q3_rpt).cash_flow_statement
+    end
+     
+    context "when given a Q1 report" do
+      subject { @cash_flow_stmt_2011_q1.latest_quarterly_reformulated(nil) }
+      it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+      it "should be valid" do
+        subject.cash_investments_in_operations.total.abs.should be > 1.0
+      end
+    end
+ 
+    context "when given a Q2 report (and a previous Q1 report)" do
+      subject { @cash_flow_stmt_2011_q2.latest_quarterly_reformulated(@cash_flow_stmt_2011_q1) }
+      it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+      it "should be valid" do
+        subject.cash_investments_in_operations.total.abs.should be > 1.0
+      end
+    end
+ 
+    context "when given a Q3 report (and a previous Q2 report)" do
+      subject { @cash_flow_stmt_2011_q3.latest_quarterly_reformulated(@cash_flow_stmt_2011_q2) }
+      it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+      it "should be valid" do
+        subject.cash_investments_in_operations.total.abs.should be > 1.0
+      end
+    end
+ 
+    context "when given an annual report (and a previous Q3 report)" do
+      subject { @cash_flow_stmt.latest_quarterly_reformulated(@cash_flow_stmt_2011_q3) }
+      it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+      it "should be valid" do
+        subject.cash_investments_in_operations.total.abs.should be > 1.0
+      end
     end
   end
 

@@ -40,15 +40,20 @@ describe FinModeling::IncomeStatementCalculation  do
         pending "no good way of setting up this test..."
       end
     end
-    it "returns true otherwise" do
-      @inc_stmt.is_valid?.should be_true
+    context "otherwise" do
+      subject { @inc_stmt.is_valid? }
+      it { should be_true }
     end
   end
 
   describe "reformulated" do
-    it "takes a period and returns a ReformulatedIncomeStatement" do
-      @inc_stmt.reformulated(@period).should be_an_instance_of FinModeling::ReformulatedIncomeStatement
-    end
+    subject { @inc_stmt.reformulated(@period) } 
+    it { should be_an_instance_of FinModeling::ReformulatedIncomeStatement }
+  end
+
+  describe "latest_quarterly_reformulated" do
+    subject{ @inc_stmt.latest_quarterly_reformulated(prev_filing=nil) }
+    it { should be_an_instance_of FinModeling::ReformulatedIncomeStatement }
   end
 
   describe "write_constructor" do

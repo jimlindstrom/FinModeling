@@ -236,7 +236,14 @@ describe FinModeling::ReformulatedIncomeStatement  do
 
   describe "-" do
     before(:all) do
-      @diff = @reformed_inc_stmt_2011 - @reformed_inc_stmt_2009 
+      google_2011_q3_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511282235/0001193125-11-282235-index.htm"
+      @filing_2011_q3 = FinModeling::AnnualReportFiling.download google_2011_q3_rpt 
+  
+      @inc_stmt_2011_q3 = @filing_2011_q3.income_statement
+      is_period_2011_q3 = @inc_stmt_2011_q3.periods.threequarterly.last
+      @reformed_inc_stmt_2011_q3 = @inc_stmt_2011_q3.reformulated(is_period_2011_q3)
+
+      @diff = @reformed_inc_stmt_2011 - @reformed_inc_stmt_2011_q3
     end
     subject { @diff }
 
@@ -254,8 +261,35 @@ describe FinModeling::ReformulatedIncomeStatement  do
                   #:oi_growth, :re_oi ]
 
       methods.each do |method|
-        expected_val = @reformed_inc_stmt_2011.send(method).total - @reformed_inc_stmt_2009.send(method).total
+        expected_val = @reformed_inc_stmt_2011.send(method).total - @reformed_inc_stmt_2011_q3.send(method).total
         @diff.send(method).total.should be_within(1.0).of(expected_val)
+      end
+    end
+
+    it "returns values that are close to 1/4th of the annual value" do
+      methods = [ :operating_revenues, :cost_of_revenues, :gross_revenue,
+                  :operating_expenses, :income_from_sales_before_tax,
+                  :income_from_sales_after_tax, :operating_income_after_tax,
+                  #:net_financing_income, 
+                  :comprehensive_income ]
+                  #:gross_margin, :sales_profit_margin, :operating_profit_margin,
+                  #:fi_over_sales, :ni_over_sales, :sales_over_noa,
+                  #:fi_over_nfa, :revenue_growth, :core_oi_growth,
+                  #:oi_growth, :re_oi ]
+
+      methods.each do |method|
+        orig = @reformed_inc_stmt_2011.send(method).total
+        max = (orig > 0) ? (0.35 * orig) : (0.15 * orig)
+        min = (orig > 0) ? (0.15 * orig) : (0.35 * orig)
+        actual = @diff.send(method).total
+        if (actual < min) || (actual > max)
+          err = "#{method} returns #{actual.to_nearest_thousand.to_s.with_thousands_separators}, "
+          err += "which is outside bounds: [#{min.to_nearest_thousand.to_s.with_thousands_separators}, "
+          err += "#{max.to_nearest_thousand.to_s.with_thousands_separators}]"
+          puts err
+        end
+        @diff.send(method).total.should be > min
+        @diff.send(method).total.should be < max
       end
     end
   end

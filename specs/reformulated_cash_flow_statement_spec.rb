@@ -113,7 +113,14 @@ describe FinModeling::ReformulatedCashFlowStatement  do
 
   describe "-" do
     before(:all) do
-      @diff = @reformed_cash_flow_stmt - @reformed_cash_flow_stmt_2009
+      google_2011_q3_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511282235/0001193125-11-282235-index.htm"
+      @filing_2011_q3 = FinModeling::AnnualReportFiling.download google_2011_q3_rpt 
+  
+      @cash_flow_stmt_2011_q3 = @filing_2011_q3.cash_flow_statement
+      cfs_period_2011_q3 = @cash_flow_stmt_2011_q3.periods.threequarterly.last
+      @reformed_cash_flow_stmt_2011_q3 = @cash_flow_stmt_2011_q3.reformulated(cfs_period_2011_q3)
+
+      @diff = @reformed_cash_flow_stmt - @reformed_cash_flow_stmt_2011_q3
     end
     subject { @diff }
 
@@ -125,10 +132,32 @@ describe FinModeling::ReformulatedCashFlowStatement  do
                   :payments_to_debtholders, :payments_to_stockholders, 
                   :free_cash_flow, :financing_flows ]
       methods.each do |method|
-        expected_val = @reformed_cash_flow_stmt.send(method).total - @reformed_cash_flow_stmt_2009.send(method).total
+        expected_val = @reformed_cash_flow_stmt.send(method).total - @reformed_cash_flow_stmt_2011_q3.send(method).total
         @diff.send(method).total.should be_within(1.0).of(expected_val)
       end
     end
+
+    it "returns values that are close to 1/4th of the annual value" do
+      methods = [ :cash_from_operations, :cash_investments_in_operations, 
+                  #:payments_to_debtholders, :payments_to_stockholders, 
+                  :free_cash_flow, :financing_flows ]
+
+      methods.each do |method|
+        orig = @reformed_cash_flow_stmt.send(method).total
+        max = (orig > 0) ? (0.35 * orig) : (0.15 * orig)
+        min = (orig > 0) ? (0.15 * orig) : (0.35 * orig)
+        actual = @diff.send(method).total
+        if (actual < min) || (actual > max)
+          err = "#{method} returns #{actual.to_nearest_thousand.to_s.with_thousands_separators}, "
+          err += "which is outside bounds: [#{min.to_nearest_thousand.to_s.with_thousands_separators}, "
+          err += "#{max.to_nearest_thousand.to_s.with_thousands_separators}]"
+          puts err
+        end
+        @diff.send(method).total.should be > min
+        @diff.send(method).total.should be < max
+      end
+    end
   end
+
 end
 
