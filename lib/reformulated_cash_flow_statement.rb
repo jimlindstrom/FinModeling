@@ -2,6 +2,41 @@ module FinModeling
   class ReformulatedCashFlowStatement
     attr_accessor :period
 
+    class FakeCashChangeSummary
+      def initialize(re_cfs1, re_cfs2)
+        @re_cfs1 = re_cfs1
+        @re_cfs2 = re_cfs2
+      end
+      def filter_by_type(key)
+        case key
+          when :c
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Cash from Operations"
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.cash_from_operations.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.cash_from_operations.total ) ]
+            return @cs
+          when :i
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Cash Investments in Operations"
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.cash_investments_in_operations.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.cash_investments_in_operations.total ) ]
+            return @cs
+          when :d
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Payments to Debtholders"
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.payments_to_debtholders.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.payments_to_debtholders.total ) ]
+            return @cs
+          when :f
+            @cs = FinModeling::CalculationSummary.new
+            @cs.title = "Payments to Stockholders"
+            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.payments_to_stockholders.total ),
+                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.payments_to_stockholders.total ) ]
+            return @cs
+        end
+      end
+    end
+
     def initialize(period, cash_change_summary)
       @period   = period
 
@@ -15,9 +50,16 @@ module FinModeling
       @d.title = "Payments to debtholders"
       @f.title = "Payments to stockholders"
 
-      @d.rows << CalculationSummaryRow.new(:key => "Investment in Cash and Equivalents",
-                                           :type => :d,
-                                           :val => -cash_change_summary.total)
+      if cash_change_summary.class != FakeCashChangeSummary
+        @d.rows << CalculationSummaryRow.new(:key => "Investment in Cash and Equivalents",
+                                             :type => :d,
+                                             :val => -cash_change_summary.total)
+      end
+    end
+
+    def -(re_cfs2)
+      summary = FakeCashChangeSummary.new(self, re_cfs2)
+      return ReformulatedCashFlowStatement.new(@period, summary)
     end
 
     def cash_from_operations

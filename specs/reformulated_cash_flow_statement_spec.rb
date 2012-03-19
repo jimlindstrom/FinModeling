@@ -4,6 +4,12 @@ require 'spec_helper'
 
 describe FinModeling::ReformulatedCashFlowStatement  do
   before(:all) do
+    google_2009_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312510030774/0001193125-10-030774-index.htm"
+    filing_2009 = FinModeling::AnnualReportFiling.download google_2009_annual_rpt
+    cash_flow_stmt_2009 = filing_2009.cash_flow_statement
+    period_2009 = cash_flow_stmt_2009.periods.last
+    @reformed_cash_flow_stmt_2009 = cash_flow_stmt_2009.reformulated(period_2009)
+
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
     @cash_flow_stmt = filing.cash_flow_statement
@@ -100,11 +106,29 @@ describe FinModeling::ReformulatedCashFlowStatement  do
 
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "contains the expected rows" do
-      expected_keys = [ "C (000's)", "I (000's)", "d (000's)", "F (000's)" ]
-
+      expected_keys = [ "C   (000's)", "I   (000's)", "d   (000's)", "F   (000's)", "FCF (000's)" ]
       subject.rows.map{ |row| row.key }.should == expected_keys
     end
   end
 
+  describe "-" do
+    before(:all) do
+      @diff = @reformed_cash_flow_stmt - @reformed_cash_flow_stmt_2009
+    end
+    subject { @diff }
+
+    it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+    its(:period) { should_not be_nil } # FIXME
+
+    it "returns the difference between the two re_cfs's for each calculation" do
+      methods = [ :cash_from_operations, :cash_investments_in_operations, 
+                  :payments_to_debtholders, :payments_to_stockholders, 
+                  :free_cash_flow, :financing_flows ]
+      methods.each do |method|
+        expected_val = @reformed_cash_flow_stmt.send(method).total - @reformed_cash_flow_stmt_2009.send(method).total
+        @diff.send(method).total.should be_within(1.0).of(expected_val)
+      end
+    end
+  end
 end
 

@@ -7,8 +7,8 @@ module FinModeling
         label_regexes = [ /^net income/,
                           /^net loss income/,
                           /^allocation.*of.*undistributed.*earnings/ ]
-        id_regexes    = [ /^us-gaap_NetIncomeLoss_.*/,
-                          /^ProfitLoss_\d+/ ]
+        id_regexes    = [ /^(|loc_|us-gaap_)NetIncomeLoss_.*/,
+                          /^(|loc_|us-gaap_)ProfitLoss_\d+/ ]
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @ni = NetIncomeCalculation.new(calc)
       end

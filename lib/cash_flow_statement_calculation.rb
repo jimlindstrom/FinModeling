@@ -7,8 +7,7 @@ module FinModeling
         label_regexes = [ /^cash and cash equivalents period increase decrease/,
                           /^net (change|increase|decrease|increase decrease) in cash and cash equivalents/,
                           /^net cash provided by used in continuing operations/]
-        id_regexes    = [ /^us-gaap_CashAndCashEquivalentsPeriodIncreaseDecrease_\d+/,
-                          /^CashAndCashEquivalentsPeriodIncreaseDecrease\d+/ ]
+        id_regexes    = [ /^(|loc_|us-gaap_)CashAndCashEquivalentsPeriodIncreaseDecrease(|_)\d+/ ]
   
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @cash_change = CashChangeCalculation.new(calc)
