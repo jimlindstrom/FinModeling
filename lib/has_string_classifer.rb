@@ -13,7 +13,7 @@ module FinModeling
       end
   
       def _load_vectors_and_train(base_filename, vectors)
-        success = true
+        success = FinModeling::Config.caching_enabled?
         @klasses.each do |cur_klass|
           filename = base_filename + cur_klass.to_s + ".db"
           success = success && File.exists?(filename)

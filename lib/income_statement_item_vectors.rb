@@ -14,6 +14,10 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
+
+                         {:klass=>:cogs, :item_string=>"Fulfillment Expense"},
+                         {:klass=>:cogs, :item_string=>"Fulfillment Expense"},
+                         {:klass=>:cogs, :item_string=>"Fulfillment Expense"},
   
                          {:klass=>:or, :item_string=>"Subscription Revenue"}, 
                          {:klass=>:or, :item_string=>"Sales Revenue Net"}, 

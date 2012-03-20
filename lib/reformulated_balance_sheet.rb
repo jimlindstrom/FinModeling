@@ -72,8 +72,22 @@ module FinModeling
       analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  @period.to_pretty_s)
   
       analysis.rows = []
+      if Config.balance_detail_enabled?
+        analysis.rows << CalculationSummaryRow.new(:key => "A (000's)",:val => @oa.total.to_nearest_thousand +
+                                                                               @fa.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "L (000's)",:val => @ol.total.to_nearest_thousand +
+                                                                               @fl.total.to_nearest_thousand)
+      end
       analysis.rows << CalculationSummaryRow.new(:key => "NOA (000's)", :val => net_operating_assets.total.to_nearest_thousand)
+      if Config.balance_detail_enabled?
+        analysis.rows << CalculationSummaryRow.new(:key => "OA (000's)",:val => operating_assets.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "OL (000's)",:val => operating_liabilities.total.to_nearest_thousand)
+      end
       analysis.rows << CalculationSummaryRow.new(:key => "NFA (000's)", :val => net_financial_assets.total.to_nearest_thousand)
+      if Config.balance_detail_enabled?
+        analysis.rows << CalculationSummaryRow.new(:key => "FA (000's)",:val => financial_assets.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "FL (000's)",:val => financial_liabilities.total.to_nearest_thousand)
+      end
       analysis.rows << CalculationSummaryRow.new(:key => "CSE (000's)", :val => common_shareholders_equity.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "Composition Ratio", :val => composition_ratio )
       if prev.nil?

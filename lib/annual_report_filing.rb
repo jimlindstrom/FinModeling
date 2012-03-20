@@ -5,10 +5,10 @@ module FinModeling
     CONSTRUCTOR_PATH = "constructors/"
     SCHEMA_VERSION_ITEM = "@schema_version"
     CURRENT_SCHEMA_VERSION = 1.0
-    def self.download(url, do_caching=true)
+    def self.download(url)
       uid = url.split("/")[-2..-1].join('-').gsub(/\.[A-zA-z]*$/, '')
       constructor_file = CONSTRUCTOR_PATH + uid + '.rb'
-      if do_caching && File.exists?(constructor_file)
+      if File.exists?(constructor_file) && FinModeling::Config.caching_enabled?
         begin
           eval(File.read(constructor_file))
           #puts "info: annual report, cache hit. schema version: #{@schema_version}"

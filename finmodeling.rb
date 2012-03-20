@@ -36,6 +36,8 @@ require 'lib/calculation_summary'
 require 'lib/multi_column_calculation_summary'
 
 require 'lib/can_classify_rows'
+require 'lib/can_cache_classifications'
+require 'lib/can_cache_summaries'
 
 require 'lib/assets_item_vectors'
 require 'lib/assets_item'
@@ -58,6 +60,8 @@ require 'lib/cash_change_calculation'
 require 'lib/reformulated_income_statement'
 require 'lib/reformulated_balance_sheet'
 require 'lib/reformulated_cash_flow_statement'
+
+require 'lib/config'
 
 require 'lib/classifiers'
 FinModeling::Classifiers.train

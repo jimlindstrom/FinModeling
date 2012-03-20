@@ -216,6 +216,12 @@ module FinModeling
       analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
 
       analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)",:val => 0)
+      if Config.income_detail_enabled?
+        analysis.rows << CalculationSummaryRow.new(:key => "COGS (000's)", :val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "GM (000's)",   :val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "OE (000's)",   :val => 0)
+        analysis.rows << CalculationSummaryRow.new(:key => "OISBT (000's)",:val => 0)
+      end
       analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)",:val => 0)
       analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",     :val => 0)
       analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",     :val => 0)
@@ -247,6 +253,12 @@ module FinModeling
       end
   
       analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)", :val => operating_revenues.total.to_nearest_thousand)
+      if Config.income_detail_enabled?
+        analysis.rows << CalculationSummaryRow.new(:key => "COGS (000's)",  :val => @cogs.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "GM (000's)",    :val => @gm.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "OE (000's)",    :val => @oe.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "OISBT (000's)", :val => income_from_sales_before_tax.total.to_nearest_thousand)
+      end
       analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)", :val => income_from_sales_after_tax.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",      :val => operating_income_after_tax.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",      :val => net_financing_income.total.to_nearest_thousand)

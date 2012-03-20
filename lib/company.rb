@@ -21,7 +21,7 @@ module SecQuery
     end
 
     def self.load(filename)
-      return nil if !File.exists?(filename)
+      return nil if !File.exists?(filename) || !FinModeling::Config.caching_enabled?
       eval(File.read(filename))
       return @entity
     end

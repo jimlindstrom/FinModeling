@@ -1,4 +1,5 @@
 Bugs
+	- "./examples/show_reports.rb nflx 2010-10-01" is reporting a crazy Core OI in last quarter
 	- show_reports doesn't check filing validity
 	- Not all filings have quarterly summaries. Need a generalized way of 
       constructing quarterly summaries from whatever latest periods *do* exist.

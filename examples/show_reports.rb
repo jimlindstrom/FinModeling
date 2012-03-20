@@ -7,12 +7,34 @@ require 'finmodeling'
 class Arguments
   def self.show_usage_and_exit
     puts "usage:"
-    puts "\t#{__FILE__} <stock symbol> <start date, e.g. '2010-01-01'>"
+    puts "\t#{__FILE__} [options] <stock symbol> <start date, e.g. '2010-01-01'>"
+    puts
+    puts "\tOptions:"
+    puts "\t\t--no-cache: disable caching"
+    puts "\t\t--balance-detail: show details about the balance sheet calculation"
+    puts "\t\t--income-detail: show details about the net income calculation"
     exit
   end
   
   def self.parse(args)
     a = { :stock_symbol => nil, :start_date => nil }
+
+    while args.any? && args.first =~ /^--/
+      case args.first.downcase
+        when '--no-cache'
+          FinModeling::Config.disable_caching
+          puts "Caching is #{FinModeling::Config.caching_enabled? ? "enabled" : "disabled"}"
+        when '--balance-detail'
+          FinModeling::Config.enable_balance_detail
+          puts "Balance sheet detail is #{FinModeling::Config.balance_detail_enabled? ? "enabled" : "disabled"}"
+        when '--income-detail'
+          FinModeling::Config.enable_income_detail
+          puts "Net income detail is #{FinModeling::Config.income_detail_enabled? ? "enabled" : "disabled"}"
+        else
+          self.show_usage_and_exit
+      end
+      args = args[1..-1]
+    end
   
     self.show_usage_and_exit if args.length != 2
     a[:stock_symbol]  = args[0]
