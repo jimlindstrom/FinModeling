@@ -5,9 +5,9 @@ module FinModeling
       if @cash_change.nil?
         friendly_goal = "cash change"
         label_regexes = [ /^cash and cash equivalents period increase decrease/,
-                          /^net (change|increase|decrease|increase decrease) in cash and cash equivalents/,
+                          /^(|net )(change|increase|decrease|increase decrease) in cash and cash equivalents/,
                           /^net cash provided by used in continuing operations/]
-        id_regexes    = [ /^(|loc_|us-gaap_)CashAndCashEquivalentsPeriodIncreaseDecrease(|_)\d+/ ]
+        id_regexes    = [ /^(|Locator_|loc_)(|us-gaap_)CashAndCashEquivalentsPeriodIncreaseDecrease[_a-z0-9]+/ ]
   
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @cash_change = CashChangeCalculation.new(calc)

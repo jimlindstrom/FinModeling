@@ -11,7 +11,7 @@ module FinModeling
       @@caching_enabled
     end
 
-    @@balance_detail_enabled = true
+    @@balance_detail_enabled = false
     def self.enable_balance_detail
       @@balance_detail_enabled = true
     end
@@ -22,7 +22,7 @@ module FinModeling
       @@balance_detail_enabled
     end
 
-    @@income_detail_enabled = true
+    @@income_detail_enabled = false
     def self.enable_income_detail
       @@income_detail_enabled = true
     end

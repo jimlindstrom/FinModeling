@@ -4,11 +4,10 @@ module FinModeling
     def net_income_calculation
       if @ni.nil?
         friendly_goal = "net income"
-        label_regexes = [ /^net income/,
-                          /^net loss income/,
+        label_regexes = [ /^net (income|loss|loss income)/,
                           /^allocation.*of.*undistributed.*earnings/ ]
-        id_regexes    = [ /^(|loc_|us-gaap_)NetIncomeLoss_.*/,
-                          /^(|loc_|us-gaap_)ProfitLoss_\d+/ ]
+        id_regexes    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
+                          /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @ni = NetIncomeCalculation.new(calc)
       end
@@ -38,8 +37,9 @@ module FinModeling
     end
 
     def latest_quarterly_reformulated(prev_income_statement)
-      if net_income_calculation.periods.quarterly.any? &&
-         reformulated(net_income_calculation.periods.quarterly.last).operating_revenues.total > 0 # FIXME: make an is_valid here?
+      if (net_income_calculation.periods.quarterly.any?) &&
+         (reformulated(net_income_calculation.periods.quarterly.last).operating_revenues.total.abs > 1.0) && # FIXME: make an is_valid here?
+         (reformulated(net_income_calculation.periods.quarterly.last).cost_of_revenues.total.abs > 1.0) # FIXME: make an is_valid here?
         return reformulated(net_income_calculation.periods.quarterly.last)
 
       elsif !prev_income_statement

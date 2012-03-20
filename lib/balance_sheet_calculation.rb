@@ -6,7 +6,7 @@ module FinModeling
         friendly_goal = "assets"
         label_regexes = [ /(^total *|^consolidated *|^)assets$/,
                           /^assets total$/ ]
-        id_regexes    = [ /^(|loc_|us-gaap_)Assets_\d+/ ]
+        id_regexes    = [ /^(|Locator_|loc_)(|us-gaap_)Assets[_a-z0-9]+/ ]
   
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @assets = AssetsCalculation.new(calc)
