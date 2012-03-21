@@ -8,6 +8,7 @@ require 'edgar'
 require 'xbrlware'
 
 require 'naive_bayes'
+require 'statsample'
 
 $LOAD_PATH << "."
 
@@ -65,4 +66,7 @@ require 'lib/config'
 
 require 'lib/classifiers'
 FinModeling::Classifiers.train
+
+require 'lib/balance_sheet_analyses'
+require 'lib/income_statement_analyses'
 

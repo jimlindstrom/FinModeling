@@ -91,8 +91,8 @@ module FinModeling
       analysis.rows << CalculationSummaryRow.new(:key => "CSE (000's)", :val => common_shareholders_equity.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "Composition Ratio", :val => composition_ratio )
       if prev.nil?
-        analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => 0 )
-        analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => 0 )
+        analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => nil )
+        analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => nil )
       else
         analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => noa_growth(prev) )
         analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => cse_growth(prev) )

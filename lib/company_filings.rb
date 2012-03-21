@@ -13,7 +13,8 @@ module FinModeling
         analysis =            next_analysis if !analysis
       end
     
-      analysis.totals_row_enabled = false if analysis.is_a? FinModeling::MultiColumnCalculationSummary
+      analysis.totals_row_enabled = false  if analysis.is_a? FinModeling::MultiColumnCalculationSummary
+      analysis.extend BalanceSheetAnalyses if analysis.is_a? FinModeling::MultiColumnCalculationSummary
     
       return analysis
     end
@@ -35,7 +36,8 @@ module FinModeling
         prev_re_bs, prev_re_is, prev_filing  = [re_bs, re_is, filing]
       end
     
-      analysis.totals_row_enabled = false if analysis.is_a? FinModeling::MultiColumnCalculationSummary
+      analysis.totals_row_enabled = false     if analysis.is_a? FinModeling::MultiColumnCalculationSummary
+      analysis.extend IncomeStatementAnalyses if analysis.is_a? FinModeling::MultiColumnCalculationSummary
     
       return analysis
     end

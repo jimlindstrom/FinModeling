@@ -3,6 +3,19 @@
 require 'spec_helper'
 
 describe FinModeling::MultiColumnCalculationSummary do
+  before(:all) do
+    @summary = FinModeling::MultiColumnCalculationSummary.new
+    @summary.title = "CS 1"
+    @summary.rows = [ FinModeling::MultiColumnCalculationSummaryRow.new(:key => "Row", :vals => [nil, 0, nil, -101, 2.4]) ]
+  end
+
+  describe "valid_vals" do
+    subject { @summary.rows.first.valid_vals }
+    it "should return all non-nil values" do
+      subject.should == @summary.rows[0].vals.select{ |x| !x.nil? }
+    end
+  end
+
   describe "+" do
     before(:all) do
       @cs1 = FinModeling::CalculationSummary.new

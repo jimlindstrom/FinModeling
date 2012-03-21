@@ -1,5 +1,23 @@
 module FinModeling
 
+  class ArrayWithStats < Array
+    def mean
+      self.inject(:+) / self.length
+    end
+
+    def variance
+      x_sqrd = self.map{ |x| x*x }
+      x_sqrd_mean = (ArrayWithStats.new(x_sqrd).mean)
+      x_sqrd_mean - (mean**2)
+    end
+
+    def linear_regression
+      x = Array(0..(self.length-1)).to_scale
+      y = self.to_scale
+      Statsample::Regression.simple(x,y)
+    end
+  end
+
   class MultiColumnCalculationSummaryRow
     attr_accessor :key, :type, :vals
 
@@ -7,6 +25,10 @@ module FinModeling
       @key  = args[:key] || ""
       @type = args[:type]
       @vals = args[:vals] || []
+    end
+
+    def valid_vals
+      ArrayWithStats.new(@vals.select{ |val| !val.nil? })
     end
 
     def print(key_width=18, max_decimals=4, val_width=12)
@@ -20,6 +42,14 @@ module FinModeling
    
       puts "\t" + justified_key + justified_vals
     end
+
+    def write_constructor(file, item_name)
+      file.puts "args = { }"
+      file.puts "args[:key] = \"#{@key}\""
+      file.puts "args[:type] = \"#{@type}\""
+      file.puts "args[:vals] = [#{@vals.join(', ')}]"
+      file.puts "#{item_name} = FinModeling::MultiColumnCalculationSummaryRow.new(args)"
+    end
   end
 
   class MultiColumnCalculationSummaryHeaderRow < MultiColumnCalculationSummaryRow
@@ -32,6 +62,13 @@ module FinModeling
       end
   
       puts "\t" + justified_key + justified_vals
+    end
+
+    def write_constructor(file, item_name)
+      file.puts "args = { }"
+      file.puts "args[:key] = \"#{@key}\""
+      file.puts "args[:vals] = [#{@vals.map{ |val| "\"#{val}\"" }.join(', ')}]"
+      file.puts "#{item_name} = FinModeling::MultiColumnCalculationSummaryHeaderRow.new(args)"
     end
   end
 
@@ -66,6 +103,30 @@ module FinModeling
       rows.each { |row| row.print(@key_width, @max_decimals, @val_width) }
 
       puts
+    end
+
+    def write_constructor(file, item_name)
+      file.puts "#{item_name} = FinModeling::MultiColumnCalculationSummary.new"
+      file.puts "#{item_name}.title = \"#{@title}\""
+      file.puts "#{item_name}.num_value_columns = #{@num_value_columns}"
+      file.puts "#{item_name}.key_width = #{@key_width}"
+      file.puts "#{item_name}.val_width = #{@val_width}"
+      file.puts "#{item_name}.max_decimals = #{@max_decimals}"
+      file.puts "#{item_name}.totals_row_enabled = #{@totals_row_enabled}"
+
+      if @header_row
+        header_row_item_name = item_name + "_header_row"
+        @header_row.write_constructor(file, header_row_item_name)
+        file.puts "#{item_name}.header_row = #{header_row_item_name}"
+      end
+
+      row_item_names = []
+      @rows.each_with_index do |row, index|
+        row_item_name = item_name + "_row#{index}"
+        row.write_constructor(file, row_item_name)
+        row_item_names << row_item_name
+      end
+      file.puts "#{item_name}.rows = [#{row_item_names.join(',')}]"
     end
 
     def +(cs)
