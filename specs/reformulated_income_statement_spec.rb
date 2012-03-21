@@ -30,194 +30,144 @@ describe FinModeling::ReformulatedIncomeStatement  do
   end
 
   describe "operating_revenues" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.operating_revenues.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.operating_revenues.total.should be_within(0.1).of(37905000000.0)
-    end
+    subject { @reformed_inc_stmt_2011.operating_revenues }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(37905000000.0) }
   end
 
   describe "cost_of_revenues" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.cost_of_revenues.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.cost_of_revenues.total.should be_within(0.1).of(-13188000000.0)
-    end
+    subject { @reformed_inc_stmt_2011.cost_of_revenues }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(-13188000000.0) }
   end
 
   describe "gross_revenue" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.gross_revenue.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.gross_revenue.total.should be_within(0.1).of(24717000000.0)
-    end
+    subject { @reformed_inc_stmt_2011.gross_revenue }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of( @reformed_inc_stmt_2011.operating_revenues.total + 
+                                            @reformed_inc_stmt_2011.cost_of_revenues.total) }
   end
 
   describe "operating_expenses" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.operating_expenses.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.operating_expenses.total.should be_within(0.1).of(-12475000000.0)
-    end
+    subject { @reformed_inc_stmt_2011.operating_expenses }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(-12475000000.0) }
   end
 
   describe "income_from_sales_before_tax" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.income_from_sales_before_tax.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.income_from_sales_before_tax.total.should be_within(0.1).of(12242000000.0)
-    end
+    subject { @reformed_inc_stmt_2011.income_from_sales_before_tax }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of( @reformed_inc_stmt_2011.gross_revenue.total + 
+                                            @reformed_inc_stmt_2011.operating_expenses.total) }
   end
 
   describe "income_from_sales_after_tax" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.income_from_sales_after_tax.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.income_from_sales_after_tax.total.should be_within(0.1).of(9682400000.0)
-    end
+    subject { @reformed_inc_stmt_2011.income_from_sales_after_tax }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(9682400000.0) }
   end
 
   describe "operating_income_after_tax" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.operating_income_after_tax.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.operating_income_after_tax.total.should be_within(0.1).of(9357400000.0)
-    end
+    subject { @reformed_inc_stmt_2011.operating_income_after_tax }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(9357400000.0) }
   end
 
   describe "net_financing_income" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.net_financing_income.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.net_financing_income.total.should be_within(0.1).of(379600000.0)
-    end
+    subject { @reformed_inc_stmt_2011.net_financing_income }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(379600000.0) }
   end
 
   describe "comprehensive_income" do
-    it "returns a CalculationSummary" do
-      @reformed_inc_stmt_2011.comprehensive_income.should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "totals up to the right amount" do
-      @reformed_inc_stmt_2011.comprehensive_income.total.should be_within(0.1).of(9737000000.0)
-    end
+    subject { @reformed_inc_stmt_2011.comprehensive_income }
+    it { should be_an_instance_of FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(9737000000.0) }
   end
 
   describe "gross_margin" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.gross_margin.should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      gm = @reformed_inc_stmt_2011.gross_revenue.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.gross_margin.should be_within(0.001).of(gm)
-    end
+    subject { @reformed_inc_stmt_2011.gross_margin }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.gross_revenue.total / @reformed_inc_stmt_2011.operating_revenues.total) }
   end
 
   describe "sales_profit_margin" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.sales_profit_margin.should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      sales_pm = @reformed_inc_stmt_2011.income_from_sales_after_tax.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.sales_profit_margin.should be_within(0.001).of(sales_pm)
-    end
+    subject { @reformed_inc_stmt_2011.sales_profit_margin }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.income_from_sales_after_tax.total / @reformed_inc_stmt_2011.operating_revenues.total) }
   end
 
   describe "operating_profit_margin" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.operating_profit_margin.should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      pm = @reformed_inc_stmt_2011.operating_income_after_tax.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.operating_profit_margin.should be_within(0.001).of(pm)
-    end
+    subject { @reformed_inc_stmt_2011.operating_profit_margin }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.operating_income_after_tax.total / @reformed_inc_stmt_2011.operating_revenues.total) }
   end
 
   describe "fi_over_sales" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.fi_over_sales.should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      fi_over_sales = @reformed_inc_stmt_2011.net_financing_income.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.fi_over_sales.should be_within(0.001).of(fi_over_sales)
-    end
+    subject { @reformed_inc_stmt_2011.fi_over_sales }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.net_financing_income.total / @reformed_inc_stmt_2011.operating_revenues.total) }
   end
 
   describe "ni_over_sales" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.ni_over_sales.should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      ni_over_sales = @reformed_inc_stmt_2011.comprehensive_income.total / @reformed_inc_stmt_2011.operating_revenues.total
-      @reformed_inc_stmt_2011.ni_over_sales.should be_within(0.001).of(ni_over_sales)
-    end
+    subject { @reformed_inc_stmt_2011.ni_over_sales }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.comprehensive_income.total / @reformed_inc_stmt_2011.operating_revenues.total) }
   end
 
   describe "sales_over_noa" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.sales_over_noa(@reformed_bal_sheet_2011).should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      sales_over_noa = @reformed_inc_stmt_2011.operating_revenues.total / @reformed_bal_sheet_2011.net_operating_assets.total
-      @reformed_inc_stmt_2011.sales_over_noa(@reformed_bal_sheet_2011).should be_within(0.001).of(sales_over_noa)
-    end
+    subject { @reformed_inc_stmt_2011.sales_over_noa(@reformed_bal_sheet_2011) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.operating_revenues.total / @reformed_bal_sheet_2011.net_operating_assets.total) }
   end
 
   describe "fi_over_nfa" do
-    it "returns a float" do
-      @reformed_inc_stmt_2011.fi_over_nfa(@reformed_bal_sheet_2011).should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      fi_over_nfa = @reformed_inc_stmt_2011.net_financing_income.total / @reformed_bal_sheet_2011.net_financial_assets.total
-      @reformed_inc_stmt_2011.fi_over_nfa(@reformed_bal_sheet_2011).should be_within(0.001).of(fi_over_nfa)
-    end
+    subject { @reformed_inc_stmt_2011.fi_over_nfa(@reformed_bal_sheet_2011) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt_2011.net_financing_income.total / @reformed_bal_sheet_2011.net_financial_assets.total) }
   end
 
   describe "revenue_growth" do
-    it "totals up to the right amount" do
+    before(:all) do
       rev0 = @reformed_inc_stmt_2009.operating_revenues.total
       rev1 = @reformed_inc_stmt_2011.operating_revenues.total
-      expected_growth = (rev1 / rev0)**(1.0/@years_between_stmts) - 1.0
-      @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2009).should be_within(0.001).of(expected_growth)
+      @expected_growth = (rev1 / rev0)**(1.0/@years_between_stmts) - 1.0
     end
+    subject { @reformed_inc_stmt_2011.revenue_growth(@reformed_inc_stmt_2009) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@expected_growth) }
   end
 
   describe "core_oi_growth" do
-    it "totals up to the right amount" do
+    before(:all) do
       core_oi0 = @reformed_inc_stmt_2009.income_from_sales_after_tax.total
       core_oi1 = @reformed_inc_stmt_2011.income_from_sales_after_tax.total
-      expected_growth = (core_oi1 / core_oi0)**(1.0/@years_between_stmts) - 1.0
-      @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2009).should be_within(0.001).of(expected_growth)
+      @expected_growth = (core_oi1 / core_oi0)**(1.0/@years_between_stmts) - 1.0
     end
+    subject { @reformed_inc_stmt_2011.core_oi_growth(@reformed_inc_stmt_2009) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@expected_growth) }
   end
 
   describe "oi_growth" do
-    it "totals up to the right amount" do
+    before(:all) do
       core_oi0 = @reformed_inc_stmt_2009.operating_income_after_tax.total
       core_oi1 = @reformed_inc_stmt_2011.operating_income_after_tax.total
-      expected_growth = (core_oi1 / core_oi0)**(1.0/@years_between_stmts) - 1.0
-      @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2009).should be_within(0.001).of(expected_growth)
+      @expected_growth = (core_oi1 / core_oi0)**(1.0/@years_between_stmts) - 1.0
     end
+    subject { @reformed_inc_stmt_2011.oi_growth(@reformed_inc_stmt_2009) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@expected_growth) }
   end
 
   describe "re_oi" do
     before(:all) do
       @expected_rate_of_return = 0.10
+      @expected_re_oi = 6868337409.999998
     end
-    it "returns a float" do
-      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2009, @expected_rate_of_return).should be_an_instance_of Float
-    end
-    it "totals up to the right amount" do
-      re_oi = 6868337409.999998
-      @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2009, @expected_rate_of_return).should be_within(1.0).of(re_oi)
-    end
+    subject { @reformed_inc_stmt_2011.re_oi(@reformed_bal_sheet_2009, @expected_rate_of_return) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@expected_re_oi) }
   end
 
   describe "analysis" do

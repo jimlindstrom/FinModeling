@@ -72,8 +72,8 @@ module Xbrlware
             @items.each do |item|
               period = item.context.period
               period_str = period.is_duration? ? "#{period.value["start_date"]} to #{period.value["end_date"]}" : "#{period.value}"
-              output += " [#{item.def["xbrli:balance"]}]" unless item.def.nil?
-              output += " (#{period_str}) = #{item.value}" unless item.nil?
+              output += " [#{item.def["xbrli:balance"]}]" if item.def
+              output += " (#{period_str}) = #{item.value}" if item.value
             end
             puts indent + output
 

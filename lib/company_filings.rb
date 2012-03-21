@@ -45,10 +45,11 @@ module FinModeling
       prev_filing, prev_re_cfs = [nil, nil]
     
       self.each do |filing|
+        re_is = filing.income_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.income_statement : nil)
         re_cfs = filing.cash_flow_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.cash_flow_statement : nil)
     
         next_analysis = FinModeling::ReformulatedCashFlowStatement.empty_analysis if !re_cfs
-        next_analysis = re_cfs.analysis                                           if  re_cfs
+        next_analysis = re_cfs.analysis(re_is)                                    if  re_cfs
       
         analysis = analysis + next_analysis if  analysis
         analysis =            next_analysis if !analysis

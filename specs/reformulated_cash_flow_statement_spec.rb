@@ -12,6 +12,11 @@ describe FinModeling::ReformulatedCashFlowStatement  do
 
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
+
+    @inc_stmt = filing.income_statement
+    @is_period = @inc_stmt.periods.last
+    @reformed_inc_stmt = @inc_stmt.reformulated(@is_period)
+
     @cash_flow_stmt = filing.cash_flow_statement
     @period = @cash_flow_stmt.periods.last
     @reformed_cash_flow_stmt = @cash_flow_stmt.reformulated(@period)
@@ -91,6 +96,12 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
+  describe "ni_over_c" do
+    subject { @reformed_cash_flow_stmt.ni_over_c(@reformed_inc_stmt) }
+    it { should be_an_instance_of Float }
+    it { should be_within(0.1).of(@reformed_inc_stmt.comprehensive_income.total / @reformed_cash_flow_stmt.cash_from_operations.total) }
+  end
+
   describe "financing_flows" do
     subject { @reformed_cash_flow_stmt.financing_flows }
     it { should be_an_instance_of FinModeling::CalculationSummary }
@@ -102,11 +113,11 @@ describe FinModeling::ReformulatedCashFlowStatement  do
   end
 
   describe "analysis" do
-    subject { @reformed_cash_flow_stmt.analysis }
+    subject { @reformed_cash_flow_stmt.analysis(@reformed_inc_stmt) }
 
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "contains the expected rows" do
-      expected_keys = [ "C   (000's)", "I   (000's)", "d   (000's)", "F   (000's)", "FCF (000's)" ]
+      expected_keys = [ "C   (000's)", "I   (000's)", "d   (000's)", "F   (000's)", "FCF (000's)", "NI / C" ]
       subject.rows.map{ |row| row.key }.should == expected_keys
     end
   end

@@ -93,6 +93,10 @@ module FinModeling
                   CalculationSummaryRow.new(:key => "Payments to stockholders (F)", :val => @f.total ) ]
       return cs
     end
+
+    def ni_over_c(inc_stmt)
+      inc_stmt.comprehensive_income.total.to_f / cash_from_operations.total
+    end
   
     def self.empty_analysis
       analysis = CalculationSummary.new
@@ -106,11 +110,12 @@ module FinModeling
       analysis.rows << CalculationSummaryRow.new(:key => "d (000's)", :val => 0)
       analysis.rows << CalculationSummaryRow.new(:key => "F (000's)", :val => 0)
       analysis.rows << CalculationSummaryRow.new(:key => "FCF (000's)", :val => 0)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI / C", :val => 0)
  
       return analysis
     end
 
-    def analysis
+    def analysis(inc_stmt)
       analysis = CalculationSummary.new
   
       analysis.title = ""
@@ -122,6 +127,7 @@ module FinModeling
       analysis.rows << CalculationSummaryRow.new(:key => "d   (000's)", :val => payments_to_debtholders.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "F   (000's)", :val => payments_to_stockholders.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "FCF (000's)", :val => free_cash_flow.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => ni_over_c(inc_stmt))
  
       return analysis
     end

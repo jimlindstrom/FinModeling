@@ -5,8 +5,10 @@ module FinModeling
       if @ni.nil?
         friendly_goal = "net income"
         label_regexes = [ /^net (income|loss|loss income)/,
+                          /^profit loss$/,
                           /^allocation.*of.*undistributed.*earnings/ ]
         id_regexes    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
+                          /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
                           /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
         calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
         @ni = NetIncomeCalculation.new(calc)

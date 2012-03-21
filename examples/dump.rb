@@ -26,7 +26,9 @@ if !(ARGV[0] =~ /http/)
 else
   filing_url = ARGV[0]
 end
-filing = FinModeling::AnnualReportFiling.download(filing_url, do_caching=false)
+
+FinModeling::Config::disable_caching
+filing = FinModeling::AnnualReportFiling.download(filing_url)
 
 filing.print_presentations
 
