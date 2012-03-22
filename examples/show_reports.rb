@@ -52,13 +52,11 @@ puts "company name: #{company.name}"
 
 filings = FinModeling::CompanyFilings.new(company.filings_since_date(args[:start_date]))
 
-bsa = filings.balance_sheet_analyses
-bsa.print
-bsa.print_extras if bsa.respond_to?(:print_extras)
+filings.balance_sheet_analyses.print
+filings.balance_sheet_analyses.print_extras if filings.balance_sheet_analyses.respond_to?(:print_extras)
 
-isa = filings.income_statement_analyses
-isa.print
-isa.print_extras if isa.respond_to?(:print_extras)
+filings.income_statement_analyses.print
+filings.income_statement_analyses.print_extras if filings.income_statement_analyses.respond_to?(:print_extras)
 
 filings.cash_flow_statement_analyses.print
 
