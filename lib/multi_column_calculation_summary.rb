@@ -2,6 +2,7 @@ module FinModeling
 
   class ArrayWithStats < Array
     def mean
+      return nil if empty?
       self.inject(:+) / self.length
     end
 

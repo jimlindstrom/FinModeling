@@ -5,7 +5,9 @@ require 'spec_helper'
 describe FinModeling::CashChangeCalculation  do
   before(:all) do
     goog_2011_q3_report = "http://www.sec.gov/Archives/edgar/data/1288776/000119312511282235/0001193125-11-282235-index.htm"
-    @filing = FinModeling::AnnualReportFiling.download(goog_2011_q3_report, do_caching=false) # FIXME: turn caching back on..
+    FinModeling::Config::disable_caching 
+    @filing = FinModeling::AnnualReportFiling.download(goog_2011_q3_report)
+    FinModeling::Config::enable_caching 
     @cfs_period_q1_thru_q3 = @filing.cash_flow_statement.periods.threequarterly.last
 
     @cash_changes = @filing.cash_flow_statement.cash_change_calculation

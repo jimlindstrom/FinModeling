@@ -3,10 +3,15 @@
 require 'spec_helper'
 
 describe FinModeling::AnnualReportFiling  do
-  before (:all) do
+  before(:all) do
     company = FinModeling::Company.new(FinModeling::Mocks::Entity.new)
     filing_url = company.annual_reports.last.link
-    @filing = FinModeling::AnnualReportFiling.download(filing_url, caching=false)
+    FinModeling::Config::disable_caching 
+    @filing = FinModeling::AnnualReportFiling.download(filing_url)
+  end
+
+  after(:all) do
+    FinModeling::Config::enable_caching 
   end
 
   describe "balance_sheet" do

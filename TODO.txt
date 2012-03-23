@@ -1,10 +1,11 @@
+Forecasts
+
 Bugs
+	- The "valid vals" thing should hides gaps in data, which affect the regressions...
 	- "./examples/show_reports.rb nflx 2010-10-01" is reporting a crazy Core OI in last quarter
 	- show_reports doesn't check filing validity
 	- Not all filings have quarterly summaries. Need a generalized way of 
       constructing quarterly summaries from whatever latest periods *do* exist.
-
-Forecasts
 
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
@@ -13,6 +14,7 @@ Cash Flow Statement
 	- "I" is defined inversely.
 
 Income Statement
+	- It'd be interesting to try to correct for cyclicality.
 	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
 	- net income != comprehensive income.  pull in items from SSE
 	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 

@@ -127,7 +127,11 @@ module FinModeling
       analysis.rows << CalculationSummaryRow.new(:key => "d   (000's)", :val => payments_to_debtholders.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "F   (000's)", :val => payments_to_stockholders.total.to_nearest_thousand)
       analysis.rows << CalculationSummaryRow.new(:key => "FCF (000's)", :val => free_cash_flow.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => ni_over_c(inc_stmt))
+      if inc_stmt
+        analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => ni_over_c(inc_stmt))
+      else
+        analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => nil)
+      end
  
       return analysis
     end
