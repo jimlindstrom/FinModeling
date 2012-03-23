@@ -134,7 +134,7 @@ FinModeling is a set of tools for manipulating financial data from SEC Edgar (in
 	Cost of Goods Sold (COGS)                                           -107,639,000.0
 	Total                                                                920,067,000.0
 
-Operating Income from sales, before tax (OISBT)
+    Operating Income from sales, before tax (OISBT)
 	Gross Margin (GM)                                                    920,067,000.0
 	Operating Expense (OE)                                              -607,457,000.0
 	Total                                                                312,610,000.0
