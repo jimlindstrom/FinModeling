@@ -312,7 +312,8 @@ module FinModeling
   end
 
   class SimplifiedReformulatedIncomeStatement < ReformulatedIncomeStatement
-    def initialize(operating_revenues, income_from_sales_after_tax, net_financing_income, comprehensive_income)
+    def initialize(period, operating_revenues, income_from_sales_after_tax, net_financing_income, comprehensive_income)
+      @period = period
       @orev = operating_revenues
       @income_from_sales_after_tax = income_from_sales_after_tax
       @net_financing_income = net_financing_income
@@ -354,7 +355,7 @@ module FinModeling
     end
 
     def operating_income_after_tax
-      nil
+      income_from_sales_after_tax # this simplified version assumes no non-sales operating income
     end
 
     def net_financing_income
@@ -371,5 +372,51 @@ module FinModeling
       return cs
     end
 
+    def analysis(re_bs, prev_re_is, prev_re_bs)
+      analysis = CalculationSummary.new
+      analysis.title = ""
+      analysis.rows = []
+  
+      if re_bs.nil?
+        analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
+      else
+        analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s)
+      end
+  
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)", :val => operating_revenues.total.to_nearest_thousand)
+      if Config.income_detail_enabled?
+        analysis.rows << CalculationSummaryRow.new(:key => "COGS (000's)",  :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "GM (000's)",    :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OE (000's)",    :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OISBT (000's)", :val => nil)
+      end
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)", :val => income_from_sales_after_tax.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",      :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",      :val => net_financing_income.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI (000's)",      :val => comprehensive_income.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "Gross Margin",    :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "Sales PM",        :val => sales_profit_margin)
+      analysis.rows << CalculationSummaryRow.new(:key => "Operating PM",    :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI / Sales",      :val => fi_over_sales)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI / Sales",      :val => ni_over_sales)
+
+      if !prev_re_bs.nil? && !prev_re_is.nil?
+        analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",   :val => sales_over_noa(prev_re_bs))
+        analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",      :val => fi_over_nfa(   prev_re_bs))
+        analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => revenue_growth(prev_re_is))
+        analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => core_oi_growth(prev_re_is))
+        analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => re_oi(         prev_re_bs).to_nearest_thousand)
+      else
+        analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",   :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",      :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => nil)
+      end
+  
+      return analysis
+    end
   end
 end

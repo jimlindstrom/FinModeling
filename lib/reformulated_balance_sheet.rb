@@ -115,7 +115,8 @@ module FinModeling
   end
 
   class SimplifiedReformulatedBalanceSheet < ReformulatedBalanceSheet
-    def initialize(noa, nfa, cse)
+    def initialize(period, noa, nfa, cse)
+      @period = period
       @noa = noa
       @nfa = nfa
       @cse = cse
