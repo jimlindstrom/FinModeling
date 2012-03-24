@@ -112,6 +112,51 @@ module FinModeling
       to_days = Xbrlware::DateUtil.days_between(prev.period.value,   @period.value)
       return Rate.new(ratio).annualize(from_days=365, to_days)
     end
+  end
+
+  class SimplifiedReformulatedBalanceSheet < ReformulatedBalanceSheet
+    def initialize(noa, nfa, cse)
+      @noa = noa
+      @nfa = nfa
+      @cse = cse
+    end
+
+    def operating_assets
+      nil
+    end
+
+    def financial_assets
+      nil
+    end
+
+    def operating_liabilities
+      nil
+    end
+
+    def financial_liabilities
+      nil
+    end
+
+    def net_operating_assets
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Net Operational Assets"
+      cs.rows = [ CalculationSummaryRow.new( :key => "NOA", :val => @noa ) ]
+      return cs
+    end
+
+    def net_financial_assets
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Net Financial Assets"
+      cs.rows = [ CalculationSummaryRow.new( :key => "NFA", :val => @nfa ) ]
+      return cs
+    end
+
+    def common_shareholders_equity
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Common Shareholders' Equity"
+      cs.rows = [ CalculationSummaryRow.new( :key => "CSE", :val => @cse ) ]
+      return cs
+    end
 
   end
 end

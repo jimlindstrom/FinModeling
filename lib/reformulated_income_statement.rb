@@ -108,7 +108,6 @@ module FinModeling
       cs.rows = [ CalculationSummaryRow.new(:key => "Operating Revenues (OR)", :val => @orev.total ),
                   CalculationSummaryRow.new(:key => "Cost of Goods Sold (COGS)", :val => @cogs.total ) ]
       return cs
-
     end
 
     def operating_expenses
@@ -154,7 +153,7 @@ module FinModeling
 
     def comprehensive_income
       cs = FinModeling::CalculationSummary.new
-      cs.title = "Comprehensive (CI)"
+      cs.title = "Comprehensive income (CI)"
       cs.rows = [ CalculationSummaryRow.new(:key => "Operating income, after tax (OI)", :val => @oi ),
                   CalculationSummaryRow.new(:key => "Net financing income, after tax (NFI)", :val => @nfi ) ]
       return cs
@@ -308,6 +307,68 @@ module FinModeling
           Xbrlware::DateUtil.days_between(prev.period.value["end_date"], @period.value["end_date"])
       end
       Rate.new(ratio).annualize(from_days=365, to_days)
+    end
+
+  end
+
+  class SimplifiedReformulatedIncomeStatement < ReformulatedIncomeStatement
+    def initialize(operating_revenues, income_from_sales_after_tax, net_financing_income, comprehensive_income)
+      @orev = operating_revenues
+      @income_from_sales_after_tax = income_from_sales_after_tax
+      @net_financing_income = net_financing_income
+      @comprehensive_income = comprehensive_income
+    end
+
+    def -(ris2)
+      raise RuntimeError.new("not implmeneted")
+    end
+
+    def operating_revenues
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Operating Revenues"
+      cs.rows = [ CalculationSummaryRow.new(:key => "Operating Revenues (OR)", :val => @orev ) ]
+      return cs
+    end
+
+    def cost_of_revenues
+      nil
+    end
+
+    def gross_revenue
+      nil
+    end
+
+    def operating_expenses
+      nil
+    end
+
+    def income_from_sales_before_tax
+      nil
+    end
+
+    def income_from_sales_after_tax
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Operating Income from sales, after tax (OISAT)"
+      cs.rows = [ CalculationSummaryRow.new(:key => "Operating income from sales (after tax)", :val => @income_from_sales_after_tax ) ]
+      return cs
+    end
+
+    def operating_income_after_tax
+      nil
+    end
+
+    def net_financing_income
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Net financing income, after tax (NFI)"
+      cs.rows = [ CalculationSummaryRow.new(:key => "Net financing income", :val => @net_financing_income ) ]
+      return cs
+    end
+
+    def comprehensive_income
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Comprehensive Income (CI)"
+      cs.rows = [ CalculationSummaryRow.new(:key => "Comprehensive income", :val => @comprehensive_income ) ]
+      return cs
     end
 
   end
