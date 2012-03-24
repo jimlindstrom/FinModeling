@@ -287,6 +287,17 @@ module FinModeling
       return analysis
     end
 
+    def self.forecast_next(period, policy, last_re_bs, last_re_is)
+      operating_revenues = last_re_is.operating_revenues.total * (1.0 + policy.revenue_growth)
+      income_from_sales_after_tax = operating_revenues * policy.sales_pm
+      net_financing_income = last_re_bs.net_financial_assets.total * policy.fi_over_nfa
+      comprehensive_income = income_from_sales_after_tax + net_financing_income
+
+      SimplifiedReformulatedIncomeStatement.new(period, operating_revenues, 
+                                                income_from_sales_after_tax,
+                                                net_financing_income, comprehensive_income)
+    end
+
     private
 
     def annualize_ratio(prev, ratio)
