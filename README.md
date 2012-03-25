@@ -8,9 +8,56 @@ FinModeling is a set of tools for manipulating financial data from SEC Edgar (in
 - Uses Naive Bayes Classifiers to classify financial statement items
   - trained on medium-to-large NASDAQ tech companies
 - Reformulates GAAP statements to better highlight enterprise value
+- Generates forecasts based on analysis of historical performance
 
-## Example 1: A Summary of Adobe's Filings Since 2010-11-01
+## Example 1: Forecasting Oracle's Financials Based
 
+    lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_reports.rb --num-forecasts 2 orcl 2011-02-01
+    Forecasting 2 periods
+    company name: ORACLE CORP
+
+	                      2011-02-28    2011-05-31    2011-08-31    2011-11-30   2012-02-29E   2012-05-29E
+	NOA ($MM)               28,172.0      28,282.0      25,235.0      27,055.0      27,342.0      29,107.0
+	NFA ($MM)                8,445.0      11,494.0      15,657.0      14,865.0      16,899.0      17,593.0
+	CSE ($MM)               36,617.0      39,776.0      40,892.0      41,920.0      44,241.0      46,700.0
+	Composition Ratio         3.3359        2.4605        1.6117        1.8200        1.6179        1.6545
+	NOA Growth                              0.0155       -0.3638        0.3222        0.0431        0.2888
+	CSE Growth                              0.3886        0.1160        0.1047        0.2412        0.2452
+
+		NOA growth: a:-0.1619, b:0.1533, r:0.4461, var:0.0787
+
+	                      2011-02-28    2011-05-31    2011-08-31    2011-11-30   2012-02-29E   2012-05-29E
+	Revenue ($MM)            8,764.0      10,775.0       8,374.0       8,792.0       9,360.0       9,964.0
+	Core OI ($MM)            2,318.0       3,413.0       2,056.0       2,327.0       2,483.0       2,644.0
+	OI ($MM)                 2,238.0       3,332.0       1,978.0       2,290.0                            
+	FI ($MM)                  -122.0        -123.0        -138.0         -98.0        -163.0        -185.0
+	NI ($MM)                 2,116.0       3,209.0       1,840.0       2,192.0       2,321.0       2,459.0
+	Gross Margin              0.5858        0.6040        0.5679        0.5845                            
+	Sales PM                  0.2644        0.3167        0.2454        0.2646        0.2653        0.2653
+	Operating PM              0.2553        0.3092        0.2361        0.2604                            
+	FI / Sales               -0.0139       -0.0114       -0.0164       -0.0111       -0.0173       -0.0185
+	NI / Sales                0.2414        0.2978        0.2197        0.2493        0.2479        0.2467
+	Sales / NOA                             1.5298        1.1843        1.3936        1.3837        1.4576
+	FI / NFA                               -0.0581       -0.0479       -0.0250       -0.0437       -0.0437
+	Revenue Growth                          1.2695       -0.6321        0.2157        0.2852        0.2888
+	Core OI Growth                          3.6455       -0.8661        0.6443        0.2974        0.2888
+	OI Growth                               3.8474       -0.8737        0.8006                            
+	ReOI ($MM)                             2,647.0       1,290.0       1,683.0       1,833.0       1,993.0
+
+		operating pm: a:0.2739, b:-0.0057, r:-0.2398, var:0.0007
+		asset turnover: a:1.4374, b:-0.0681, r:-0.3914, var:0.0201
+		revenue growth: a:0.8112, b:-0.5268, r:-0.5530, var:0.6050
+		fi / nfa: a:-0.0602, b:0.0165, r:0.9765, var:0.0001
+
+	                      Unknown...    2011-05-31    2011-08-31    2011-11-30
+	C ($MM)                                  -17.0       5,421.0       1,255.0
+	I ($MM)                               -8,380.0     -13,091.0      -9,191.0
+	d ($MM)                                8,688.0       8,568.0       8,956.0
+	F ($MM)                                 -291.0        -898.0      -1,020.0
+	FCF ($MM)                             -8,397.0      -7,670.0      -7,936.0
+	NI / C                               -188.7647        0.3394        1.7466
+
+## Example 2: A Summary of Adobe's Filings Since 2010-11-01
 
     lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_reports.rb adbe 2010-11-01
     company name: ADOBE SYSTEMS INC
@@ -55,7 +102,7 @@ FinModeling is a set of tools for manipulating financial data from SEC Edgar (in
 	FCF (000's)                          105,315.0     167,994.0     -71,007.0     -50,862.0
 	NI / C                                  0.7063        0.5768        0.6088        0.5194
 
-## Example 2: A Detailed View of Adobe's Second-to-Last 10-Q
+## Example 3: A Detailed View of Adobe's Second-to-Last 10-Q
 
     lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_report.rb adbe 10-q -2
     company name: ADOBE SYSTEMS INC
