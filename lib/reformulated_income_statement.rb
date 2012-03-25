@@ -293,7 +293,7 @@ module FinModeling
       net_financing_income = last_re_bs.net_financial_assets.total * policy.fi_over_nfa
       comprehensive_income = income_from_sales_after_tax + net_financing_income
 
-      SimplifiedReformulatedIncomeStatement.new(period, operating_revenues, 
+      ForecastedReformulatedIncomeStatement.new(period, operating_revenues, 
                                                 income_from_sales_after_tax,
                                                 net_financing_income, comprehensive_income)
     end
@@ -322,7 +322,7 @@ module FinModeling
 
   end
 
-  class SimplifiedReformulatedIncomeStatement < ReformulatedIncomeStatement
+  class ForecastedReformulatedIncomeStatement < ReformulatedIncomeStatement
     def initialize(period, operating_revenues, income_from_sales_after_tax, net_financing_income, comprehensive_income)
       @period = period
       @orev = operating_revenues
@@ -391,7 +391,7 @@ module FinModeling
       if re_bs.nil?
         analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
       else
-        analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s)
+        analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s + "E")
       end
   
       analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)", :val => operating_revenues.total.to_nearest_thousand)

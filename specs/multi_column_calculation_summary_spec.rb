@@ -1,4 +1,4 @@
-# company_filing_calculation_spec.rb
+# multi_column_calculation_summary_spec.rb
 
 require 'spec_helper'
 
@@ -17,39 +17,69 @@ describe FinModeling::MultiColumnCalculationSummary do
   end
 
   describe "+" do
-    before(:all) do
-      @cs1 = FinModeling::CalculationSummary.new
-      @cs1.title = "CS 1"
-      @cs1.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 1),
-                    FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 2) ]
+    context "when added to a CalculationSummary" do
+      before(:all) do
+        @cs1 = FinModeling::CalculationSummary.new
+        @cs1.title = "CS 1"
+        @cs1.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 1),
+                      FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 2) ]
+         
+        @cs2 = FinModeling::CalculationSummary.new
+        @cs2.title = "CS 2"
+        @cs2.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 11),
+                      FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 22) ]
        
-      @cs2 = FinModeling::CalculationSummary.new
-      @cs2.title = "CS 2"
-      @cs2.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 11),
-                    FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 22) ]
-     
-      @cs3 = FinModeling::CalculationSummary.new
-      @cs3.title = "CS 3"
-      @cs3.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 111),
-                    FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 222) ]
-
-      @mccs12 = @cs1 + @cs2
-      @mccs123 = @mccs12 + @cs3
+        @cs3 = FinModeling::CalculationSummary.new
+        @cs3.title = "CS 3"
+        @cs3.rows = [ FinModeling::CalculationSummaryRow.new(:key => "First  Row", :val => 111),
+                      FinModeling::CalculationSummaryRow.new(:key => "Second Row", :val => 222) ]
+  
+        @mccs12 = @cs1 + @cs2
+        @mccs123 = @mccs12 + @cs3
+      end
+  
+      subject { @mccs123 }
+  
+      it { should be_an_instance_of FinModeling::MultiColumnCalculationSummary }
+  
+      its(:title) { should == @mccs12.title }
+  
+      it "should set the row labels to the first summary's row labels" do
+        @mccs123.rows.map{ |row| row.key }.should == @mccs12.rows.map{ |row| row.key }
+      end
+  
+      it "should merge the values of summary into an array of values in the result" do
+        0.upto(@mccs123.rows.length-1).each do |row_idx|
+          @mccs123.rows[row_idx].vals.should == ( @mccs12.rows[row_idx].vals + [ @cs3.rows[row_idx].val ] )
+        end
+      end
     end
 
-    subject { @mccs123 }
+    context "when added to a MultiColumnCalculationSummary" do
+      before(:all) do
+        @mccs1 = FinModeling::MultiColumnCalculationSummary.new
+        @mccs1.title = "MCCS 1"
+        @mccs1.rows = [ FinModeling::MultiColumnCalculationSummaryRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4]) ]
 
-    it { should be_an_instance_of FinModeling::MultiColumnCalculationSummary }
-
-    its(:title) { should == @mccs12.title }
-
-    it "should set the row labels to the first summary's row labels" do
-      @mccs123.rows.map{ |row| row.key }.should == @mccs12.rows.map{ |row| row.key }
-    end
-
-    it "should merge the values of summary into an array of values in the result" do
-      0.upto(@mccs123.rows.length-1).each do |row_idx|
-        @mccs123.rows[row_idx].vals.should == ( @mccs12.rows[row_idx].vals + [ @cs3.rows[row_idx].val ] )
+        @mccs2 = FinModeling::MultiColumnCalculationSummary.new
+        @mccs2.title = "MCCS 2"
+        @mccs2.rows = [ FinModeling::MultiColumnCalculationSummaryRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4]) ]
+      end
+  
+      subject { @mccs1 + @mccs2 }
+  
+      it { should be_an_instance_of FinModeling::MultiColumnCalculationSummary }
+  
+      its(:title) { should == @mccs1.title }
+  
+      it "should set the row labels to the first summary's row labels" do
+        subject.rows.map{ |row| row.key }.should == @mccs1.rows.map{ |row| row.key }
+      end
+  
+      it "should merge the values of summary into an array of values in the result" do
+        0.upto(subject.rows.length-1).each do |row_idx|
+          subject.rows[row_idx].vals.should == ( @mccs1.rows[row_idx].vals + @mccs2.rows[row_idx].vals )
+        end
       end
     end
   end

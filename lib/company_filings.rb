@@ -69,5 +69,36 @@ module FinModeling
       return @cash_flow_statement_analyses
     end
   
+    def choose_forecasting_policy
+      FinModeling::ForecastingPolicy.new
+    end
+  
+    def forecasts(policy, num_quarters)
+      f = Forecasts.new
+
+      last_last_re_is = nil
+      if self.length >= 2
+        last_last_re_is = self[-2].income_statement
+      end
+
+      last_re_bs = self.last.balance_sheet.reformulated(self.last.balance_sheet.periods.last)
+      last_re_is = self.last.income_statement.latest_quarterly_reformulated(last_last_re_is)
+
+      num_quarters.times do |i|
+        next_bs_period = last_re_bs.period.plus_n_months(3)
+        next_is_period = last_re_is.period.plus_n_months(3)
+  
+        next_re_is = FinModeling::ReformulatedIncomeStatement.forecast_next(next_is_period, policy, last_re_bs, last_re_is)
+        next_re_bs = FinModeling::ReformulatedBalanceSheet   .forecast_next(next_bs_period, policy, last_re_bs, next_re_is)
+
+        f.reformulated_income_statements << next_re_is
+        f.reformulated_balance_sheets    << next_re_bs
+
+        last_last_re_is, last_re_bs, last_re_is = [last_re_is, next_re_bs, next_re_is]
+      end
+
+      return f
+    end
+
   end
 end

@@ -28,19 +28,22 @@ module Xbrlware
 
     class Period
       def plus_n_months(n)
-        new_value = @value
-        n.times do
-          case
-            when is_instant?
+        case
+          when is_instant?
+            new_value = @value.dup
+            n.times do
               new_value = new_value.next_month
-            when is_duration?
+            end
+            return Period.new(new_value)
+          when is_duration?
+            new_value = {"start_date"=>@value["start_date"].dup, "end_date"=>@value["end_date"].dup}
+            n.times do
               new_value["start_date"] = new_value["start_date"].next_month
               new_value[  "end_date"] = new_value[  "end_date"].next_month
-            else
-              raise RuntimeError.new("not supported")
-          end
+            end
+            return Period.new(new_value)
         end
-        Period.new(new_value)
+        raise RuntimeError.new("not supported")
       end
 
       def to_pretty_s

@@ -1,8 +1,8 @@
+Get rid of the non-multi-column version of Calculation Summary and simplify the name.
 Use ||= for caching
 
-Forecasts
-
 Bugs
+	- Forecasts not working right...
 	- The "valid vals" thing should hides gaps in data, which affect the regressions...
 	- "./examples/show_reports.rb nflx 2010-10-01" is reporting a crazy Core OI in last quarter
 	- show_reports doesn't check filing validity

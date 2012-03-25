@@ -106,7 +106,7 @@ module FinModeling
       cse = last_re_bs.common_shareholders_equity.total / next_re_is.comprehensive_income.total
       nfa = cse - noa
 
-      SimplifiedReformulatedBalanceSheet.new(period, noa, nfa, cse)
+      ForecastedReformulatedBalanceSheet.new(period, noa, nfa, cse)
     end
 
     private
@@ -122,7 +122,7 @@ module FinModeling
     end
   end
 
-  class SimplifiedReformulatedBalanceSheet < ReformulatedBalanceSheet
+  class ForecastedReformulatedBalanceSheet < ReformulatedBalanceSheet
     def initialize(period, noa, nfa, cse)
       @period = period
       @noa = noa
@@ -166,6 +166,11 @@ module FinModeling
       cs.rows = [ CalculationSummaryRow.new( :key => "CSE", :val => @cse ) ]
       return cs
     end
-
+ 
+    def analysis(prev)
+      analysis = super(prev)
+      analysis.header_row.val += "E"
+      return analysis
+    end
   end
 end

@@ -26,14 +26,15 @@ describe FinModeling::CompanyFiling  do
   describe "choose_forecasting_policy" do
     subject { @filings.choose_forecasting_policy }
     it { should be_an_instance_of FinModeling::ForecastingPolicy }
+    pending "Choose a smarter policy, depending on context."
   end
 
   describe "forecasts" do
-    before(:all) do
-      @policy = @filings.choose_forecasting_policy
-      @num_years = 3
-    end
-    subject { @filings.forecasts(@policy, @num_years) }
+    let(:policy) { @filings.choose_forecasting_policy }
+    let(:num_quarters) { 3 }
+    subject { @filings.forecasts(policy, num_quarters) }
     it { should be_an_instance_of FinModeling::Forecasts }
+    its(:reformulated_income_statements) { should have(num_quarters).items }
+    its(:reformulated_balance_sheets)    { should have(num_quarters).items }
   end
 end

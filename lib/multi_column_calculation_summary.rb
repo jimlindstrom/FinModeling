@@ -130,7 +130,17 @@ module FinModeling
       file.puts "#{item_name}.rows = [#{row_item_names.join(',')}]"
     end
 
-    def +(cs)
+    def +(param)
+      if param.is_a?(CalculationSummary)
+        plus_single_column(param)
+      elsif param.is_a?(MultiColumnCalculationSummary)
+        plus_multi_column(param)
+      else
+        raise RuntimeError.new("can't add a MultiColumnCalculationSummary to a #{param.class}")
+      end
+    end
+
+    def plus_single_column(cs)
       raise RuntimeError.new("can't add CalculationSummaries with different numbers of rows") if @rows.length != cs.rows.length
 
       multics = MultiColumnCalculationSummary.new
@@ -152,6 +162,30 @@ module FinModeling
 
         multics.rows << new_row
       end
+
+      return multics
+    end
+
+    def plus_multi_column(mccs)
+      raise RuntimeError.new("can't add CalculationSummaries with different numbers of rows") if @rows.length != mccs.rows.length
+
+      multics = MultiColumnCalculationSummary.new
+      multics.title = @title
+
+      if @header_row
+        multics.header_row = MultiColumnCalculationSummaryHeaderRow.new(
+                               :key  => @header_row.key.dup, 
+                               :vals => @header_row.vals.dup + mccs.header_row.vals.dup)
+      end
+
+      multics.rows = []
+      0.upto(@rows.length-1).each do |idx|
+        multics.rows << MultiColumnCalculationSummaryRow.new(
+                          :key  => @rows[idx].key.dup, 
+                          :vals => @rows[idx].vals.dup + mccs.rows[idx].vals.dup)
+      end
+
+      multics.num_value_columns = multics.rows.map{|row| row.vals.length}.max
 
       return multics
     end
