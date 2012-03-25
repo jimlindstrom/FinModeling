@@ -105,11 +105,11 @@ module FinModeling
       analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  "Unknown...")
   
       analysis.rows = []
-      analysis.rows << CalculationSummaryRow.new(:key => "C (000's)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "I (000's)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "d (000's)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "F (000's)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "FCF (000's)", :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "C ($MM)",   :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "I ($MM)",   :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "d ($MM)",   :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "F ($MM)",   :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "FCF ($MM)", :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => nil)
  
       return analysis
@@ -122,11 +122,11 @@ module FinModeling
       analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  @period.value["end_date"].to_s)
   
       analysis.rows = []
-      analysis.rows << CalculationSummaryRow.new(:key => "C   (000's)", :val => cash_from_operations.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "I   (000's)", :val => cash_investments_in_operations.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "d   (000's)", :val => payments_to_debtholders.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "F   (000's)", :val => payments_to_stockholders.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "FCF (000's)", :val => free_cash_flow.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "C   ($MM)", :val => cash_from_operations.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "I   ($MM)", :val => cash_investments_in_operations.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "d   ($MM)", :val => payments_to_debtholders.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "F   ($MM)", :val => payments_to_stockholders.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "FCF ($MM)", :val => free_cash_flow.total.to_nearest_million)
       if inc_stmt
         analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => ni_over_c(inc_stmt))
       else

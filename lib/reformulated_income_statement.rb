@@ -214,17 +214,17 @@ module FinModeling
 
       analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => "Unknown...")
 
-      analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)",:val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue ($MM)",:val => nil)
       if Config.income_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "COGS (000's)", :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "GM (000's)",   :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "OE (000's)",   :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "OISBT (000's)",:val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "COGS ($MM)", :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "GM ($MM)",   :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OE ($MM)",   :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OISBT ($MM)",:val => nil)
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)",:val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",     :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",     :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "NI (000's)",     :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI ($MM)",:val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI ($MM)",     :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI ($MM)",     :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI ($MM)",     :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "Gross Margin",   :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "Sales PM",       :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "Operating PM",   :val => nil)
@@ -235,7 +235,7 @@ module FinModeling
       analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth", :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth", :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",      :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",   :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "ReOI ($MM)",   :val => nil)
 
       return analysis
     end
@@ -251,17 +251,17 @@ module FinModeling
         analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s)
       end
   
-      analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)", :val => operating_revenues.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue ($MM)", :val => operating_revenues.total.to_nearest_million)
       if Config.income_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "COGS (000's)",  :val => @cogs.total.to_nearest_thousand)
-        analysis.rows << CalculationSummaryRow.new(:key => "GM (000's)",    :val => @gm.to_nearest_thousand)
-        analysis.rows << CalculationSummaryRow.new(:key => "OE (000's)",    :val => @oe.total.to_nearest_thousand)
-        analysis.rows << CalculationSummaryRow.new(:key => "OISBT (000's)", :val => income_from_sales_before_tax.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "COGS ($MM)",  :val => @cogs.total.to_nearest_million)
+        analysis.rows << CalculationSummaryRow.new(:key => "GM ($MM)",    :val => @gm.to_nearest_million)
+        analysis.rows << CalculationSummaryRow.new(:key => "OE ($MM)",    :val => @oe.total.to_nearest_million)
+        analysis.rows << CalculationSummaryRow.new(:key => "OISBT ($MM)", :val => income_from_sales_before_tax.total.to_nearest_million)
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)", :val => income_from_sales_after_tax.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",      :val => operating_income_after_tax.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",      :val => net_financing_income.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "NI (000's)",      :val => comprehensive_income.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI ($MM)", :val => income_from_sales_after_tax.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI ($MM)",      :val => operating_income_after_tax.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI ($MM)",      :val => net_financing_income.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI ($MM)",      :val => comprehensive_income.total.to_nearest_million)
       analysis.rows << CalculationSummaryRow.new(:key => "Gross Margin",    :val => gross_margin)
       analysis.rows << CalculationSummaryRow.new(:key => "Sales PM",        :val => sales_profit_margin)
       analysis.rows << CalculationSummaryRow.new(:key => "Operating PM",    :val => operating_profit_margin)
@@ -274,14 +274,14 @@ module FinModeling
         analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => revenue_growth(prev_re_is))
         analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => core_oi_growth(prev_re_is))
         analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => oi_growth(     prev_re_is))
-        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => re_oi(         prev_re_bs).to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI ($MM)",  :val => re_oi(         prev_re_bs).to_nearest_million)
       else
         analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",   :val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",      :val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI ($MM)",  :val => nil)
       end
   
       return analysis
@@ -394,17 +394,17 @@ module FinModeling
         analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val => re_bs.period.to_pretty_s + "E")
       end
   
-      analysis.rows << CalculationSummaryRow.new(:key => "Revenue (000's)", :val => operating_revenues.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "Revenue ($MM)", :val => operating_revenues.total.to_nearest_million)
       if Config.income_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "COGS (000's)",  :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "GM (000's)",    :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "OE (000's)",    :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "OISBT (000's)", :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "COGS ($MM)",  :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "GM ($MM)",    :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OE ($MM)",    :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "OISBT ($MM)", :val => nil)
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "Core OI (000's)", :val => income_from_sales_after_tax.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "OI (000's)",      :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "FI (000's)",      :val => net_financing_income.total.to_nearest_thousand)
-      analysis.rows << CalculationSummaryRow.new(:key => "NI (000's)",      :val => comprehensive_income.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "Core OI ($MM)", :val => income_from_sales_after_tax.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "OI ($MM)",      :val => nil)
+      analysis.rows << CalculationSummaryRow.new(:key => "FI ($MM)",      :val => net_financing_income.total.to_nearest_million)
+      analysis.rows << CalculationSummaryRow.new(:key => "NI ($MM)",      :val => comprehensive_income.total.to_nearest_million)
       analysis.rows << CalculationSummaryRow.new(:key => "Gross Margin",    :val => nil)
       analysis.rows << CalculationSummaryRow.new(:key => "Sales PM",        :val => sales_profit_margin)
       analysis.rows << CalculationSummaryRow.new(:key => "Operating PM",    :val => nil)
@@ -417,14 +417,14 @@ module FinModeling
         analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => revenue_growth(prev_re_is))
         analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => core_oi_growth(prev_re_is))
         analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => re_oi(         prev_re_bs).to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI ($MM)",  :val => re_oi(         prev_re_bs).to_nearest_million)
       else
         analysis.rows << CalculationSummaryRow.new(:key => "Sales / NOA",   :val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "FI / NFA",      :val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "Revenue Growth",:val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "Core OI Growth",:val => nil)
         analysis.rows << CalculationSummaryRow.new(:key => "OI Growth",     :val => nil)
-        analysis.rows << CalculationSummaryRow.new(:key => "ReOI (000's)",  :val => nil)
+        analysis.rows << CalculationSummaryRow.new(:key => "ReOI ($MM)",  :val => nil)
       end
   
       return analysis

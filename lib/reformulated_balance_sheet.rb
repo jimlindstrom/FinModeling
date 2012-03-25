@@ -73,22 +73,22 @@ module FinModeling
   
       analysis.rows = []
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "A (000's)",:val => @oa.total.to_nearest_thousand +
-                                                                               @fa.total.to_nearest_thousand)
-        analysis.rows << CalculationSummaryRow.new(:key => "L (000's)",:val => @ol.total.to_nearest_thousand +
-                                                                               @fl.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "A ($MM)",:val => @oa.total.to_nearest_million +
+                                                                               @fa.total.to_nearest_million)
+        analysis.rows << CalculationSummaryRow.new(:key => "L ($MM)",:val => @ol.total.to_nearest_million +
+                                                                               @fl.total.to_nearest_million)
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "NOA (000's)", :val => net_operating_assets.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "NOA ($MM)", :val => net_operating_assets.total.to_nearest_million)
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "OA (000's)",:val => operating_assets.total.to_nearest_thousand)
-        analysis.rows << CalculationSummaryRow.new(:key => "OL (000's)",:val => operating_liabilities.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "OA ($MM)",:val => operating_assets.total.to_nearest_million)
+        analysis.rows << CalculationSummaryRow.new(:key => "OL ($MM)",:val => operating_liabilities.total.to_nearest_million)
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "NFA (000's)", :val => net_financial_assets.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "NFA ($MM)", :val => net_financial_assets.total.to_nearest_million)
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "FA (000's)",:val => financial_assets.total.to_nearest_thousand)
-        analysis.rows << CalculationSummaryRow.new(:key => "FL (000's)",:val => financial_liabilities.total.to_nearest_thousand)
+        analysis.rows << CalculationSummaryRow.new(:key => "FA ($MM)",:val => financial_assets.total.to_nearest_million)
+        analysis.rows << CalculationSummaryRow.new(:key => "FL ($MM)",:val => financial_liabilities.total.to_nearest_million)
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "CSE (000's)", :val => common_shareholders_equity.total.to_nearest_thousand)
+      analysis.rows << CalculationSummaryRow.new(:key => "CSE ($MM)", :val => common_shareholders_equity.total.to_nearest_million)
       analysis.rows << CalculationSummaryRow.new(:key => "Composition Ratio", :val => composition_ratio )
       if prev.nil?
         analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => nil )

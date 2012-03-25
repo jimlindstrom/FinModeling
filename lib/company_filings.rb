@@ -78,8 +78,9 @@ module FinModeling
 
       last_re_bs = self.last.balance_sheet.reformulated(self.last.balance_sheet.periods.last)
 
-      last_last_re_is = (self.length >= 2) ? nil : self[-2].income_statement
-      last_re_is = self.last.income_statement.latest_quarterly_reformulated(last_last_re_is)
+      last_last_is = (self.length >= 2) ? self[-2].income_statement : nil
+      puts "warning: last_last_is is nil..." if !last_last_is
+      last_re_is = self.last.income_statement.latest_quarterly_reformulated(last_last_is)
       raise RuntimeError.new("last_re_is is nil!") if !last_re_is
 
       num_quarters.times do |i|
