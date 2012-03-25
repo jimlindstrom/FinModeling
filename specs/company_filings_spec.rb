@@ -24,9 +24,24 @@ describe FinModeling::CompanyFiling  do
   end
 
   describe "choose_forecasting_policy" do
-    subject { @filings.choose_forecasting_policy }
-    it { should be_an_instance_of FinModeling::ForecastingPolicy }
-    pending "Choose a smarter policy, depending on context."
+    context "when one or two filings" do
+      let(:filings) { FinModeling::CompanyFilings.new(@filings[-2..-1]) }
+      subject { filings.choose_forecasting_policy }
+
+      it { should be_an_instance_of FinModeling::GenericForecastingPolicy }
+    end
+    context "when two or more filings" do
+      let(:filings) { FinModeling::CompanyFilings.new(@filings[-3..-1]) }
+      subject { filings.choose_forecasting_policy }
+      it { should be_an_instance_of FinModeling::ConstantForecastingPolicy }
+
+      let(:isa) { filings.income_statement_analyses }
+
+      its(:revenue_growth) { should be_within(0.01).of(isa.revenue_growth_row.valid_vals.mean) }
+      its(:sales_pm)       { should be_within(0.01).of(isa.operating_pm_row.valid_vals.mean) } # FIXME: name mismatch
+      its(:sales_over_noa) { should be_within(0.01).of(isa.asset_turnover_row.valid_vals.mean) } # FIXME: name mismatch
+      its(:fi_over_nfa)    { should be_within(0.01).of(isa.fi_over_nfa_row.valid_vals.mean) }
+    end
   end
 
   describe "forecasts" do

@@ -10,6 +10,9 @@ Bugs
       constructing quarterly summaries from whatever latest periods *do* exist.
 
 Cleanup
+	- As with Rate, create a Ratio to annualize/deannualize instead of mult/div'ing by 4.0
+	- For Rate (and the to-be-created Ratio), add helpers for going from quarter-to-annual and 
+	  vice versa.
 	- The *Analyses doesn't feel right to me, modeling-wise.
 	- Get rid of the non-multi-column version of Calculation Summary and simplify the name.
 	- Use ||= for caching

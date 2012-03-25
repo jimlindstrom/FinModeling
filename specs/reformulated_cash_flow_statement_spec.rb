@@ -117,7 +117,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
 
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "contains the expected rows" do
-      expected_keys = [ "C   (000's)", "I   (000's)", "d   (000's)", "F   (000's)", "FCF (000's)", "NI / C" ]
+      expected_keys = [ "C   ($MM)", "I   ($MM)", "d   ($MM)", "F   ($MM)", "FCF ($MM)", "NI / C" ]
       subject.rows.map{ |row| row.key }.should == expected_keys
     end
   end

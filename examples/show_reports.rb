@@ -62,11 +62,13 @@ forecasts = filings.forecasts(filings.choose_forecasting_policy, num_quarters=ar
 
 bs_analyses = filings.balance_sheet_analyses 
 bs_analyses += forecasts.balance_sheet_analyses(filings) if forecasts
+bs_analyses.totals_row_enabled = false 
 bs_analyses.print
 filings.balance_sheet_analyses.print_extras if filings.balance_sheet_analyses.respond_to?(:print_extras)
 
 is_analyses = filings.income_statement_analyses 
 is_analyses += forecasts.income_statement_analyses(filings) if forecasts
+is_analyses.totals_row_enabled = false 
 is_analyses.print
 filings.income_statement_analyses.print_extras if filings.income_statement_analyses.respond_to?(:print_extras)
 

@@ -28,6 +28,19 @@ module FinModeling
              "r:#{lr.r.to_s.cap_decimals(4)}, "+
              "var:#{revenue_growth_row.valid_vals.variance.to_s.cap_decimals(4)}"
       end
+
+      if fi_over_nfa_row && fi_over_nfa_row.valid_vals.any?
+        lr = fi_over_nfa_row.valid_vals.linear_regression
+        puts "\t\tfi / nfa: "+
+             "a:#{lr.a.to_s.cap_decimals(4)}, "+
+             "b:#{lr.b.to_s.cap_decimals(4)}, "+
+             "r:#{lr.r.to_s.cap_decimals(4)}, "+
+             "var:#{fi_over_nfa_row.valid_vals.variance.to_s.cap_decimals(4)}"
+      end
+    end
+
+    def revenue_growth_row
+      find_row_by_key('Revenue Growth')
     end
 
     def operating_pm_row
@@ -38,8 +51,8 @@ module FinModeling
       find_row_by_key('Sales / NOA')
     end
 
-    def revenue_growth_row
-      find_row_by_key('Revenue Growth')
+    def fi_over_nfa_row
+      find_row_by_key('FI / NFA')
     end
 
     def find_row_by_key(key)

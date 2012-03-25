@@ -175,10 +175,10 @@ describe FinModeling::ReformulatedIncomeStatement  do
 
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "contains the expected rows" do
-      expected_keys = [ "Revenue (000's)", "Core OI (000's)", "OI (000's)", "FI (000's)",
-                        "NI (000's)", "Gross Margin", "Sales PM", "Operating PM",
+      expected_keys = [ "Revenue ($MM)", "Core OI ($MM)", "OI ($MM)", "FI ($MM)",
+                        "NI ($MM)", "Gross Margin", "Sales PM", "Operating PM",
                         "FI / Sales", "NI / Sales", "Sales / NOA", "FI / NFA",
-                        "Revenue Growth", "Core OI Growth", "OI Growth", "ReOI (000's)" ]
+                        "Revenue Growth", "Core OI Growth", "OI Growth", "ReOI ($MM)" ]
 
       subject.rows.map{ |row| row.key }.should == expected_keys
     end
@@ -248,7 +248,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     before (:all) do
       @company = FinModeling::Company.find("aapl")
       @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
-      @policy = FinModeling::ForecastingPolicy.new
+      @policy = FinModeling::GenericForecastingPolicy.new
   
       prev_bs_period = @filings.last.balance_sheet.periods.last
       next_bs_period_value = prev_bs_period.value.next_month.next_month.next_month
@@ -271,7 +271,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       subject.period.to_pretty_s == @next_is_period.to_pretty_s
     end
     it "should set operating_revenue to last year's revenue times the revenue growth" do
-      expected_val = last_re_is.operating_revenues.total * (1.0 + @policy.revenue_growth)
+      expected_val = last_re_is.operating_revenues.total * (1.0 + FinModeling::Rate.new(@policy.revenue_growth).annualize(from=365, to=365/4.0))
       subject.operating_revenues.total.should == expected_val
     end
     it "should set OISAT to operating revenue times sales PM" do
@@ -279,7 +279,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       subject.income_from_sales_after_tax.total.should == expected_val
     end
     it "should set NFI to fi_over_nfa times last year's NFA" do
-      expected_val = last_re_bs.net_financial_assets.total * @policy.fi_over_nfa
+      expected_val = last_re_bs.net_financial_assets.total * (@policy.fi_over_nfa/4)
       subject.net_financing_income.total.should == expected_val
     end
     it "should set comprehensive income to OISAT plus NFI" do

@@ -1,6 +1,5 @@
 module FinModeling
-  class ForecastingPolicy
-    # this class shouldn't be used. It's just some generic constants that can be redefined
+  class GenericForecastingPolicy 
     def revenue_growth
       0.04
     end

@@ -119,7 +119,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
     subject {@reformed_bal_sheet.analysis(@prev_reformed_bal_sheet) }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "contains the expected rows" do
-      expected_keys = ["NOA (000's)", "NFA (000's)", "CSE (000's)",
+      expected_keys = ["NOA ($MM)", "NFA ($MM)", "CSE ($MM)",
                        "Composition Ratio", "NOA Growth", "CSE Growth" ]
 
       subject.rows.map{ |row| row.key }.should == expected_keys
@@ -130,7 +130,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
     before (:all) do
       @company = FinModeling::Company.find("aapl")
       @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
-      @policy = FinModeling::ForecastingPolicy.new
+      @policy = FinModeling::GenericForecastingPolicy.new
   
       prev_bs_period = @filings.last.balance_sheet.periods.last
       next_bs_period_value = prev_bs_period.value.next_month.next_month.next_month
@@ -152,11 +152,11 @@ describe FinModeling::ReformulatedBalanceSheet  do
       subject.period.to_pretty_s == @next_bs_period.to_pretty_s
     end
     it "should set NOA to operating revenue over asset turnover" do # FIXME: isn't this off by a period?
-      expected_val = next_re_is.operating_revenues.total / @policy.sales_over_noa
+      expected_val = next_re_is.operating_revenues.total / (@policy.sales_over_noa/4.0)
       subject.net_operating_assets.total.should == expected_val
     end
     it "should set CSE to last year's CSE plus this year's net income" do
-      expected_val = last_re_bs.common_shareholders_equity.total / next_re_is.comprehensive_income.total
+      expected_val = last_re_bs.common_shareholders_equity.total + next_re_is.comprehensive_income.total
       subject.common_shareholders_equity.total.should == expected_val
     end
     it "should set NFA to the gap between CSE and NOA" do

@@ -1,12 +1,10 @@
-# forecasting_policy_spec.rb
+# generic_forecasting_policy_spec.rb
 
 require 'spec_helper'
 
-describe FinModeling::ForecastingPolicy  do
+describe FinModeling::GenericForecastingPolicy  do
   before (:all) do
-    @company = FinModeling::Company.find("aapl")
-    @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
-    @policy = FinModeling::ForecastingPolicy.new
+    @policy = FinModeling::GenericForecastingPolicy.new
   end
 
   describe ".revenue_growth" do

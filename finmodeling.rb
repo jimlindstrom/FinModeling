@@ -70,6 +70,7 @@ FinModeling::Classifiers.train
 require 'lib/balance_sheet_analyses'
 require 'lib/income_statement_analyses'
 
-require 'lib/forecasting_policy'
+require 'lib/generic_forecasting_policy'
+require 'lib/constant_forecasting_policy'
 require 'lib/forecasts'
 

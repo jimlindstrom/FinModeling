@@ -180,11 +180,11 @@ module FinModeling
     end
 
     def sales_over_noa(reformed_bal_sheet)
-      operating_revenues.total / reformed_bal_sheet.net_operating_assets.total
+      (operating_revenues.total*4.0) / reformed_bal_sheet.net_operating_assets.total
     end
 
     def fi_over_nfa(reformed_bal_sheet)
-      net_financing_income.total / reformed_bal_sheet.net_financial_assets.total
+      (net_financing_income.total*4.0) / reformed_bal_sheet.net_financial_assets.total
     end
 
     def revenue_growth(prev)

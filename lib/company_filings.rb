@@ -70,7 +70,17 @@ module FinModeling
     end
   
     def choose_forecasting_policy
-      FinModeling::ForecastingPolicy.new
+      if length < 3
+        return FinModeling::GenericForecastingPolicy.new
+      else
+        isa = income_statement_analyses
+        args = { }
+        args[:revenue_growth] = isa.revenue_growth_row.valid_vals.mean
+        args[:sales_pm      ] = isa.operating_pm_row.valid_vals.mean
+        args[:sales_over_noa] = isa.asset_turnover_row.valid_vals.mean
+        args[:fi_over_nfa   ] = isa.fi_over_nfa_row.valid_vals.mean
+        return FinModeling::ConstantForecastingPolicy.new(args)
+      end
     end
   
     def forecasts(policy, num_quarters)
