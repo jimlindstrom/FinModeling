@@ -4,21 +4,21 @@ module Xbrlware
     def write_constructor(file, context_name)
       period_str = "nil"
       case
-        when self.period.nil?
+        when !@period
         when self.period.is_instant?
           period_str = "Date.parse(\"#{self.period.value}\")"
         when self.period.is_duration?
           period_str = "{"
           period_str += "\"start_date\" => Date.parse(\"#{self.period.value["start_date"].to_s}\"),"
-          period_str += "\"end_date\" => Date.parse(\"#{self.period.value["end_date"].to_s}\")"
+          period_str +=   "\"end_date\" => Date.parse(\"#{self.period.value[  "end_date"].to_s}\")"
           period_str += "}"
       end
 
       entity_str = "nil"
       case
-        when self.entity.nil? || self.entity.segment.nil?
+        when !@entity || !@entity.segment
         else
-          identifier_str = "\"#{self.entity.identifier}\""
+          identifier_str = "\"#{@entity.identifier}\""
           segment_str = "{}"
           entity_str = "Xbrlware::Entity.new(identifier=#{identifier_str}, segment=#{segment_str})"
       end
@@ -27,6 +27,22 @@ module Xbrlware
     end
 
     class Period
+      def plus_n_months(n)
+        new_value = @value
+        n.times do
+          case
+            when is_instant?
+              new_value = new_value.next_month
+            when is_duration?
+              new_value["start_date"] = new_value["start_date"].next_month
+              new_value[  "end_date"] = new_value[  "end_date"].next_month
+            else
+              raise RuntimeError.new("not supported")
+          end
+        end
+        Period.new(new_value)
+      end
+
       def to_pretty_s
         case
           when is_instant?

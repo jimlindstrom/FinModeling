@@ -2,6 +2,29 @@
 
 require 'spec_helper'
 
+describe Xbrlware::Context::Period do
+  describe ".plus_n_months" do
+    context "when an instantaneous date" do
+      let(:old_value) { Date.parse("2010-12-31") }
+      let(:old) { old = Xbrlware::Context::Period.new(old_value) }
+
+      subject { old.plus_n_months(3) }
+
+      it { should be_a Xbrlware::Context::Period }
+      its(:to_pretty_s) { should == "2011-03-28" }
+    end
+    context "when a date range" do
+      let(:old_value) { {"start_date"=>Date.parse("2011-01-01"), "end_date"=>Date.parse("2011-03-31")} }
+      let(:old) { old = Xbrlware::Context::Period.new(old_value) }
+
+      subject { old.plus_n_months(3) }
+
+      it { should be_a Xbrlware::Context::Period }
+      its(:to_pretty_s) { should == "2011-04-01 to 2011-06-30" }
+    end
+  end
+end
+
 describe Xbrlware::Context do
 
   describe "write_constructor" do
