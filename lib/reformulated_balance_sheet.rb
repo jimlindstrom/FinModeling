@@ -102,8 +102,8 @@ module FinModeling
     end
 
     def self.forecast_next(period, policy, last_re_bs, next_re_is)
-      noa = next_re_is.operating_revenues.total / policy.sales_over_noa
-      cse = last_re_bs.common_shareholders_equity.total / next_re_is.comprehensive_income.total
+      noa = next_re_is.operating_revenues.total / (policy.sales_over_noa/4)
+      cse = last_re_bs.common_shareholders_equity.total + next_re_is.comprehensive_income.total
       nfa = cse - noa
 
       ForecastedReformulatedBalanceSheet.new(period, noa, nfa, cse)

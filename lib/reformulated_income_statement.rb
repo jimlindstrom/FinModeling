@@ -288,9 +288,9 @@ module FinModeling
     end
 
     def self.forecast_next(period, policy, last_re_bs, last_re_is)
-      operating_revenues = last_re_is.operating_revenues.total * (1.0 + policy.revenue_growth)
+      operating_revenues = last_re_is.operating_revenues.total * (1.0 + Rate.new(policy.revenue_growth).annualize(from=365, to=365.0/4.0))
       income_from_sales_after_tax = operating_revenues * policy.sales_pm
-      net_financing_income = last_re_bs.net_financial_assets.total * policy.fi_over_nfa
+      net_financing_income = last_re_bs.net_financial_assets.total * (policy.fi_over_nfa/4.0)
       comprehensive_income = income_from_sales_after_tax + net_financing_income
 
       ForecastedReformulatedIncomeStatement.new(period, operating_revenues, 
