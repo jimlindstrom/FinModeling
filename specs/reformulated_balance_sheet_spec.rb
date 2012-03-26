@@ -152,7 +152,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
       subject.period.to_pretty_s == @next_bs_period.to_pretty_s
     end
     it "should set NOA to the same period's operating revenue over the policy's asset turnover" do
-      expected_val = next_re_is.operating_revenues.total / Ratio.new(@policy.sales_over_noa).yearly_to_quarterly
+      expected_val = next_re_is.operating_revenues.total / FinModeling::Ratio.new(@policy.sales_over_noa).yearly_to_quarterly
       subject.net_operating_assets.total.should == expected_val
     end
     it "should set CSE to last year's CSE plus this year's net income" do
