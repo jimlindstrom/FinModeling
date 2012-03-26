@@ -32,8 +32,8 @@ module FinModeling
       calc_summary.title = @calculation.label + " (#{@calculation.item_id})"
 
       calc_summary.rows = leaf_items(args).collect do |item| 
-        CalculationSummaryRow.new(:key => item.pretty_name, 
-                                  :val => item.value(args[:mapping]))
+        CalculationRow.new(:key => item.pretty_name, 
+                                             :vals => [ item.value(args[:mapping] )])
       end
     
       return calc_summary

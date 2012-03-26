@@ -38,7 +38,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
       sum = @cash_flow_stmt.cash_change_calculation
                            .summary(:period=>@period)
                            .rows.select{ |row| row.type == :c }
-                           .map{ |row| row.val }
+                           .map{ |row| row.vals.first }
                            .inject(:+)
       subject.total.should == sum
     end
@@ -51,7 +51,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
       sum = @cash_flow_stmt.cash_change_calculation
                            .summary(:period=>@period)
                            .rows.select{ |row| row.type == :i }
-                           .map{ |row| row.val }
+                           .map{ |row| row.vals.first }
                            .inject(:+)
       subject.total.should == sum
     end
@@ -64,7 +64,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
       sum = @cash_flow_stmt.cash_change_calculation
                            .summary(:period=>@period)
                            .rows.select{ |row| row.type == :d }
-                           .map{ |row| row.val }
+                           .map{ |row| row.vals.first }
                            .inject(:+) 
       sum = sum - @cash_flow_stmt.cash_change_calculation
                            .summary(:period=>@period)
@@ -80,7 +80,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
       sum = @cash_flow_stmt.cash_change_calculation
                            .summary(:period=>@period)
                            .rows.select{ |row| row.type == :f }
-                           .map{ |row| row.val }
+                           .map{ |row| row.vals.first }
                            .inject(:+)
       subject.total.should == sum
     end

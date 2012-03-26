@@ -12,26 +12,26 @@ module FinModeling
           when :c
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Cash from Operations"
-            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.cash_from_operations.total ),
-                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.cash_from_operations.total ) ]
+            @cs.rows = [ CalculationRow.new(:key => "First  Row", :vals => [ @re_cfs1.cash_from_operations.total] ),
+                         CalculationRow.new(:key => "Second Row", :vals => [-@re_cfs2.cash_from_operations.total] ) ]
             return @cs
           when :i
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Cash Investments in Operations"
-            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.cash_investments_in_operations.total ),
-                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.cash_investments_in_operations.total ) ]
+            @cs.rows = [ CalculationRow.new(:key => "First  Row", :vals => [ @re_cfs1.cash_investments_in_operations.total] ),
+                         CalculationRow.new(:key => "Second Row", :vals => [-@re_cfs2.cash_investments_in_operations.total] ) ]
             return @cs
           when :d
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Payments to Debtholders"
-            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.payments_to_debtholders.total ),
-                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.payments_to_debtholders.total ) ]
+            @cs.rows = [ CalculationRow.new(:key => "First  Row", :vals => [ @re_cfs1.payments_to_debtholders.total] ),
+                         CalculationRow.new(:key => "Second Row", :vals => [-@re_cfs2.payments_to_debtholders.total] ) ]
             return @cs
           when :f
             @cs = FinModeling::CalculationSummary.new
             @cs.title = "Payments to Stockholders"
-            @cs.rows = [ CalculationSummaryRow.new(:key => "First  Row", :val =>  @re_cfs1.payments_to_stockholders.total ),
-                         CalculationSummaryRow.new(:key => "Second Row", :val => -@re_cfs2.payments_to_stockholders.total ) ]
+            @cs.rows = [ CalculationRow.new(:key => "First  Row", :vals => [ @re_cfs1.payments_to_stockholders.total] ),
+                         CalculationRow.new(:key => "Second Row", :vals => [-@re_cfs2.payments_to_stockholders.total] ) ]
             return @cs
         end
       end
@@ -51,9 +51,9 @@ module FinModeling
       @f.title = "Payments to stockholders"
 
       if cash_change_summary.class != FakeCashChangeSummary
-        @d.rows << CalculationSummaryRow.new(:key => "Investment in Cash and Equivalents",
-                                             :type => :d,
-                                             :val => -cash_change_summary.total)
+        @d.rows << CalculationRow.new(:key => "Investment in Cash and Equivalents",
+                                                        :type => :d,
+                                                        :vals => [-cash_change_summary.total])
       end
     end
 
@@ -81,16 +81,16 @@ module FinModeling
     def free_cash_flow
       cs = FinModeling::CalculationSummary.new
       cs.title = "Free Cash Flow"
-      cs.rows = [ CalculationSummaryRow.new(:key => "Cash from Operations (C)", :val => @c.total ),
-                  CalculationSummaryRow.new(:key => "Cash Investment in Operations (I)", :val => @i.total ) ]
+      cs.rows = [ CalculationRow.new(:key => "Cash from Operations (C)",          :vals => [@c.total] ),
+                  CalculationRow.new(:key => "Cash Investment in Operations (I)", :vals => [@i.total] ) ]
       return cs
     end
 
     def financing_flows
       cs = FinModeling::CalculationSummary.new
       cs.title = "Financing Flows"
-      cs.rows = [ CalculationSummaryRow.new(:key => "Payments to debtholders (d)", :val => @d.total ),
-                  CalculationSummaryRow.new(:key => "Payments to stockholders (F)", :val => @f.total ) ]
+      cs.rows = [ CalculationRow.new(:key => "Payments to debtholders (d)",  :vals => [@d.total] ),
+                  CalculationRow.new(:key => "Payments to stockholders (F)", :vals => [@f.total] ) ]
       return cs
     end
 
@@ -102,15 +102,15 @@ module FinModeling
       analysis = CalculationSummary.new
   
       analysis.title = ""
-      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  "Unknown...")
+      analysis.header_row = CalculationHeader.new(:key => "", :vals =>  ["Unknown..."])
   
       analysis.rows = []
-      analysis.rows << CalculationSummaryRow.new(:key => "C ($MM)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "I ($MM)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "d ($MM)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "F ($MM)",   :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "FCF ($MM)", :val => nil)
-      analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => nil)
+      analysis.rows << CalculationRow.new(:key => "C ($MM)",   :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "I ($MM)",   :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "d ($MM)",   :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "F ($MM)",   :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "FCF ($MM)", :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "NI / C",    :vals => [nil])
  
       return analysis
     end
@@ -119,18 +119,18 @@ module FinModeling
       analysis = CalculationSummary.new
   
       analysis.title = ""
-      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  @period.value["end_date"].to_s)
+      analysis.header_row = CalculationHeader.new(:key => "", :vals => [@period.value["end_date"].to_s])
   
       analysis.rows = []
-      analysis.rows << CalculationSummaryRow.new(:key => "C   ($MM)", :val => cash_from_operations.total.to_nearest_million)
-      analysis.rows << CalculationSummaryRow.new(:key => "I   ($MM)", :val => cash_investments_in_operations.total.to_nearest_million)
-      analysis.rows << CalculationSummaryRow.new(:key => "d   ($MM)", :val => payments_to_debtholders.total.to_nearest_million)
-      analysis.rows << CalculationSummaryRow.new(:key => "F   ($MM)", :val => payments_to_stockholders.total.to_nearest_million)
-      analysis.rows << CalculationSummaryRow.new(:key => "FCF ($MM)", :val => free_cash_flow.total.to_nearest_million)
+      analysis.rows << CalculationRow.new(:key => "C   ($MM)", :vals => [cash_from_operations.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "I   ($MM)", :vals => [cash_investments_in_operations.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "d   ($MM)", :vals => [payments_to_debtholders.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "F   ($MM)", :vals => [payments_to_stockholders.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "FCF ($MM)", :vals => [free_cash_flow.total.to_nearest_million])
       if inc_stmt
-        analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => ni_over_c(inc_stmt))
+        analysis.rows << CalculationRow.new(:key => "NI / C",  :vals => [ni_over_c(inc_stmt)])
       else
-        analysis.rows << CalculationSummaryRow.new(:key => "NI / C",      :val => nil)
+        analysis.rows << CalculationRow.new(:key => "NI / C",  :vals => [nil])
       end
  
       return analysis

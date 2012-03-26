@@ -11,11 +11,11 @@ describe FinModeling::Forecasts  do
 
   describe "balance_sheet_analyses" do
     subject { @forecasts.balance_sheet_analyses(@filings) }
-    it { should be_a FinModeling::MultiColumnCalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
   end
 
   describe "income_statement_analyses" do
     subject { @forecasts.income_statement_analyses(@filings) }
-    it { should be_a FinModeling::MultiColumnCalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
   end
 end

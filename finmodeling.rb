@@ -34,8 +34,8 @@ require 'lib/company_filing'
 require 'lib/annual_report_filing'
 require 'lib/quarterly_report_filing'
 
+require 'lib/array_with_stats'
 require 'lib/calculation_summary'
-require 'lib/multi_column_calculation_summary'
 
 require 'lib/can_classify_rows'
 require 'lib/can_cache_classifications'

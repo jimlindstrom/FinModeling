@@ -41,7 +41,7 @@ describe FinModeling::CanClassifyRows  do
         @age_list = AgeList.new
         @age_list.calculation = FinModeling::CalculationSummary.new
         ages = [21, 41, 30, 35]
-        @age_list.calculation.rows = ages.collect { |age| FinModeling::CalculationSummaryRow.new(:key => age.to_s, :val => 0) }
+        @age_list.calculation.rows = ages.collect { |age| FinModeling::CalculationRow.new(:key => age.to_s, :vals => 0) }
       end
       context "with lookahead of 0" do
         it "should fail to correct errors" do
@@ -63,7 +63,7 @@ describe FinModeling::CanClassifyRows  do
         @age_list = AgeList.new
         @age_list.calculation = FinModeling::CalculationSummary.new
         ages = [21, 41, 40, 25, 30, 35, 38, 40]
-        @age_list.calculation.rows = ages.collect { |age| FinModeling::CalculationSummaryRow.new(:key => age.to_s, :val => 0) }
+        @age_list.calculation.rows = ages.collect { |age| FinModeling::CalculationRow.new(:key => age.to_s, :vals => 0) }
       end
       context "with lookahead of 2" do
         it "should fail to correct errors" do

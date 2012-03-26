@@ -21,8 +21,8 @@ module FinModeling
           prev_re_bs = re_bs
         end
       
-        @balance_sheet_analyses.totals_row_enabled = false  if @balance_sheet_analyses.is_a? FinModeling::MultiColumnCalculationSummary
-        @balance_sheet_analyses.extend BalanceSheetAnalyses if @balance_sheet_analyses.is_a? FinModeling::MultiColumnCalculationSummary
+        @balance_sheet_analyses.totals_row_enabled = false  if @balance_sheet_analyses.is_a? FinModeling::CalculationSummary
+        @balance_sheet_analyses.extend BalanceSheetAnalyses if @balance_sheet_analyses.is_a? FinModeling::CalculationSummary
       end
       return @balance_sheet_analyses
     end
@@ -45,8 +45,8 @@ module FinModeling
           prev_re_bs, prev_re_is  = [re_bs, re_is]
         end
       
-        @income_statement_analyses.totals_row_enabled = false     if @income_statement_analyses.is_a? FinModeling::MultiColumnCalculationSummary
-        @income_statement_analyses.extend IncomeStatementAnalyses if @income_statement_analyses.is_a? FinModeling::MultiColumnCalculationSummary
+        @income_statement_analyses.totals_row_enabled = false     if @income_statement_analyses.is_a? FinModeling::CalculationSummary
+        @income_statement_analyses.extend IncomeStatementAnalyses if @income_statement_analyses.is_a? FinModeling::CalculationSummary
       end
       return @income_statement_analyses
     end

@@ -30,24 +30,24 @@ module FinModeling
     def net_operating_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Operational Assets"
-      cs.rows = [ CalculationSummaryRow.new( :key => "OA", :val =>  @oa.total ),
-                  CalculationSummaryRow.new( :key => "OL", :val => -@ol.total ) ]
+      cs.rows = [ CalculationRow.new( :key => "OA", :vals => [  @oa.total ] ),
+                  CalculationRow.new( :key => "OL", :vals => [ -@ol.total ] ) ]
       return cs
     end
 
     def net_financial_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Financial Assets"
-      cs.rows = [ CalculationSummaryRow.new( :key => "FA", :val =>  @fa.total ),
-                  CalculationSummaryRow.new( :key => "FL", :val => -@fl.total ) ]
+      cs.rows = [ CalculationRow.new( :key => "FA", :vals => [  @fa.total ] ),
+                  CalculationRow.new( :key => "FL", :vals => [ -@fl.total ] ) ]
       return cs
     end
 
     def common_shareholders_equity
       cs = FinModeling::CalculationSummary.new
       cs.title = "Common Shareholders' Equity"
-      cs.rows = [ CalculationSummaryRow.new( :key => "NOA", :val =>  net_operating_assets.total ),
-                  CalculationSummaryRow.new( :key => "NFA", :val =>  net_financial_assets.total ) ]
+      cs.rows = [ CalculationRow.new( :key => "NOA", :vals => [  net_operating_assets.total ] ),
+                  CalculationRow.new( :key => "NFA", :vals => [  net_financial_assets.total ] ) ]
       return cs
     end
 
@@ -69,33 +69,33 @@ module FinModeling
       analysis = CalculationSummary.new
   
       analysis.title = ""
-      analysis.header_row = CalculationSummaryHeaderRow.new(:key => "", :val =>  @period.to_pretty_s)
+      analysis.header_row = CalculationHeader.new(:key => "", :vals => [@period.to_pretty_s])
   
       analysis.rows = []
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "A ($MM)",:val => @oa.total.to_nearest_million +
-                                                                               @fa.total.to_nearest_million)
-        analysis.rows << CalculationSummaryRow.new(:key => "L ($MM)",:val => @ol.total.to_nearest_million +
-                                                                               @fl.total.to_nearest_million)
+        analysis.rows << CalculationRow.new(:key => "A ($MM)",:vals => [@oa.total.to_nearest_million +
+                                                                               @fa.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "L ($MM)",:vals => [@ol.total.to_nearest_million +
+                                                                               @fl.total.to_nearest_million])
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "NOA ($MM)", :val => net_operating_assets.total.to_nearest_million)
+      analysis.rows << CalculationRow.new(:key => "NOA ($MM)", :vals => [net_operating_assets.total.to_nearest_million])
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "OA ($MM)",:val => operating_assets.total.to_nearest_million)
-        analysis.rows << CalculationSummaryRow.new(:key => "OL ($MM)",:val => operating_liabilities.total.to_nearest_million)
+        analysis.rows << CalculationRow.new(:key => "OA ($MM)",:vals => [operating_assets.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "OL ($MM)",:vals => [operating_liabilities.total.to_nearest_million])
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "NFA ($MM)", :val => net_financial_assets.total.to_nearest_million)
+      analysis.rows << CalculationRow.new(:key => "NFA ($MM)", :vals => [net_financial_assets.total.to_nearest_million])
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationSummaryRow.new(:key => "FA ($MM)",:val => financial_assets.total.to_nearest_million)
-        analysis.rows << CalculationSummaryRow.new(:key => "FL ($MM)",:val => financial_liabilities.total.to_nearest_million)
+        analysis.rows << CalculationRow.new(:key => "FA ($MM)",:vals => [financial_assets.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "FL ($MM)",:vals => [financial_liabilities.total.to_nearest_million])
       end
-      analysis.rows << CalculationSummaryRow.new(:key => "CSE ($MM)", :val => common_shareholders_equity.total.to_nearest_million)
-      analysis.rows << CalculationSummaryRow.new(:key => "Composition Ratio", :val => composition_ratio )
+      analysis.rows << CalculationRow.new(:key => "CSE ($MM)", :vals => [common_shareholders_equity.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "Composition Ratio", :vals => [composition_ratio] )
       if prev.nil?
-        analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => nil )
-        analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => nil )
+        analysis.rows << CalculationRow.new(:key => "NOA Growth", :vals => [nil] )
+        analysis.rows << CalculationRow.new(:key => "CSE Growth", :vals => [nil] )
       else
-        analysis.rows << CalculationSummaryRow.new(:key => "NOA Growth", :val => noa_growth(prev) )
-        analysis.rows << CalculationSummaryRow.new(:key => "CSE Growth", :val => cse_growth(prev) )
+        analysis.rows << CalculationRow.new(:key => "NOA Growth", :vals => [noa_growth(prev)] )
+        analysis.rows << CalculationRow.new(:key => "CSE Growth", :vals => [cse_growth(prev)] )
       end
   
       return analysis
@@ -149,27 +149,27 @@ module FinModeling
     def net_operating_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Operational Assets"
-      cs.rows = [ CalculationSummaryRow.new( :key => "NOA", :val => @noa ) ]
+      cs.rows = [ CalculationRow.new( :key => "NOA", :vals => [@noa] ) ]
       return cs
     end
 
     def net_financial_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Financial Assets"
-      cs.rows = [ CalculationSummaryRow.new( :key => "NFA", :val => @nfa ) ]
+      cs.rows = [ CalculationRow.new( :key => "NFA", :vals => [@nfa] ) ]
       return cs
     end
 
     def common_shareholders_equity
       cs = FinModeling::CalculationSummary.new
       cs.title = "Common Shareholders' Equity"
-      cs.rows = [ CalculationSummaryRow.new( :key => "CSE", :val => @cse ) ]
+      cs.rows = [ CalculationRow.new( :key => "CSE", :vals => [@cse] ) ]
       return cs
     end
  
     def analysis(prev)
       analysis = super(prev)
-      analysis.header_row.val += "E"
+      analysis.header_row.vals[0] += "E" # for estimated
       return analysis
     end
   end

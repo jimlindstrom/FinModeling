@@ -1,14 +1,15 @@
 Forecasts
 	- Need more sophisticated forecasting policies
+	- Need to have more sophisticated policies fall back on simpler ones (or none) when there's
+	  too much chaos
 
 Bugs
-	- The "valid vals" thing should hides gaps in data, which affect the regressions...
+	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
 	- "./examples/show_reports.rb nflx 2010-10-01" is reporting a crazy Core OI in last quarter
 	- show_reports doesn't check filing validity
 
 Cleanup
 	- The *Analyses doesn't feel right to me, modeling-wise.
-	- Get rid of the non-multi-column version of Calculation Summary and simplify the name.
 
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
