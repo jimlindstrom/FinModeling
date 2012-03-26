@@ -3,6 +3,15 @@
 require 'spec_helper'
 
 describe Xbrlware::Context::Period do
+  describe ".days" do
+    context "when a date range" do
+      let(:value) { {"start_date"=>Date.parse("2011-01-01"), "end_date"=>Date.parse("2011-03-31")} }
+      subject { Xbrlware::Context::Period.new(value).days }
+
+      it { should be_a Fixnum }
+      it { should == Xbrlware::DateUtil.days_between(value["end_date"], value["start_date"]) }
+    end
+  end
   describe ".plus_n_months" do
     context "when an instantaneous date" do
       let(:old_value) { Date.parse("2010-12-31") }

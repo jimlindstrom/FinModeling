@@ -11,13 +11,13 @@ module FinModeling
              "var:#{operating_pm_row.valid_vals.variance.to_s.cap_decimals(4)}"
       end
 
-      if asset_turnover_row && asset_turnover_row.valid_vals.any?
-        lr = asset_turnover_row.valid_vals.linear_regression
-        puts "\t\tasset turnover: "+
+      if sales_over_noa_row && sales_over_noa_row.valid_vals.any?
+        lr = sales_over_noa_row.valid_vals.linear_regression
+        puts "\t\tsales / noa: "+
              "a:#{lr.a.to_s.cap_decimals(4)}, "+
              "b:#{lr.b.to_s.cap_decimals(4)}, "+
              "r:#{lr.r.to_s.cap_decimals(4)}, "+
-             "var:#{asset_turnover_row.valid_vals.variance.to_s.cap_decimals(4)}"
+             "var:#{sales_over_noa_row.valid_vals.variance.to_s.cap_decimals(4)}"
       end
 
       if revenue_growth_row && revenue_growth_row.valid_vals.any?
@@ -47,7 +47,7 @@ module FinModeling
       find_row_by_key('Operating PM')
     end
 
-    def asset_turnover_row
+    def sales_over_noa_row
       find_row_by_key('Sales / NOA')
     end
 

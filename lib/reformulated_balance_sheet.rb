@@ -56,13 +56,13 @@ module FinModeling
     end
 
     def noa_growth(prev)
-      ratio = (net_operating_assets.total - prev.net_operating_assets.total) / prev.net_operating_assets.total
-      return annualize_ratio(prev, ratio)
+      rate = (net_operating_assets.total - prev.net_operating_assets.total) / prev.net_operating_assets.total
+      return annualize_rate(prev, rate)
     end
 
     def cse_growth(prev)
-      ratio = (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
-      return annualize_ratio(prev, ratio)
+      rate = (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
+      return annualize_rate(prev, rate)
     end
   
     def analysis(prev)
@@ -102,7 +102,7 @@ module FinModeling
     end
 
     def self.forecast_next(period, policy, last_re_bs, next_re_is)
-      noa = next_re_is.operating_revenues.total / (policy.sales_over_noa/4)
+      noa = next_re_is.operating_revenues.total / Ratio.new(policy.sales_over_noa).yearly_to_quarterly
       cse = last_re_bs.common_shareholders_equity.total + next_re_is.comprehensive_income.total
       nfa = cse - noa
 
@@ -111,14 +111,14 @@ module FinModeling
 
     private
 
-    def annualize_ratio(prev, ratio)
+    def annualize_rate(prev, rate)
       from_days = Xbrlware::DateUtil.days_between(prev.period.value, @period.value)
-      return Rate.new(ratio).annualize(from_days, to_days=365)
+      return Rate.new(rate).annualize(from_days, to_days=365)
     end
 
-    def deannualize_ratio(prev, ratio)
+    def deannualize_rate(prev, rate)
       to_days = Xbrlware::DateUtil.days_between(prev.period.value,   @period.value)
-      return Rate.new(ratio).annualize(from_days=365, to_days)
+      return Rate.new(rate).annualize(from_days=365, to_days)
     end
   end
 

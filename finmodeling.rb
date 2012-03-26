@@ -26,6 +26,7 @@ require 'lib/xbrlware_dateutil'
 
 require 'lib/period_array'
 require 'lib/rate'
+require 'lib/ratio'
 require 'lib/company'
 
 require 'lib/company_filings'

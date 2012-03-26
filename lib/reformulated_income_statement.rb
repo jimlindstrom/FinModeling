@@ -180,30 +180,32 @@ module FinModeling
     end
 
     def sales_over_noa(reformed_bal_sheet)
-      (operating_revenues.total*4.0) / reformed_bal_sheet.net_operating_assets.total
+      ratio = operating_revenues.total / reformed_bal_sheet.net_operating_assets.total
+      Ratio.new(ratio).annualize(from_days=@period.days, to_days=365.0)
     end
 
     def fi_over_nfa(reformed_bal_sheet)
-      (net_financing_income.total*4.0) / reformed_bal_sheet.net_financial_assets.total
+      ratio = net_financing_income.total / reformed_bal_sheet.net_financial_assets.total
+      Ratio.new(ratio).annualize(from_days=@period.days, to_days=365.0)
     end
 
     def revenue_growth(prev)
-      ratio = (operating_revenues.total - prev.operating_revenues.total) / prev.operating_revenues.total
-      return annualize_ratio(prev, ratio)
+      rate = (operating_revenues.total - prev.operating_revenues.total) / prev.operating_revenues.total
+      return annualize_rate(prev, rate)
     end
 
     def core_oi_growth(prev)
-      ratio = (income_from_sales_after_tax.total - prev.income_from_sales_after_tax.total) / prev.income_from_sales_after_tax.total
-      return annualize_ratio(prev, ratio)
+      rate = (income_from_sales_after_tax.total - prev.income_from_sales_after_tax.total) / prev.income_from_sales_after_tax.total
+      return annualize_rate(prev, rate)
     end
 
     def oi_growth(prev)
-      ratio = (operating_income_after_tax.total - prev.operating_income_after_tax.total) / prev.operating_income_after_tax.total
-      return annualize_ratio(prev, ratio)
+      rate = (operating_income_after_tax.total - prev.operating_income_after_tax.total) / prev.operating_income_after_tax.total
+      return annualize_rate(prev, rate)
     end
 
     def re_oi(prev_bal_sheet, expected_rate_of_return=0.10)
-      e_ror = deannualize_ratio(prev_bal_sheet, expected_rate_of_return)
+      e_ror = deannualize_rate(prev_bal_sheet, expected_rate_of_return)
       return (operating_income_after_tax.total - (e_ror * prev_bal_sheet.net_operating_assets.total))
     end
 
@@ -288,9 +290,10 @@ module FinModeling
     end
 
     def self.forecast_next(period, policy, last_re_bs, last_re_is)
-      operating_revenues = last_re_is.operating_revenues.total * (1.0 + Rate.new(policy.revenue_growth).annualize(from=365, to=365.0/4.0))
+      operating_revenues = last_re_is.operating_revenues.total * (1.0 + Rate.new(policy.revenue_growth).yearly_to_quarterly)
       income_from_sales_after_tax = operating_revenues * policy.sales_pm
-      net_financing_income = last_re_bs.net_financial_assets.total * (policy.fi_over_nfa/4.0)
+      net_financing_income = last_re_bs.net_financial_assets.total * Ratio.new(policy.fi_over_nfa).yearly_to_quarterly
+
       comprehensive_income = income_from_sales_after_tax + net_financing_income
 
       ForecastedReformulatedIncomeStatement.new(period, operating_revenues, 
@@ -300,24 +303,24 @@ module FinModeling
 
     private
 
-    def annualize_ratio(prev, ratio)
+    def annualize_rate(prev, rate)
       from_days = case
         when prev.period.is_instant?
           Xbrlware::DateUtil.days_between(prev.period.value,             @period.value["end_date"])
         when prev.period.is_duration?
           Xbrlware::DateUtil.days_between(prev.period.value["end_date"], @period.value["end_date"])
       end
-      Rate.new(ratio).annualize(from_days, to_days=365)
+      Rate.new(rate).annualize(from_days, to_days=365)
     end
 
-    def deannualize_ratio(prev, ratio)
+    def deannualize_rate(prev, rate)
       to_days = case
         when prev.period.is_instant?
           Xbrlware::DateUtil.days_between(prev.period.value,             @period.value["end_date"])
         when prev.period.is_duration?
           Xbrlware::DateUtil.days_between(prev.period.value["end_date"], @period.value["end_date"])
       end
-      Rate.new(ratio).annualize(from_days=365, to_days)
+      Rate.new(rate).annualize(from_days=365, to_days)
     end
 
   end

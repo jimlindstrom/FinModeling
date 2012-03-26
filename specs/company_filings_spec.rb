@@ -39,7 +39,7 @@ describe FinModeling::CompanyFiling  do
 
       its(:revenue_growth) { should be_within(0.01).of(isa.revenue_growth_row.valid_vals.mean) }
       its(:sales_pm)       { should be_within(0.01).of(isa.operating_pm_row.valid_vals.mean) } # FIXME: name mismatch
-      its(:sales_over_noa) { should be_within(0.01).of(isa.asset_turnover_row.valid_vals.mean) } # FIXME: name mismatch
+      its(:sales_over_noa) { should be_within(0.01).of(isa.sales_over_noa_row.valid_vals.mean) } 
       its(:fi_over_nfa)    { should be_within(0.01).of(isa.fi_over_nfa_row.valid_vals.mean) }
     end
   end

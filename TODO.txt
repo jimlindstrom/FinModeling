@@ -2,20 +2,13 @@ Forecasts
 	- Need more sophisticated forecasting policies
 
 Bugs
-	- The IS/BS ratios (e.g., Sales/NOA, FI/NFA) are not being annualized like the other ratios are.
 	- The "valid vals" thing should hides gaps in data, which affect the regressions...
 	- "./examples/show_reports.rb nflx 2010-10-01" is reporting a crazy Core OI in last quarter
 	- show_reports doesn't check filing validity
-	- Not all filings have quarterly summaries. Need a generalized way of 
-      constructing quarterly summaries from whatever latest periods *do* exist.
 
 Cleanup
-	- As with Rate, create a Ratio to annualize/deannualize instead of mult/div'ing by 4.0
-	- For Rate (and the to-be-created Ratio), add helpers for going from quarter-to-annual and 
-	  vice versa.
 	- The *Analyses doesn't feel right to me, modeling-wise.
 	- Get rid of the non-multi-column version of Calculation Summary and simplify the name.
-	- Use ||= for caching
 
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash

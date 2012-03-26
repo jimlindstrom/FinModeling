@@ -77,7 +77,7 @@ module FinModeling
         args = { }
         args[:revenue_growth] = isa.revenue_growth_row.valid_vals.mean
         args[:sales_pm      ] = isa.operating_pm_row.valid_vals.mean
-        args[:sales_over_noa] = isa.asset_turnover_row.valid_vals.mean
+        args[:sales_over_noa] = isa.sales_over_noa_row.valid_vals.mean
         args[:fi_over_nfa   ] = isa.fi_over_nfa_row.valid_vals.mean
         return FinModeling::ConstantForecastingPolicy.new(args)
       end

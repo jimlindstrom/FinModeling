@@ -27,6 +27,10 @@ module Xbrlware
     end
 
     class Period
+      def days
+        Xbrlware::DateUtil.days_between(@value["end_date"], @value["start_date"])
+      end
+
       def plus_n_months(n)
         case
           when is_instant?
