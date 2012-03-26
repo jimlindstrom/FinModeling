@@ -5,11 +5,10 @@ Forecasts
 
 Bugs
 	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
-	- "./examples/show_reports.rb nflx 2010-10-01" is reporting a crazy Core OI in last quarter
 	- show_reports doesn't check filing validity
 
 Cleanup
-	- The *Analyses doesn't feel right to me, modeling-wise.
+	- The *Analyses doesn't feel right, modeling-wise.
 
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
