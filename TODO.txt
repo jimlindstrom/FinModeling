@@ -7,9 +7,6 @@ Bugs
 	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
 	- show_reports doesn't check filing validity
 
-Cleanup
-	- The *Analyses doesn't feel right, modeling-wise.
-
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
 	  transactions.  All 3 of these items are listed in supplementary disclosures.

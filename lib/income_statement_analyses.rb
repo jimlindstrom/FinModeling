@@ -1,6 +1,17 @@
 module FinModeling
 
-  module IncomeStatementAnalyses
+  class IncomeStatementAnalyses < CalculationSummary
+    def initialize(calc_summary)
+      @title              = calc_summary.title
+      @rows               = calc_summary.rows
+      @header_row         = calc_summary.header_row
+      @num_value_columns  = calc_summary.num_value_columns
+      @key_width          = calc_summary.key_width
+      @val_width          = calc_summary.val_width
+      @max_decimals       = calc_summary.max_decimals
+      @totals_row_enabled = false
+    end
+
     def print_extras
       if operating_pm_row && operating_pm_row.valid_vals.any?
         lr = operating_pm_row.valid_vals.linear_regression

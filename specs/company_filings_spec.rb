@@ -10,17 +10,17 @@ describe FinModeling::CompanyFiling  do
 
   describe "balance_sheet_analyses" do
     subject { @filings.balance_sheet_analyses }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_an_instance_of FinModeling::BalanceSheetAnalyses }
   end
 
   describe "cash_flow_statement_analyses" do
     subject { @filings.cash_flow_statement_analyses }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_an_instance_of FinModeling::CalculationSummary } # FIXME: model this guy the same way...
   end
 
   describe "income_statement_analyses" do
     subject { @filings.income_statement_analyses }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_an_instance_of FinModeling::IncomeStatementAnalyses }
   end
 
   describe "choose_forecasting_policy" do

@@ -1,7 +1,18 @@
 module FinModeling
 
-  module BalanceSheetAnalyses
-    def print_extras
+  class BalanceSheetAnalyses < CalculationSummary
+    def initialize(calc_summary)
+      @title              = calc_summary.title
+      @rows               = calc_summary.rows
+      @header_row         = calc_summary.header_row
+      @num_value_columns  = calc_summary.num_value_columns
+      @key_width          = calc_summary.key_width
+      @val_width          = calc_summary.val_width
+      @max_decimals       = calc_summary.max_decimals
+      @totals_row_enabled = false
+    end
+
+    def print_extras # FIXME: rename
       lr = noa_growth_row.valid_vals.linear_regression
       puts "\t\tNOA growth: "+
            "a:#{lr.a.to_s.cap_decimals(4)}, "+
@@ -14,7 +25,7 @@ module FinModeling
       find_row_by_key('NOA Growth')
     end
 
-    def find_row_by_key(key)
+    def find_row_by_key(key) # FIXME: move this to CalculationSummary
       self.rows.find{ |x| x.key == key }
     end
   end

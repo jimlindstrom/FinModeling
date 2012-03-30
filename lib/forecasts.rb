@@ -11,8 +11,6 @@ module FinModeling
       if !@balance_sheet_analyses
         prev_filing = filings.last
         prev_re_bs = prev_filing.balance_sheet.reformulated(prev_filing.balance_sheet.periods.last)
-        @balance_sheet_analyses = nil
-    
         @reformulated_balance_sheets.each do |re_bs|
           next_analysis = re_bs.analysis(prev_re_bs)
     
@@ -20,16 +18,13 @@ module FinModeling
           @balance_sheet_analyses =                           next_analysis if !@balance_sheet_analyses
           prev_re_bs = re_bs
         end
-      
-        @balance_sheet_analyses.totals_row_enabled = false  if @balance_sheet_analyses.is_a? FinModeling::CalculationSummary
-        @balance_sheet_analyses.extend BalanceSheetAnalyses if @balance_sheet_analyses.is_a? FinModeling::CalculationSummary
+        @balance_sheet_analyses = BalanceSheetAnalyses.new(@balance_sheet_analyses)
       end
       return @balance_sheet_analyses
     end
   
     def income_statement_analyses(filings)
       if !@income_statement_analyses
-        @income_statement_analyses = nil
         prev_filing = filings.last
         prev_re_bs = prev_filing.balance_sheet.reformulated(prev_filing.balance_sheet.periods.last)
         prev_prev_is = (filings.length > 2) ? filings[-2].income_statement : nil
@@ -44,9 +39,7 @@ module FinModeling
       
           prev_re_bs, prev_re_is  = [re_bs, re_is]
         end
-      
-        @income_statement_analyses.totals_row_enabled = false     if @income_statement_analyses.is_a? FinModeling::CalculationSummary
-        @income_statement_analyses.extend IncomeStatementAnalyses if @income_statement_analyses.is_a? FinModeling::CalculationSummary
+        @income_statement_analyses = IncomeStatementAnalyses.new(@income_statement_analyses)
       end
       return @income_statement_analyses
     end
