@@ -194,7 +194,7 @@ end
 
 def print_summaries(summaries)
   summaries.each do |summary|
-    summary.key_width = 50
+    summary.key_width = 60
     summary.val_width = 18
     summary.print
   end
