@@ -164,6 +164,27 @@ end
 #end
 
 describe Xbrlware::Linkbase::CalculationLinkbase::Calculation do
+  describe ".top_level_arcs" do
+    before(:all) do
+      @calc = FinModeling::Factory.Calculation(:title=>"Statement of Something or Other") 
+      @calc.arcs << FinModeling::Factory.CalculationArc(:label=>"A0")
+	  @calc.arcs.first.items = []
+      @calc.arcs.first.items << FinModeling::Factory.Item(:name=>"A0.I0")
+
+      @calc.arcs << FinModeling::Factory.CalculationArc(:label=>"B0")
+	  @calc.arcs.last.children = []
+      @calc.arcs.last.children << FinModeling::Factory.CalculationArc(:label=>"B0.B1")
+
+	  @calc.arcs.last.children.first.items = []
+      @calc.arcs.last.children.first.items << FinModeling::Factory.Item(:name=>"B0.B1.I0")
+
+      @calc.arcs.last.children << @calc.arcs.first # B0 contains A0
+    end
+    subject { @calc.top_level_arcs }
+    it { should have(1).items }
+    its(:first) { should be @calc.arcs.last }
+  end
+
   describe ".is_disclosure?" do
     context "when its title begins with 'Disclosure'" do
       let(:calc) { FinModeling::Factory.Calculation(:title=>"Disclosure of Something or Other") }
@@ -179,7 +200,7 @@ describe Xbrlware::Linkbase::CalculationLinkbase::Calculation do
 end
 
 describe Xbrlware::Linkbase::CalculationLinkbase::Calculation::CalculationArc do
-  describe "write_constructor" do
+  describe ".write_constructor" do
     before(:all) do
       google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
       filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
@@ -208,5 +229,43 @@ describe Xbrlware::Linkbase::CalculationLinkbase::Calculation::CalculationArc do
       @loaded_item.items.length.should == @orig_item.items.length
     end
   end
+
+  describe ".contains_arc?" do
+    before(:each) do
+      @calc = FinModeling::Factory.Calculation(:title=>"Statement of Something or Other") 
+      @calc.arcs << FinModeling::Factory.CalculationArc(:label=>"A0")
+	  @calc.arcs.first.items = []
+      @calc.arcs.first.items << FinModeling::Factory.Item(:name=>"A0.I0")
+
+      @calc.arcs << FinModeling::Factory.CalculationArc(:label=>"B0")
+	  @calc.arcs.last.children = []
+      @calc.arcs.last.children << FinModeling::Factory.CalculationArc(:label=>"B0.B1")
+
+	  @calc.arcs.last.children.first.items = []
+      @calc.arcs.last.children.first.items << FinModeling::Factory.Item(:name=>"B0.B1.I0")
+    end
+    context "when the first arc does not contain the second arc" do
+      subject { @calc.arcs.first.contains_arc?(@calc.arcs.last) }
+      it { should == false }
+    end
+    context "when the first arc contains the second arc" do
+      before(:each) do
+        @calc.arcs.last.children << @calc.arcs.first # B0 contains A0
+      end
+
+      subject { @calc.arcs.last.contains_arc?(@calc.arcs.first) }
+      it { should == true }
+    end
+    context "when the first arc contains a second arc that contains the third arc" do
+      before(:each) do
+        @calc.arcs.last.children << FinModeling::Factory.CalculationArc(:label=>"B0.B2")
+        @calc.arcs.last.children.last.children << @calc.arcs.first # B0.B2 contains A0
+      end
+
+      subject { @calc.arcs.last.contains_arc?(@calc.arcs.first) }
+      it { should == true }
+    end
+  end
+
 end
 

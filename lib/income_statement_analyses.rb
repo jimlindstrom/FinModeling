@@ -5,7 +5,6 @@ module FinModeling
       @title              = calc_summary.title
       @rows               = calc_summary.rows
       @header_row         = calc_summary.header_row
-      @num_value_columns  = calc_summary.num_value_columns
       @key_width          = calc_summary.key_width
       @val_width          = calc_summary.val_width
       @max_decimals       = calc_summary.max_decimals

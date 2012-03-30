@@ -1,13 +1,13 @@
-# annual_report_filing_spec.rb
+# quarterly_report_filing_spec.rb
 
 require 'spec_helper'
 
-describe FinModeling::AnnualReportFiling  do
+describe FinModeling::QuarterlyReportFiling  do
   before(:all) do
     company = FinModeling::Company.new(FinModeling::Mocks::Entity.new)
-    filing_url = company.annual_reports.last.link
+    filing_url = company.quarterly_reports.last.link
     FinModeling::Config::disable_caching 
-    @filing = FinModeling::AnnualReportFiling.download(filing_url)
+    @filing = FinModeling::QuarterlyReportFiling.download(filing_url)
   end
 
   after(:all) do
@@ -23,9 +23,9 @@ describe FinModeling::AnnualReportFiling  do
 
   describe "write_constructor" do
     before(:all) do
-      file_name = "/tmp/finmodeling-annual-rpt.rb"
+      file_name = "/tmp/finmodeling-quarterly-rpt.rb"
       schema_version_item_name = "@schema_version"
-      item_name = "@annual_rpt"
+      item_name = "@quarterly_rpt"
       file = File.open(file_name, "w")
       @filing.write_constructor(file, item_name)
       file.close
@@ -64,5 +64,6 @@ describe FinModeling::AnnualReportFiling  do
       expected_total = @filing.disclosures.first.summary(:period=>period).total
       @loaded_filing.disclosures.first.summary(:period=>period).total.should == expected_total
     end
+
   end
 end

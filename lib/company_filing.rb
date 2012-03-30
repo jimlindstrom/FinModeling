@@ -1,11 +1,12 @@
 module FinModeling
 
-  class FakeAnnualFiling 
-    attr_accessor :balance_sheet, :income_statement, :cash_flow_statement
-    def initialize(bs, is, cfs)
+  class CachedAnnualFiling 
+    attr_accessor :balance_sheet, :income_statement, :cash_flow_statement, :disclosures
+    def initialize(bs, is, cfs, disclosures)
       @balance_sheet       = bs
       @income_statement    = is
       @cash_flow_statement = cfs
+      @disclosures         = disclosures
     end
 
     def is_valid?
@@ -13,7 +14,7 @@ module FinModeling
     end
   end
 
-  class FakeQuarterlyFiling < FakeAnnualFiling 
+  class CachedQuarterlyFiling < CachedAnnualFiling 
   end
 
   class CompanyFiling

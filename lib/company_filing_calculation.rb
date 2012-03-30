@@ -29,14 +29,29 @@ module FinModeling
 
     def summary(args)
       calc_summary = CalculationSummary.new
-      calc_summary.title = @calculation.label + " (#{@calculation.item_id})"
+      calc_summary.title = case
+        when @calculation.instance_variable_defined?(:@title)   then @calculation.title
+        when @calculation.instance_variable_defined?(:@label)   then @calculation.label
+        else "[No title]"
+      end
+      calc_summary.title += case
+        when @calculation.instance_variable_defined?(:@item_id) then " (#{@calculation.item_id})"
+        when @calculation.instance_variable_defined?(:@role)    then " (#{@calculation.role   })"
+        else ""
+      end
 
       calc_summary.rows = leaf_items(args).collect do |item| 
         CalculationRow.new(:key => item.pretty_name, 
-                                             :vals => [ item.value(args[:mapping] )])
+                           :vals => [ item.value(args[:mapping] )])
       end
     
       return calc_summary
+    end
+
+    def write_constructor(file, item_name)
+      item_calc_name = item_name + "_calc"
+      @calculation.write_constructor(file, item_calc_name)
+      file.puts "#{item_name} = FinModeling::CompanyFilingCalculation.new(#{item_calc_name})"
     end
 
     protected

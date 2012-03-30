@@ -14,6 +14,7 @@ module Xbrlware
         def write_constructor(file, calc_name)
           file.puts "#{calc_name}_args = {}"
           file.puts "#{calc_name}_args[:title] = \"#{@title}\""
+          file.puts "#{calc_name}_args[:role] = \"#{@role}\""
           file.puts "#{calc_name}_args[:arcs] = []"
           @arcs.each_with_index do |arc, index|
             arc_name = calc_name + "_arc#{index}"
@@ -27,6 +28,17 @@ module Xbrlware
           @title.downcase =~ /^disclosure/ ? true : false
         end
 
+        def top_level_arcs
+          uniq_arcs = []
+          @arcs.each do |arc|
+            if @arcs.none?{ |other_arc| other_arc.contains_arc?(arc) }
+              uniq_arcs.push arc
+            end
+          end
+
+          return uniq_arcs
+        end
+
         def print_tree(indent_count=0)
           indent = " " * indent_count
           puts indent + "Calc: #{@title} (#{@role})"
@@ -37,7 +49,8 @@ module Xbrlware
         end
 
         def leaf_items(period)
-          if @arcs.empty?
+          #if @arcs.empty?
+          if top_level_arcs.empty?
             raise RuntimeError.new("#{self.inspect} (#{@label}) has nil items!") if @items.nil?
 
             items = @items.select{ |x| !x.is_sub_leaf? }
@@ -46,7 +59,8 @@ module Xbrlware
             return items
           end
     
-          return @arcs.collect { |child| child.leaf_items(period) }.flatten
+          #return @arcs.collect { |child| child.leaf_items(period) }.flatten
+          return top_level_arcs.collect { |child| child.leaf_items(period) }.flatten
         end
     
         class CalculationArc
@@ -69,11 +83,22 @@ module Xbrlware
             end
           end
 
+          def contains_arc?(arc)
+            return false if @children.empty?
+
+            @children.each do |child|
+              return true if (child.label == arc.label) && (child.item_id == arc.item_id)
+              return true if child.contains_arc?(arc)
+            end
+
+            return false
+          end
+
           def print_tree(indent_count=0)
             indent = " " * indent_count
             output = "#{indent} #{@label}"
 
-            @items.each do |item|
+            (@items || []).each do |item|
               period = item.context.period
               period_str = period.is_duration? ? "#{period.value["start_date"]} to #{period.value["end_date"]}" : "#{period.value}"
               output += " [#{item.def["xbrli:balance"]}]" if item.def
@@ -81,7 +106,7 @@ module Xbrlware
             end
             puts indent + output
 
-            @children.each { |child| child.print_tree(indent_count+1) }
+            (@children || []).each { |child| child.print_tree(indent_count+1) }
           end
 
           def leaf_items(period)

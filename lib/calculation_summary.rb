@@ -55,7 +55,7 @@ module FinModeling
   end
 
   class CalculationSummary
-    attr_accessor :title, :header_row, :rows, :num_value_columns
+    attr_accessor :title, :header_row, :rows
     attr_accessor :key_width, :val_width, :max_decimals, :totals_row_enabled
 
     def initialize
@@ -65,14 +65,17 @@ module FinModeling
       @totals_row_enabled = true
     end
 
+    def num_value_columns
+      @rows.map{ |row| row.vals.length }.max
+    end
+
     def total(col_idx=0)
       @rows.map{ |row| row.vals[col_idx] }.inject(:+) || 0.0
     end
 
     def totals
-      0.upto(@num_value_columns-1).collect do |col_idx|
-        total(col_idx)
-      end
+      return [] if num_value_columns.nil?
+      0.upto(num_value_columns-1).map { |col_idx| total(col_idx) }
     end
 
     def print
@@ -81,7 +84,7 @@ module FinModeling
       rows = []
       rows << @header_row if @header_row
       rows += @rows
-      rows << CalculationRow.new(:key => "Total", :vals => @totals) if @totals_row_enabled
+      rows << CalculationRow.new(:key => "Total", :vals => totals) if @totals_row_enabled
       rows.each { |row| row.print(@key_width, @max_decimals, @val_width) }
 
       puts
@@ -97,7 +100,6 @@ module FinModeling
     def write_constructor(file, item_name)
       file.puts "#{item_name} = FinModeling::CalculationSummary.new"
       file.puts "#{item_name}.title = \"#{@title}\""
-      file.puts "#{item_name}.num_value_columns = #{@num_value_columns}"
       file.puts "#{item_name}.key_width = #{@key_width}"
       file.puts "#{item_name}.val_width = #{@val_width}"
       file.puts "#{item_name}.max_decimals = #{@max_decimals}"
@@ -137,8 +139,6 @@ module FinModeling
                           :key  => @rows[idx].key.dup, 
                           :vals => @rows[idx].vals.dup + mccs.rows[idx].vals.dup)
       end
-
-      multics.num_value_columns = multics.rows.map{|row| row.vals.length}.max
 
       return multics
     end

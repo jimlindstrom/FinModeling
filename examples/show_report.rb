@@ -4,52 +4,78 @@ $LOAD_PATH << "."
 
 require 'finmodeling'
 
-def show_usage_and_exit
-  puts "usage:"
-  puts "\t#{__FILE__} <stock symbol> <10-k|10-q> <0, for most recent|-1 for prevous|-2, etc>"
-  puts "\t#{__FILE__} <report URL> <10-k|10-q>"
-  exit
-end
+class Arguments
+  def self.show_usage_and_exit
+    puts "usage:"
+    puts "\t#{__FILE__} [options] <stock symbol> <10-k|10-q> <0, for most recent|-1 for prevous|-2, etc>"
+    puts "\t#{__FILE__} [options] <report URL> <10-k|10-q>"
+    puts
+    puts "\tOptions:"
+    puts "\t\t--no-cache: disables caching"
+    puts "\t\t--show-disclosures: prints out all the disclosure calculations in the filing"
+    exit
+  end
+  
+  def self.parse(raw_args)
+    parsed_args = { :stock_symbol => nil, :filing_url => nil, 
+                    :report_type => nil, :report_offset => nil, 
+                    :show_disclosures => false }
 
-def get_args__just_a_url(args)
-  show_usage_and_exit if ARGV.length != 2
+    while raw_args.any? && raw_args.first =~ /^--/
+      case raw_args.first.downcase
+        when '--no-cache'
+          FinModeling::Config.disable_caching
+          puts "Caching is #{FinModeling::Config.caching_enabled? ? "enabled" : "disabled"}"
+        when '--show-disclosures'
+          parsed_args[:show_disclosures] = true
+          puts "Showing disclosures"
+        else
+          self.show_usage_and_exit
+      end
+      raw_args = raw_args[1..-1]
+    end
 
-  args[:filing_url] = ARGV[0]
-  args[:report_type]   = case ARGV[1].downcase
-    when "10-k"
-      :annual_report
-    when "10-q"
-      :quarterly_report
+    if raw_args[0] =~ /http/
+      return self.parse_just_a_url(raw_args, parsed_args)
     else
-      show_usage_and_exit
-  end
-end
-
-def get_args__symbol_etc(args)
-  show_usage_and_exit if ARGV.length != 3
-
-  args[:stock_symbol]  = ARGV[0]
-  args[:report_type]   = case ARGV[1].downcase
-    when "10-k"
-      :annual_report
-    when "10-q"
-      :quarterly_report
-    else
-      show_usage_and_exit
-  end
-  args[:report_offset] = ARGV[2].to_i
-end
-
-def get_args
-  args = { :stock_symbol => nil, :filing_url => nil, :report_type => nil, :report_offset => nil }
-
-  if ARGV[0] =~ /http/
-    get_args__just_a_url(args)
-  else
-    get_args__symbol_etc(args)
+      return self.parse_symbol_etc(raw_args, parsed_args)
+    end
   end
 
-  return args
+  protected
+
+  def self.parse_just_a_url(raw_args, parsed)
+    self.show_usage_and_exit if raw_args.length != 2
+
+    parsed_args[:filing_url]  = raw_args[0]
+    parsed_args[:report_type] = case raw_args[1].downcase
+      when "10-k"
+        :annual_report
+      when "10-q"
+        :quarterly_report
+      else
+        self.show_usage_and_exit
+    end
+
+    return parsed_args
+  end
+  
+  def self.parse_symbol_etc(raw_args, parsed_args)
+    self.show_usage_and_exit if raw_args.length != 3
+  
+    parsed_args[:stock_symbol]  = raw_args[0]
+    parsed_args[:report_type]   = case raw_args[1].downcase
+      when "10-k"
+        :annual_report
+      when "10-q"
+        :quarterly_report
+      else
+        self.show_usage_and_exit
+    end
+    parsed_args[:report_offset] = raw_args[2].to_i
+
+    return parsed_args
+  end
 end
 
 def get_company_filing_url(stock_symbol, report_type, report_offset)
@@ -79,8 +105,11 @@ def print_balance_sheet(filing, report_type)
   period = filing.balance_sheet.periods.last
   puts "Balance Sheet (#{period.to_pretty_s})"
   
-  filing.balance_sheet.assets_calculation.summary(:period => period).print
-  filing.balance_sheet.liabs_and_equity_calculation.summary(:period => period).print
+  summaries = []
+  summaries << filing.balance_sheet.assets_calculation.summary(:period => period)
+  summaries << filing.balance_sheet.liabs_and_equity_calculation.summary(:period => period)
+
+  print_summaries(summaries)
 end
 
 def print_reformulated_balance_sheet(filing, report_type)
@@ -88,9 +117,12 @@ def print_reformulated_balance_sheet(filing, report_type)
 
   reformed_balance_sheet = filing.balance_sheet.reformulated(period)
 
-  reformed_balance_sheet.net_operating_assets.print
-  reformed_balance_sheet.net_financial_assets.print
-  reformed_balance_sheet.common_shareholders_equity.print
+  summaries = []
+  summaries << reformed_balance_sheet.net_operating_assets
+  summaries << reformed_balance_sheet.net_financial_assets
+  summaries << reformed_balance_sheet.common_shareholders_equity
+
+  print_summaries(summaries)
 end
 
 def print_income_statement(filing, report_type)
@@ -98,7 +130,10 @@ def print_income_statement(filing, report_type)
   period  = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
   puts "Income Statement (#{period.to_pretty_s})"
 
-  filing.income_statement.net_income_calculation.summary(:period => period).print
+  summaries = []
+  summaries << filing.income_statement.net_income_calculation.summary(:period => period)
+
+  print_summaries(summaries)
 end
 
 def print_reformulated_income_statement(filing, report_type)
@@ -107,12 +142,15 @@ def print_reformulated_income_statement(filing, report_type)
 
   reformed_inc_stmt  = filing.income_statement.reformulated(period)
 
-  reformed_inc_stmt.gross_revenue.print
-  reformed_inc_stmt.income_from_sales_before_tax.print
-  reformed_inc_stmt.income_from_sales_after_tax.print
-  reformed_inc_stmt.operating_income_after_tax.print
-  reformed_inc_stmt.net_financing_income.print
-  reformed_inc_stmt.comprehensive_income.print
+  summaries = []
+  summaries << reformed_inc_stmt.gross_revenue
+  summaries << reformed_inc_stmt.income_from_sales_before_tax
+  summaries << reformed_inc_stmt.income_from_sales_after_tax
+  summaries << reformed_inc_stmt.operating_income_after_tax
+  summaries << reformed_inc_stmt.net_financing_income
+  summaries << reformed_inc_stmt.comprehensive_income
+
+  print_summaries(summaries)
 end
 
 def print_cash_flow_statement(filing, report_type)
@@ -120,7 +158,10 @@ def print_cash_flow_statement(filing, report_type)
   period = filing.cash_flow_statement.periods.quarterly.last if report_type == :quarterly_report
   puts "Cash Flow Statement (#{period.to_pretty_s})"
   
-  filing.cash_flow_statement.cash_change_calculation.summary(:period => period).print
+  summaries = []
+  summaries << filing.cash_flow_statement.cash_change_calculation.summary(:period => period)
+
+  print_summaries(summaries)
 end
 
 def print_reformulated_cash_flow_statement(filing, report_type)
@@ -129,17 +170,39 @@ def print_reformulated_cash_flow_statement(filing, report_type)
   
   reformed_cash_flow_stmt  = filing.cash_flow_statement.reformulated(period)
 
-  reformed_cash_flow_stmt.cash_from_operations.print
-  reformed_cash_flow_stmt.cash_investments_in_operations.print
-  reformed_cash_flow_stmt.payments_to_debtholders.print
-  reformed_cash_flow_stmt.payments_to_stockholders.print
-  reformed_cash_flow_stmt.free_cash_flow.print
-  reformed_cash_flow_stmt.financing_flows.print
+  summaries = []
+  summaries << reformed_cash_flow_stmt.cash_from_operations
+  summaries << reformed_cash_flow_stmt.cash_investments_in_operations
+  summaries << reformed_cash_flow_stmt.payments_to_debtholders
+  summaries << reformed_cash_flow_stmt.payments_to_stockholders
+  summaries << reformed_cash_flow_stmt.free_cash_flow
+  summaries << reformed_cash_flow_stmt.financing_flows
+
+  print_summaries(summaries)
+end
+
+def print_disclosures(filing, report_type)
+  puts "Disclosures"
+
+  summaries = []
+  filing.disclosures.each do |disclosure|
+    summaries << disclosure.summary(:period => disclosure.periods.last)
+  end
+
+  print_summaries(summaries)
+end
+
+def print_summaries(summaries)
+  summaries.each do |summary|
+    summary.key_width = 50
+    summary.val_width = 18
+    summary.print
+  end
 end
 
 
 
-args = get_args
+args = Arguments.parse(ARGV)
 if args[:filing_url].nil?
   args[:filing_url] = get_company_filing_url(args[:stock_symbol], args[:report_type], args[:report_offset])
 end
@@ -152,5 +215,6 @@ print_income_statement(                filing, args[:report_type])
 print_reformulated_income_statement(   filing, args[:report_type])
 print_cash_flow_statement(             filing, args[:report_type])
 print_reformulated_cash_flow_statement(filing, args[:report_type])
+print_disclosures(                     filing, args[:report_type]) if args[:show_disclosures]
 
 raise RuntimeError.new("filing is not valid") if !filing.is_valid?
