@@ -50,6 +50,13 @@ module FinModeling
       calculations=@taxonomy.callb.calculation
       calculations.each { |calc| calc.print_tree }
     end
+
+    def disclosures
+      @taxonomy.callb
+               .calculation
+               .select{ |x| x.is_disclosure? }
+               .map{ |x| CompanyFilingCalculation.new(x) }
+    end
   
   end
 end

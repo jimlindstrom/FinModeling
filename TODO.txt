@@ -1,4 +1,8 @@
+Statement of Shareholder Equity
+	- Parse this one to get at comprehensive income
+
 Forecasts
+	- Choosing of policies should probably be bumped to a higher-level package.
 	- Need more sophisticated forecasting policies
 	- Need to have more sophisticated policies fall back on simpler ones (or none) when there's
 	  too much chaos
@@ -7,13 +11,8 @@ Bugs
 	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
 	- show_reports doesn't check filing validity
 
-Cash Flow Statement
-	- not taking into account: net cash interest, tax on net interest, or non-cash
-	  transactions.  All 3 of these items are listed in supplementary disclosures.
-	- the classifier's success rate isn't that high.
-	- "I" is defined inversely.
-
 Income Statement
+	- Dig into the disclosures. They've got lots more interesting goodness.
 	- It'd be interesting to try to correct for cyclicality.
 	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
 	- net income != comprehensive income.  pull in items from SSE
@@ -25,4 +24,12 @@ Income Statement
 	  etc.
 
 Balance Sheet
+	- Dig into the disclosures. They've got lots more interesting goodness.
 	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
+
+Cash Flow Statement
+	- Dig into the disclosures. They've got lots more interesting goodness.
+	- not taking into account: net cash interest, tax on net interest, or non-cash
+	  transactions.  All 3 of these items are listed in supplementary disclosures.
+	- the classifier's success rate isn't that high.
+	- "I" is defined inversely.

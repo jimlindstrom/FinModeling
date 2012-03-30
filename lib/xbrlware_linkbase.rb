@@ -23,6 +23,10 @@ module Xbrlware
           file.puts "#{calc_name} = FinModeling::Factory.Calculation(#{calc_name}_args)"
         end
 
+        def is_disclosure?
+          @title.downcase =~ /^disclosure/ ? true : false
+        end
+
         def print_tree(indent_count=0)
           indent = " " * indent_count
           puts indent + "Calc: #{@title} (#{@role})"

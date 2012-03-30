@@ -163,6 +163,21 @@ end
 #
 #end
 
+describe Xbrlware::Linkbase::CalculationLinkbase::Calculation do
+  describe ".is_disclosure?" do
+    context "when its title begins with 'Disclosure'" do
+      let(:calc) { FinModeling::Factory.Calculation(:title=>"Disclosure of Something or Other") }
+      subject { calc.is_disclosure? }
+      it { should == true }
+    end
+    context "when its title does not begin with 'Disclosure'" do
+      let(:calc) { FinModeling::Factory.Calculation(:title=>"Statement of Something or Other") }
+      subject { calc.is_disclosure? }
+      it { should == false }
+    end
+  end
+end
+
 describe Xbrlware::Linkbase::CalculationLinkbase::Calculation::CalculationArc do
   describe "write_constructor" do
     before(:all) do
