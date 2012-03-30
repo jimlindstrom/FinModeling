@@ -8,6 +8,7 @@ Forecasts
 	  too much chaos
 
 Bugs
+	- Not all disclosures *begin* with disclosure.  See CRM's most recent 10-K, for instance.
 	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
 	- show_reports doesn't check filing validity
 
