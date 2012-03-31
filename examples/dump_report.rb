@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH << "."
-
 require 'finmodeling'
 
 if ARGV.length != 1

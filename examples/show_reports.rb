@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH << "."
-
 require 'finmodeling'
 
 class Arguments
