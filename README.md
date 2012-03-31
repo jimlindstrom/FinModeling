@@ -12,6 +12,8 @@ FinModeling is a set of tools for manipulating financial data from SEC Edgar (in
 
 ## Example 1: Forecasting Oracle's Financials Based
 
+After running "rake install" (to build and install the 'finmodeling' gem), you can run:
+
     lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_reports.rb --num-forecasts 2 orcl 2011-02-01
     Forecasting 2 periods
     company name: ORACLE CORP
