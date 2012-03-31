@@ -2,7 +2,7 @@ module FinModeling
   class CashChangeItem < String
     include HasStringClassifier
 
-    BASE_FILENAME = "classifiers/cci_"
+    BASE_FILENAME = File.join(FinModeling::BASE_PATH, "classifiers/cci_")
     TYPES         = [ :c, :i, :d, :f ]
 
     has_string_classifier(TYPES, CashChangeItem)

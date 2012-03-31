@@ -18,7 +18,7 @@ module FinModeling
   end
 
   class CompanyFiling
-    DOWNLOAD_PATH = "filings/"
+    DOWNLOAD_PATH = File.join(FinModeling::BASE_PATH, "filings/")
     attr_accessor :instance # FIXME: hide this
   
     def initialize(download_dir)
@@ -33,9 +33,10 @@ module FinModeling
     end
   
     def self.download(url)
+      FileUtils.mkdir_p(DOWNLOAD_PATH) if !File.exists?(DOWNLOAD_PATH)
       download_dir = DOWNLOAD_PATH + url.split("/")[-2]
       if !File.exists?(download_dir)
-        dl = Edgar::HTMLFeedDownloader.new()
+        dl = Xbrlware::Edgar::HTMLFeedDownloader.new()
         dl.download(url, download_dir)
       end
   

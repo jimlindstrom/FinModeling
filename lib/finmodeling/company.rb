@@ -9,6 +9,7 @@ module SecQuery
 
   class Entity
     def write_constructor(filename)
+      FileUtils.mkdir_p(File.dirname(filename)) if !File.exists?(File.dirname(filename))
       file = File.open(filename, "w")
       filing_names = []
       @filings.select{ |x| x.title =~ /^10-/ }.each_with_index do |filing, index|
@@ -34,7 +35,7 @@ module FinModeling
       @entity = entity
     end
   
-    BASE_FILENAME = "companies/"
+    BASE_FILENAME = File.join(FinModeling::BASE_PATH, "companies/")
     def self.find(stock_symbol)
       filename = BASE_FILENAME + stock_symbol.upcase + ".rb"
       entity = SecQuery::Entity.load(filename)
@@ -80,8 +81,11 @@ module FinModeling
             when "10-Q" then filings << FinModeling::QuarterlyReportFiling.download(report.link)
             when "10-K" then filings << FinModeling::AnnualReportFiling.download(   report.link) 
           end
-        rescue
+        rescue Exception => e  
           # *ReportFiling.download() will throw errors if it doesn't contain xbrl data.
+          puts "Caught error in FinModeling::(.*)ReportFiling.download:"
+          puts "\t" + e.message  
+          puts "\t" + e.backtrace.inspect.gsub(/, /, "\n\t ")
         end
       end
 

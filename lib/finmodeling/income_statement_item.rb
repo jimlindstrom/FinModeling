@@ -2,7 +2,7 @@ module FinModeling
   class IncomeStatementItem < String
     include HasStringClassifier
 
-    BASE_FILENAME = "classifiers/isi_"
+    BASE_FILENAME = File.join(FinModeling::BASE_PATH, "classifiers/isi_")
     TYPES         = [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ]
 
     has_string_classifier(TYPES, IncomeStatementItem)

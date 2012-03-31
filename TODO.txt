@@ -1,3 +1,5 @@
+- The training isn't working... "bogus klass" messages..
+
 Statement of Shareholder Equity
 	- Parse this one to get at comprehensive income
 

@@ -2,7 +2,7 @@ module FinModeling
   class AssetsItem < String
     include HasStringClassifier
 
-    BASE_FILENAME = "classifiers/ai_"
+    BASE_FILENAME = File.join(FinModeling::BASE_PATH, "classifiers/ai_")
     TYPES         = [ :oa, :fa ]
 
     has_string_classifier(TYPES, AssetsItem)

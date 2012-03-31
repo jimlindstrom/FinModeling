@@ -13,6 +13,7 @@ module FinModeling
       end
   
       def _load_vectors_and_train(base_filename, vectors)
+        FileUtils.mkdir_p(File.dirname(base_filename)) if !File.exists?(File.dirname(base_filename))
         success = FinModeling::Config.caching_enabled?
         @klasses.each do |cur_klass|
           filename = base_filename + cur_klass.to_s + ".db"
@@ -29,8 +30,10 @@ module FinModeling
           begin
             item = @item_klass.new(vector[:item_string])
             item.train(vector[:klass])
-          rescue
+          rescue Exception => e
             puts "\"#{vector[:item_string]}\" has a bogus klass: \"#{vector[:klass]}\""
+            puts "\t" + e.message
+            puts "\t" + e.backtrace.inspect.gsub(/, /, "\n\t ")
           end
         end
   

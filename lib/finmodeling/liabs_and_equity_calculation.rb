@@ -4,7 +4,7 @@ module FinModeling
     include CanCacheSummaries
     include CanClassifyRows
 
-    BASE_FILENAME = "summaries/liabs_and_equity_"
+    BASE_FILENAME = File.join(FinModeling::BASE_PATH, "summaries/liabs_and_equity_")
 
     ALL_STATES  =           [ :ol, :fl, :cse ]
     NEXT_STATES = { nil  => [ :ol, :fl, :cse ],

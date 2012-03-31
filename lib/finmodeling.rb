@@ -13,6 +13,8 @@ require 'finmodeling/float_helpers'
 require 'finmodeling/string_helpers'
 require 'finmodeling/factory'
 
+require 'finmodeling/paths'
+
 require 'finmodeling/has_string_classifer'
 
 require 'finmodeling/period_array'

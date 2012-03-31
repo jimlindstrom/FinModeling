@@ -2,7 +2,7 @@ module FinModeling
 
   class AnnualReportFiling < CompanyFiling
 
-    CONSTRUCTOR_PATH = "constructors/"
+    CONSTRUCTOR_PATH = File.join(FinModeling::BASE_PATH, "constructors/")
     SCHEMA_VERSION_ITEM = "@schema_version"
     CURRENT_SCHEMA_VERSION = 1.1
     # History:
@@ -26,6 +26,7 @@ module FinModeling
 
       filing = super(url)
 
+      FileUtils.mkdir_p(CONSTRUCTOR_PATH) if !File.exists?(CONSTRUCTOR_PATH)
       file = File.open(constructor_file, "w")
       filing.write_constructor(file, "@filing")
       file.close
