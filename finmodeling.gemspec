@@ -4,12 +4,11 @@ require File.expand_path('../lib/finmodeling/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Jim Lindstrom"]
   gem.email         = ["jim.lindstrom@gmail.com"]
-  gem.description   = %q{A set of extentions that make it easier to build on top of xbrlware}
-  gem.summary       = %q{A set of extentions that make it easier to build on top of xbrlware}
+  gem.description   = %q{A gem for manipulating XBRL financial filings}
+  gem.summary       = %q{A gem for manipulating XBRL financial filings}
   gem.homepage      = ""
 
   gem.add_dependency("fileutils")
-  gem.add_dependency("digest")
   gem.add_dependency("sec_query")
   gem.add_dependency("edgar")
 
@@ -20,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency("naive_bayes")
   gem.add_dependency("statsample")
 
-  gem.add_development_dependency("rspec", "~> 2.0.1")
+  gem.add_development_dependency("rspec", "2.5")
   gem.add_development_dependency("rake")
 
   gem.files         = `git ls-files`.split($\)
