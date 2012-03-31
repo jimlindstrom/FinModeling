@@ -5,7 +5,8 @@ require 'rubygems'
 
 require 'sec_query'
 require 'edgar'
-require 'xbrlware'
+require 'xbrlware-ruby19'
+require 'xbrlware-extras'
 
 require 'naive_bayes'
 require 'statsample'
@@ -17,12 +18,6 @@ require 'lib/string_helpers'
 require 'lib/factory'
 
 require 'lib/has_string_classifer'
-
-require 'lib/xbrlware_valuemapping_vectors'
-require 'lib/xbrlware_item'
-require 'lib/xbrlware_linkbase'
-require 'lib/xbrlware_context'
-require 'lib/xbrlware_dateutil'
 
 require 'lib/period_array'
 require 'lib/rate'
