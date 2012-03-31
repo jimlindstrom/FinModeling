@@ -1,7 +1,3 @@
 *swp
-filings/
-constructors/
-classifiers/
-summaries/
-companies/
+pkg/
 Gemfile.lock

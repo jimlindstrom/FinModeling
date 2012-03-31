@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["jim.lindstrom@gmail.com"]
   gem.description   = %q{A gem for manipulating XBRL financial filings}
   gem.summary       = %q{A gem for manipulating XBRL financial filings}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/jimlindstrom/FinModeling"
 
   gem.add_dependency("fileutils")
   gem.add_dependency("sec_query")
