@@ -55,6 +55,10 @@ raise RuntimeError.new("couldn't find company") if !company
 puts "company name: #{company.name}"
 
 filings = FinModeling::CompanyFilings.new(company.filings_since_date(args[:start_date]))
+if filings.empty?
+  puts "No filings..."
+  exit
+end
 
 forecasts = filings.forecasts(filings.choose_forecasting_policy, num_quarters=args[:num_forecasts]) if args[:num_forecasts]
 
