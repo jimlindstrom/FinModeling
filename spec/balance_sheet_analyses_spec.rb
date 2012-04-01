@@ -8,23 +8,23 @@ describe FinModeling::BalanceSheetAnalyses do
     @summary.title = "Title 123"
     @summary.rows = [ ]
     @summary.rows << FinModeling::CalculationRow.new(:key => "NOA Growth", :type => :oa, :vals => [  4])
-    @summary.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :fa, :vals => [109])
-    @summary.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [ 93])
-    @summary.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :fa, :vals => [  1])
+    @summary.rows << FinModeling::CalculationRow.new(:key => "Row",        :type => :fa, :vals => [109])
+    @summary.rows << FinModeling::CalculationRow.new(:key => "Row",        :type => :oa, :vals => [ 93])
+    @summary.rows << FinModeling::CalculationRow.new(:key => "Row",        :type => :fa, :vals => [  1])
   end
 
   describe ".new" do
     subject { FinModeling::BalanceSheetAnalyses.new(@summary) }
 
     it { should be_a_kind_of FinModeling::CalculationSummary }
-    its(:title) { should == @summary.title }
-    its(:rows) { should == @summary.rows }
-    its(:header_row) { should == @summary.header_row }
-    its(:rows) { should == @summary.rows }
-    its(:num_value_columns) { should == @summary.num_value_columns }
-    its(:key_width) { should == @summary.key_width }
-    its(:val_width) { should == @summary.val_width }
-    its(:max_decimals) { should == @summary.max_decimals }
+    its(:title)              { should == @summary.title }
+    its(:rows)               { should == @summary.rows }
+    its(:header_row)         { should == @summary.header_row }
+    its(:rows)               { should == @summary.rows }
+    its(:num_value_columns)  { should == @summary.num_value_columns }
+    its(:key_width)          { should == @summary.key_width }
+    its(:val_width)          { should == @summary.val_width }
+    its(:max_decimals)       { should == @summary.max_decimals }
     its(:totals_row_enabled) { should be_false }
   end
 

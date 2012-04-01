@@ -1,4 +1,4 @@
-# income_statement_calculation_spec.rb
+# net_income_calculation_spec.rb
 
 require 'spec_helper'
 
@@ -6,17 +6,15 @@ describe FinModeling::NetIncomeCalculation  do
   before(:all) do
     google_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/1288776/000119312512025336/0001193125-12-025336-index.htm"
     filing = FinModeling::AnnualReportFiling.download google_2011_annual_rpt
-    @inc_stmt = filing.income_statement
-    @period = @inc_stmt.periods.last
-    @ni = @inc_stmt.net_income_calculation
+    @period = filing.income_statement.periods.last
+    @ni = filing.income_statement.net_income_calculation
   end
 
   describe "summary" do
-    it "only requires a period (knows how debts/credits work and whether to flip the total)" do
-      @ni.summary(:period=>@period).should be_an_instance_of FinModeling::CalculationSummary
-    end
-    it "tags each row with an Income Statement Type" do
-      FinModeling::IncomeStatementItem::TYPES.include?(@ni.summary(:period=>@period).rows.first.type).should be_true
+    subject { @ni.summary(:period=>@period) }
+    it { should be_a FinModeling::CalculationSummary }
+    it "should tag each row with an Income Statement Type" do
+      subject.rows.first.type.should be_in(FinModeling::IncomeStatementItem::TYPES)
     end
   end
 end

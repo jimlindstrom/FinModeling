@@ -3,54 +3,42 @@
 require 'spec_helper'
 
 describe FinModeling::IncomeStatementItem do
-
-  before(:all) do
-    #FinModeling::IncomeStatementItem.load_vectors_and_train(FinModeling::IncomeStatementItem::TRAINING_VECTORS)
-  end
+  let(:isi) { FinModeling::IncomeStatementItem.new("Cost of Goods Sold") }
 
   describe "new" do
-    it "takes a string and returns a new IncomeStatementItem" do
-      isi = FinModeling::IncomeStatementItem.new("Cost of Goods Sold")
-      isi.should be_an_instance_of FinModeling::IncomeStatementItem
-    end
+    subject { isi }
+    it { should be_a FinModeling::IncomeStatementItem }
   end
 
   describe "train" do
     it "trains the classifier that this ISI is of the given type" do
-      FinModeling::IncomeStatementItem.new("provision for income tax").train(:tax)
+      isi.train(:tax)
     end
   end
 
   describe "classification_estimates" do
-    it "returns a hash with the confidence in each ISI type" do
-      isi = FinModeling::IncomeStatementItem.new("Cost of Services")
-
-      FinModeling::IncomeStatementItem::TYPES.each do |klass|
-        isi.classification_estimates.keys.include?(klass).should be_true
-      end
-    end
+    subject { isi.classification_estimates }
+    it { should be_a Hash }
+    its(:keys) { should == FinModeling::IncomeStatementItem::TYPES }
   end
 
   describe "classify" do
+    subject { isi.classify }
     it "returns the ISI type with the highest probability estimate" do
-      isi = FinModeling::IncomeStatementItem.new("provision for income tax")
       estimates = isi.classification_estimates
-      estimates[isi.classify].should be_within(0.1).of(estimates.values.max)
+      estimates[subject].should be_within(0.1).of(estimates.values.max)
     end
   end
 
   describe "load_vectors_and_train" do
-    # the before(:all) clause calls load_vectors_and_train already
-    # we can just focus, here, on its effects
-
-    it "loads vectors from a given file, trains on each example, and correctly classifies tax" do
-      isi = FinModeling::IncomeStatementItem.new("provision for income tax")
-      isi.classify.should == :tax
+    context "tax" do
+      subject { FinModeling::IncomeStatementItem.new("provision for income tax").classify }
+      it { should == :tax }
     end
 
-    it "loads vectors from a given file, trains on each example, and correctly classifies revenue" do
-      isi = FinModeling::IncomeStatementItem.new("software licensing revenues net")
-      isi.classify.should == :or
+    context "or" do
+      subject { FinModeling::IncomeStatementItem.new("software licensing revenues net").classify }
+      it { should == :or }
     end
 
     it "classifies >95% correctly" do
@@ -74,12 +62,12 @@ describe FinModeling::IncomeStatementItem do
   end
 
   describe "tokenize" do
+    subject { FinModeling::IncomeStatementItem.new("Cost of Goods Sold").tokenize }
     it "returns an array of downcased 1-word, 2-word, and 3-word tokens" do
-      isi = FinModeling::IncomeStatementItem.new("Cost of Goods Sold")
       expected_tokens  = ["^", "cost", "of", "goods", "sold", "$"]
       expected_tokens += ["^ cost", "cost of", "of goods", "goods sold", "sold $"]
       expected_tokens += ["^ cost of", "cost of goods", "of goods sold", "goods sold $"]
-      isi.tokenize.sort.should == expected_tokens.sort
+      subject.sort.should == expected_tokens.sort
     end
   end
 

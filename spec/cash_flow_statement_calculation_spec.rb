@@ -13,9 +13,7 @@ describe FinModeling::CashFlowStatementCalculation  do
   describe "cash_change_calculation" do
     subject { @cash_flow_stmt.cash_change_calculation }
     it { should be_an_instance_of FinModeling::CashChangeCalculation }
-    it "returns the root node of the cash change calculation" do
-      @cash_flow_stmt.cash_change_calculation.label.downcase.should match /^cash/
-    end
+    its(:label) { should match /^cash/i }
   end
 
   describe "is_valid?" do
@@ -26,13 +24,14 @@ describe FinModeling::CashFlowStatementCalculation  do
                       (re_cfs.cash_investments_in_operations.total != 0) &&
                       (re_cfs.payments_to_debtholders.total        != 0) &&
                       (re_cfs.payments_to_stockholders.total       != 0)
+
       @cash_flow_stmt.is_valid?.should == (flows_are_balanced && none_are_zero)
     end
   end
 
   describe "reformulated" do
     subject { @cash_flow_stmt.reformulated(@period) }
-    it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
+    it { should be_a FinModeling::ReformulatedCashFlowStatement }
   end
 
   describe "latest_quarterly_reformulated" do
@@ -50,9 +49,7 @@ describe FinModeling::CashFlowStatementCalculation  do
     context "when given a Q1 report" do
       subject { @cash_flow_stmt_2011_q1.latest_quarterly_reformulated(nil) }
       it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
-      it "should be valid" do
-        subject.cash_investments_in_operations.total.abs.should be > 1.0
-      end
+      its(:cash_investments_in_operations) { should have_a_plausible_total }
     end
  
     context "when given a Q2 report (and a previous Q1 report)" do
@@ -66,21 +63,17 @@ describe FinModeling::CashFlowStatementCalculation  do
     context "when given a Q3 report (and a previous Q2 report)" do
       subject { @cash_flow_stmt_2011_q3.latest_quarterly_reformulated(@cash_flow_stmt_2011_q2) }
       it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
-      it "should be valid" do
-        subject.cash_investments_in_operations.total.abs.should be > 1.0
-      end
+      its(:cash_investments_in_operations) { should have_a_plausible_total }
     end
  
     context "when given an annual report (and a previous Q3 report)" do
       subject { @cash_flow_stmt.latest_quarterly_reformulated(@cash_flow_stmt_2011_q3) }
       it { should be_an_instance_of FinModeling::ReformulatedCashFlowStatement }
-      it "should be valid" do
-        subject.cash_investments_in_operations.total.abs.should be > 1.0
-      end
+      its(:cash_investments_in_operations) { should have_a_plausible_total }
     end
   end
 
-  describe "write_constructor" do
+  context "after write_constructor()ing it to a file and then eval()ing the results" do
     before(:all) do
       file_name = "/tmp/finmodeling-cash_flow_stmt.rb"
       item_name = "@cfs"
@@ -89,19 +82,12 @@ describe FinModeling::CashFlowStatementCalculation  do
       file.close
 
       eval(File.read(file_name))
-
       @loaded_cfs = eval(item_name)
     end
 
-    it "writes itself to a file, and when reloaded, has the same periods" do
-      expected_periods = @cash_flow_stmt.periods.map{|x| x.to_pretty_s}.join(',')
-      @loaded_cfs.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
-    end
-    it "writes itself to a file, and when reloaded, has the same change in cash" do
-      period = @cash_flow_stmt.periods.last
-      expected_cash_change = @cash_flow_stmt.cash_change_calculation.summary(:period=>period).total
-      @loaded_cfs.cash_change_calculation.summary(:period=>period).total.should be_within(1.0).of(expected_cash_change)
-    end
+    subject { @loaded_cfs }
+    it { should have_the_same_periods_as(@cash_flow_stmt) }
+    its(:cash_change_calculation) { should have_the_same_last_total_as(@cash_flow_stmt.cash_change_calculation) }
   end
 
 end

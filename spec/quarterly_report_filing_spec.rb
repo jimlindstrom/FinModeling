@@ -21,7 +21,7 @@ describe FinModeling::QuarterlyReportFiling  do
 
   its(:is_valid?) { should == (@filing.income_statement.is_valid? && @filing.balance_sheet.is_valid? && @filing.cash_flow_statement.is_valid?) }
 
-  describe "write_constructor" do
+  context "after write_constructor()ing it to a file and then eval()ing the results" do
     before(:all) do
       file_name = "/tmp/finmodeling-quarterly-rpt.rb"
       schema_version_item_name = "@schema_version"
@@ -40,30 +40,11 @@ describe FinModeling::QuarterlyReportFiling  do
       @schema_version.should be == 1.1
     end
 
-    it "writes itself to a file, and when reloaded, has the same periods" do
-      expected_periods = @filing.balance_sheet.periods.map{|x| x.to_pretty_s}.join(',')
-      @loaded_filing.balance_sheet.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
-    end
-    it "writes itself to a file, and when reloaded, has the same net operating assets" do
-      period = @filing.balance_sheet.periods.last
-      expected_noa = @filing.balance_sheet.reformulated(period).net_operating_assets.total
-      @loaded_filing.balance_sheet.reformulated(period).net_operating_assets.total.should be_within(1.0).of(expected_noa)
-    end
-    it "writes itself to a file, and when reloaded, has the same net financing income" do
-      period = @filing.income_statement.periods.last
-      expected_nfi = @filing.income_statement.reformulated(period).net_financing_income.total
-      @loaded_filing.income_statement.reformulated(period).net_financing_income.total.should be_within(1.0).of(expected_nfi)
-    end
-    it "writes itself to a file, and when reloaded, has the same net change in cash" do
-      period = @filing.cash_flow_statement.periods.last
-	  expected_cash_change = @filing.cash_flow_statement.cash_change_calculation.summary(:period=>period).total
-	  @loaded_filing.cash_flow_statement.cash_change_calculation.summary(:period=>period).total.should be_within(1.0).of(expected_cash_change)
-    end
-    it "writes itself to a file, and when reloaded, has the same disclosures" do
-      period = @filing.disclosures.first.periods.last
-      expected_total = @filing.disclosures.first.summary(:period=>period).total
-      @loaded_filing.disclosures.first.summary(:period=>period).total.should == expected_total
-    end
-
+    subject { @loaded_filing }
+    its(:balance_sheet)       { should have_the_same_periods_as(@filing.balance_sheet) }
+    its(:balance_sheet)       { should have_the_same_reformulated_last_total(:net_operating_assets).as(@filing.balance_sheet) }
+    its(:income_statement)    { should have_the_same_reformulated_last_total(:net_financing_income).as(@filing.income_statement) }
+    its(:cash_flow_statement) { should have_the_same_last_total(:cash_change_calculation).as(@filing.cash_flow_statement) }
+    its(:disclosures)         { should have_the_same_last_total(:first).as(@filing.disclosures) }
   end
 end

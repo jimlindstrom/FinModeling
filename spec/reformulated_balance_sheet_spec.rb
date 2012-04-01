@@ -20,61 +20,61 @@ describe FinModeling::ReformulatedBalanceSheet  do
     @years_between_sheets = 2.0
   end
 
-  describe "new" do
+  describe ".new" do
     it "takes an assets calculation and a liabs_and_equity calculation and a period and returns a CalculationSummary" do
       rbs = FinModeling::ReformulatedBalanceSheet.new(@period, @bal_sheet.assets_calculation.summary(:period=>@period), @bal_sheet.liabs_and_equity_calculation.summary(:period=>@period))
-      rbs.should be_an_instance_of FinModeling::ReformulatedBalanceSheet
+      rbs.should be_a FinModeling::ReformulatedBalanceSheet
     end
   end
 
-  describe "operating_assets" do
+  describe ".operating_assets" do
     subject { @reformed_bal_sheet.operating_assets }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(26943000000.0) }
   end
 
-  describe "financial_assets" do
+  describe ".financial_assets" do
     subject { @reformed_bal_sheet.financial_assets }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(45631000000.0) }
   end
 
-  describe "operating_liabilities" do
+  describe ".operating_liabilities" do
     subject { @reformed_bal_sheet.operating_liabilities }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(6041000000.0) }
   end
 
-  describe "financial_liabilities" do
+  describe ".financial_liabilities" do
     subject { @reformed_bal_sheet.financial_liabilities }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(8388000000.0) }
   end
 
-  describe "net_operating_assets" do
+  describe ".net_operating_assets" do
     subject { @reformed_bal_sheet.net_operating_assets }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(20902000000.0) }
   end
 
-  describe "net_financial_assets" do
+  describe ".net_financial_assets" do
     subject { @reformed_bal_sheet.net_financial_assets }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(37243000000.0) }
   end
 
-  describe "common_shareholders_equity" do
+  describe ".common_shareholders_equity" do
     subject { @reformed_bal_sheet.common_shareholders_equity }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     its(:total) { should be_within(0.1).of(58145000000.0) }
   end
 
-  describe "composition_ratio" do
+  describe ".composition_ratio" do
     subject { @reformed_bal_sheet.composition_ratio }
     it { should be_within(0.1).of(@reformed_bal_sheet.net_operating_assets.total / @reformed_bal_sheet.net_financial_assets.total) }
   end
 
-  describe "noa_growth" do
+  describe ".noa_growth" do
     subject { @reformed_bal_sheet.noa_growth(@prev_reformed_bal_sheet) }
     let(:noa0) { @prev_reformed_bal_sheet.net_operating_assets.total }
     let(:noa1) { @reformed_bal_sheet.net_operating_assets.total }
@@ -82,7 +82,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
     it { should be_within(0.001).of(expected_growth) }
   end
 
-  describe "cse_growth" do
+  describe ".cse_growth" do
     subject { @reformed_bal_sheet.cse_growth(@prev_reformed_bal_sheet) }
     let(:cse0) { @prev_reformed_bal_sheet.common_shareholders_equity.total }
     let(:cse1) { @reformed_bal_sheet.common_shareholders_equity.total }
@@ -90,9 +90,9 @@ describe FinModeling::ReformulatedBalanceSheet  do
     it { should be_within(0.001).of(expected_growth) }
   end
 
-  describe "analysis" do
+  describe ".analysis" do
     subject {@reformed_bal_sheet.analysis(@prev_reformed_bal_sheet) }
-    it { should be_an_instance_of FinModeling::CalculationSummary }
+    it { should be_a FinModeling::CalculationSummary }
     it "contains the expected rows" do
       expected_keys = ["NOA ($MM)", "NFA ($MM)", "CSE ($MM)",
                        "Composition Ratio", "NOA Growth", "CSE Growth" ]

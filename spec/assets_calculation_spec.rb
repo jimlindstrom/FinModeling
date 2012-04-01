@@ -12,10 +12,9 @@ describe FinModeling::AssetsCalculation  do
     @a = @bal_sheet.assets_calculation
   end
 
-  describe "summary" do
-    it "only requires a period (knows how debts/credits work and whether to flip the total)" do
-      @a.summary(:period=>@period).should be_an_instance_of FinModeling::CalculationSummary
-    end
+  describe ".summary" do
+    subject { @a.summary(:period=>@period) }
+    it { should be_a FinModeling::CalculationSummary }
   end
 end
 

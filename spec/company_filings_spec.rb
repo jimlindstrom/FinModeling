@@ -2,38 +2,28 @@
 
 require 'spec_helper'
 
-describe FinModeling::CompanyFiling  do
+describe FinModeling::CompanyFilings  do
   before (:all) do
     @company = FinModeling::Company.find("aapl")
     @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
   end
 
-  describe "balance_sheet_analyses" do
-    subject { @filings.balance_sheet_analyses }
-    it { should be_an_instance_of FinModeling::BalanceSheetAnalyses }
-  end
+  subject { @filings }
+  its(:balance_sheet_analyses) { should be_a FinModeling::BalanceSheetAnalyses }
+  its(:cash_flow_statement_analyses) { should be_a FinModeling::CalculationSummary } # FIXME: model this guy the same way...
+  its(:income_statement_analyses) {should be_a FinModeling::IncomeStatementAnalyses }
 
-  describe "cash_flow_statement_analyses" do
-    subject { @filings.cash_flow_statement_analyses }
-    it { should be_an_instance_of FinModeling::CalculationSummary } # FIXME: model this guy the same way...
-  end
-
-  describe "income_statement_analyses" do
-    subject { @filings.income_statement_analyses }
-    it { should be_an_instance_of FinModeling::IncomeStatementAnalyses }
-  end
-
-  describe "choose_forecasting_policy" do
+  describe ".choose_forecasting_policy" do
     context "when one or two filings" do
-      let(:filings) { FinModeling::CompanyFilings.new(@filings[-2..-1]) }
+      let(:filings) { FinModeling::CompanyFilings.new(@filings.last(2)) }
       subject { filings.choose_forecasting_policy }
 
-      it { should be_an_instance_of FinModeling::GenericForecastingPolicy }
+      it { should be_a FinModeling::GenericForecastingPolicy }
     end
     context "when two or more filings" do
-      let(:filings) { FinModeling::CompanyFilings.new(@filings[-3..-1]) }
+      let(:filings) { FinModeling::CompanyFilings.new(@filings.last(3)) }
       subject { filings.choose_forecasting_policy }
-      it { should be_an_instance_of FinModeling::ConstantForecastingPolicy }
+      it { should be_a FinModeling::ConstantForecastingPolicy }
 
       let(:isa) { filings.income_statement_analyses }
 
@@ -44,11 +34,11 @@ describe FinModeling::CompanyFiling  do
     end
   end
 
-  describe "forecasts" do
+  describe ".forecasts" do
     let(:policy) { @filings.choose_forecasting_policy }
     let(:num_quarters) { 3 }
     subject { @filings.forecasts(policy, num_quarters) }
-    it { should be_an_instance_of FinModeling::Forecasts }
+    it { should be_a FinModeling::Forecasts }
     its(:reformulated_income_statements) { should have(num_quarters).items }
     its(:reformulated_balance_sheets)    { should have(num_quarters).items }
   end

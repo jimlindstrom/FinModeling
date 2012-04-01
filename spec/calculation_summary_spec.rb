@@ -25,11 +25,10 @@ describe FinModeling::CalculationSummary do
       @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [ 93])
       @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :fa, :vals => [  1])
     end
-    it "should return a new FinModeling::CalculationSummary" do
-      @summary2.filter_by_type(:oa).should be_an_instance_of FinModeling::CalculationSummary
-    end
+    subject { @summary2.filter_by_type(:oa) }
+    it { should be_a FinModeling::CalculationSummary }
     it "should return a summary of only the requested type" do
-      @summary2.filter_by_type(:oa).rows.map{ |row| row.type }.uniq.should == [:oa]
+      subject.rows.map{ |row| row.type }.uniq.should == [:oa]
     end
   end
 
@@ -46,14 +45,11 @@ describe FinModeling::CalculationSummary do
 
     subject { @mccs1 + @mccs2 }
 
-    it { should be_an_instance_of FinModeling::CalculationSummary }
-
+    it { should be_a FinModeling::CalculationSummary }
     its(:title) { should == @mccs1.title }
-
     it "should set the row labels to the first summary's row labels" do
       subject.rows.map{ |row| row.key }.should == @mccs1.rows.map{ |row| row.key }
     end
-
     it "should merge the values of summary into an array of values in the result" do
       0.upto(subject.rows.length-1).each do |row_idx|
         subject.rows[row_idx].vals.should == ( @mccs1.rows[row_idx].vals + @mccs2.rows[row_idx].vals )

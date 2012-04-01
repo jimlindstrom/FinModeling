@@ -17,15 +17,6 @@ describe FinModeling::CashChangeCalculation  do
 
     @cash_initial = @filing.balance_sheet.assets_calculation.summary(:period => bs_period_initial).rows[0].vals.first
     @cash_final   = @filing.balance_sheet.assets_calculation.summary(:period => bs_period_final  ).rows[0].vals.first
-    
-    #puts "initial cash: #{@cash_initial}"
-    #puts "final cash:   #{@cash_final}"
-
-    #@filing.cash_flow_statement.cash_change_calculation.summary(:period => @cfs_period_q1_thru_q3).print
-
-    #@cash_changes.leaf_items(:period => @cfs_period_q1_thru_q3).each do |item|
-    #  puts "#{item.name}: #{item.def ? item.def["xbrli:balance"] : "nil"}"
-    #end
   end
 
   describe "summary(period)" do

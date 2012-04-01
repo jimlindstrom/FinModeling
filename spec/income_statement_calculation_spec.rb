@@ -15,12 +15,9 @@ describe FinModeling::IncomeStatementCalculation  do
   end
 
   describe "net_income_calculation" do
-    it "returns a NetIncomeCalculation" do
-      @inc_stmt.net_income_calculation.should be_an_instance_of FinModeling::NetIncomeCalculation
-    end
-    it "returns the root node of the net income calculation" do
-      @inc_stmt.net_income_calculation.label.downcase.should match /net.*income/
-    end
+    subject { @inc_stmt.net_income_calculation }
+    it { should be_a FinModeling::NetIncomeCalculation }
+    its(:label) { should match /net.*income/i }
   end
 
   describe "is_valid?" do
@@ -52,12 +49,12 @@ describe FinModeling::IncomeStatementCalculation  do
 
   describe "reformulated" do
     subject { @inc_stmt.reformulated(@period) } 
-    it { should be_an_instance_of FinModeling::ReformulatedIncomeStatement }
+    it { should be_a FinModeling::ReformulatedIncomeStatement }
   end
 
   describe "latest_quarterly_reformulated" do
     subject{ @inc_stmt.latest_quarterly_reformulated(@prev_inc_stmt) }
-    it { should be_an_instance_of FinModeling::ReformulatedIncomeStatement }
+    it { should be_a FinModeling::ReformulatedIncomeStatement }
   end
 
   describe "write_constructor" do
@@ -69,19 +66,12 @@ describe FinModeling::IncomeStatementCalculation  do
       file.close
 
       eval(File.read(file_name))
-
       @loaded_is = eval(item_name)
     end
 
-    it "writes itself to a file, and when reloaded, has the same periods" do
-      expected_periods = @inc_stmt.periods.map{|x| x.to_pretty_s}.join(',')
-      @loaded_is.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
-    end
-    it "writes itself to a file, and when reloaded, has the same net financing income" do
-      period = @inc_stmt.periods.yearly.last
-      expected_nfi = @inc_stmt.reformulated(period).net_financing_income.total
-      @loaded_is.reformulated(period).net_financing_income.total.should be_within(1.0).of(expected_nfi)
-    end
+    subject { @loaded_is }
+    it { should have_the_same_periods_as(@inc_stmt) }
+    it { should have_the_same_reformulated_last_total(:net_financing_income).as(@inc_stmt) }
   end
 
 end

@@ -3,71 +3,61 @@
 require 'spec_helper'
 
 describe FinModeling::Company  do
-  before(:each) do
-  end
-
   describe "initialize" do
-    it "takes a SecQuery::Entity and creates a new company" do
-      entity = SecQuery::Entity.find("aapl", {:relationships=>false, :transactions=>false, :filings=>true})
-      FinModeling::Company.new(entity).should be_an_instance_of FinModeling::Company
-    end
+    let(:entity) { SecQuery::Entity.find("aapl", {:relationships=>false, :transactions=>false, :filings=>true}) }
+    subject { FinModeling::Company.new(entity) }
+    it { should be_a FinModeling::Company }
   end
 
   describe "find" do
-    it "looks up a company by its stock ticker" do
-      FinModeling::Company.find("aapl").should be_an_instance_of FinModeling::Company
+    context "when given a valid stock ticker" do
+      subject { FinModeling::Company.find("aapl") } 
+      it { should be_a FinModeling::Company }
     end
-    it "returns nil if the stock symbol is invalid" do
-      FinModeling::Company.find("bogus symbol").should be_nil
+    context "when given a bogus stock ticker" do
+      subject { FinModeling::Company.find("bogus symbol") } 
+      it { should be_nil }
     end
   end
 
+  let(:company) { FinModeling::Company.find("aapl") }
+
   describe "name" do
-    it "returns the name of the company" do
-      c = FinModeling::Company.find("aapl")
-      c.name.should == "APPLE INC"
-    end
+    subject { company.name }
+    it { should == "APPLE INC" }
   end
 
   describe "annual_reports" do
-    before(:all) do
-      @company = FinModeling::Company.find "aapl"
-    end
-    it "returns a CompanyFilings object " do
-      @company.annual_reports.should be_an_instance_of FinModeling::CompanyFilings
-    end
-    it "returns an array of 10-K filings" do
-      @company.annual_reports.last.term.should == "10-K"
-    end
+    subject { company.annual_reports }
+    it { should be_a FinModeling::CompanyFilings }
+    specify { subject.all?{ |report| report.term == "10-K" }.should be_true }
   end
 
   describe "quarterly_reports" do
-    before(:all) do
-      @company = FinModeling::Company.find "aapl"
-    end
-    it "returns a CompanyFilings object " do
-      @company.quarterly_reports.should be_an_instance_of FinModeling::CompanyFilings
-    end
-    it "returns an array of 10-Q filings" do
-      @company.quarterly_reports.last.term.should == "10-Q"
-    end
+    subject { company.quarterly_reports }
+    it { should be_a FinModeling::CompanyFilings }
+    specify { subject.all?{ |report| report.term == "10-Q" }.should be_true }
   end
 
   describe "filings_since_date" do
-    before(:all) do
-      @company = FinModeling::Company.find "aapl"
+    let(:start_date) { Time.parse("1994-01-01") }
+    subject { company.filings_since_date(start_date) }
+    it { should be_a FinModeling::CompanyFilings }
+
+    context "when start date is 1994" do
+      let(:start_date) { Time.parse("1994-01-01") }
+      subject { company.filings_since_date(start_date) }
+      it { should have(11).items }
     end
-    it "returns a CompanyFilings object " do
-      @company.filings_since_date(Time.parse("2010-01-01")).should be_an_instance_of FinModeling::CompanyFilings
+    context "when start date is 2010" do
+      let(:start_date) { Time.parse("2010-01-01") }
+      subject { company.filings_since_date(start_date) }
+      it { should have( 9).items }
     end
-    it "returns an array of 10-Q and/or 10-K filings filed after the given date" do
-      @company.filings_since_date(Time.parse("1994-01-01")).length.should == 11
-    end
-    it "returns an array of 10-Q and/or 10-K filings filed after the given date" do
-      @company.filings_since_date(Time.parse("2010-01-01")).length.should == 9
-    end
-    it "returns an array of 10-Q and/or 10-K filings filed after the given date" do
-      @company.filings_since_date(Time.parse("2011-01-01")).length.should == 5
+    context "when start date is 2011" do
+      let(:start_date) { Time.parse("2011-01-01") }
+      subject { company.filings_since_date(start_date) }
+      it { should have( 5).items }
     end
   end
 end

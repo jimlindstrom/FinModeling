@@ -4,42 +4,34 @@ require 'spec_helper'
 
 describe FinModeling::LiabsAndEquityItem do
 
-  before(:all) do
-    #FinModeling::LiabsAndEquityItem.load_vectors_and_train(FinModeling::LiabsAndEquityItem::TRAINING_VECTORS)
+  describe ".new" do
+    subject { FinModeling::LiabsAndEquityItem.new("Accounts Payable Current") }
+    it { should be_a FinModeling::LiabsAndEquityItem }
   end
 
-  describe "new" do
-    it "takes a string and returns a new LiabsAndEquityItem" do
-      laei = FinModeling::LiabsAndEquityItem.new("Accounts Payable Current")
-      laei.should be_an_instance_of FinModeling::LiabsAndEquityItem
-    end
-  end
-
-  describe "train" do
+  describe ".train" do
     it "trains the classifier that this LiabsAndEquityItem is of the given type" do
       FinModeling::LiabsAndEquityItem.new("Accounts Payable Current").train(:ol)
     end
   end
 
-  describe "classification_estimates" do
-    it "returns a hash with the confidence in each LiabsAndEquityItem type" do
-      laei = FinModeling::LiabsAndEquityItem.new("Accounts Payable Current")
+  describe ".classification_estimates" do
+    subject { FinModeling::LiabsAndEquityItem.new("Accounts Payable Current").classification_estimates }
 
-      FinModeling::LiabsAndEquityItem::TYPES.each do |klass|
-        laei.classification_estimates.keys.include?(klass).should be_true
-      end
-    end
+    it { should be_a Hash }
+    specify { subject.keys.sort == FinModeling::LiabsAndEquityItem::TYPES.sort }
   end
 
-  describe "classify" do
+  describe ".classify" do
+    let(:laei) { FinModeling::LiabsAndEquityItem.new("Accounts Payable Current") }
+    subject { laei.classify }
     it "returns the LiabsAndEquityItem type with the highest probability estimate" do
-      laei = FinModeling::LiabsAndEquityItem.new("Accounts Payable Current")
       estimates = laei.classification_estimates
-      estimates[laei.classify].should be_within(0.1).of(estimates.values.max)
+      estimates[subject].should be_within(0.1).of(estimates.values.max)
     end
   end
 
-  describe "load_vectors_and_train" do
+  describe ".load_vectors_and_train" do
     # the before(:all) clause calls load_vectors_and_train already
     # we can just focus, here, on its effects
 

@@ -4,38 +4,30 @@ require 'spec_helper'
 
 describe FinModeling::CashChangeItem do
 
-  before(:all) do
-    #FinModeling::CashChangeItem.load_vectors_and_train(FinModeling::CashChangeItem::TRAINING_VECTORS)
-  end
-
   describe "new" do
-    it "takes a string and returns a new CashChangeItem" do
-      cci = FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment")
-      cci.should be_an_instance_of FinModeling::CashChangeItem
-    end
+    subject { FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment") }
+    it { should be_a FinModeling::CashChangeItem }
   end
 
   describe "train" do
+    let(:item) { FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment") }
     it "trains the classifier that this CashChangeItem is of the given type" do
-      FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment").train(:c)
+      item.train(:c)
     end
   end
 
   describe "classification_estimates" do
-    it "returns a hash with the confidence in each CashChangeItem type" do
-      cci = FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment")
-
-      FinModeling::CashChangeItem::TYPES.each do |klass|
-        cci.classification_estimates.keys.include?(klass).should be_true
-      end
-    end
+    let(:item) { FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment") }
+    subject { item.classification_estimates }
+    its(:keys) { should == FinModeling::CashChangeItem::TYPES }
   end
 
   describe "classify" do
+    let(:cci) { FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment") }
+    subject { cci.classify }
     it "returns the CashChangeItem type with the highest probability estimate" do
-      cci = FinModeling::CashChangeItem.new("Depreciation and amortization of property and equipment")
       estimates = cci.classification_estimates
-      estimates[cci.classify].should be_within(0.1).of(estimates.values.max)
+      estimates[subject].should be_within(0.1).of(estimates.values.max)
     end
   end
 

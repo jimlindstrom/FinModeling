@@ -9,33 +9,28 @@ describe FinModeling::AssetsItem do
   end
 
   describe "new" do
-    it "takes a string and returns a new AssetsItem" do
-      ai = FinModeling::AssetsItem.new("Property Plant And Equipment Net")
-      ai.should be_an_instance_of FinModeling::AssetsItem
-    end
+    subject { FinModeling::AssetsItem.new("Property Plant And Equipment Net") }
+    it { should be_a FinModeling::AssetsItem }
   end
 
   describe "train" do
+    subject { FinModeling::AssetsItem.new("Property Plant And Equipment Net") }
     it "trains the classifier that this AssetsItem is of the given type" do
-      FinModeling::AssetsItem.new("Property Plant and Equipment Net").train(:oa)
+      subject.train(:oa)
     end
   end
 
   describe "classification_estimates" do
-    it "returns a hash with the confidence in each AssetsItem type" do
-      ai = FinModeling::AssetsItem.new("Property Plant And Equipment Net")
-
-      FinModeling::AssetsItem::TYPES.each do |klass|
-        ai.classification_estimates.keys.include?(klass).should be_true
-      end
-    end
+    subject { FinModeling::AssetsItem.new("Property Plant And Equipment Net").classification_estimates }
+    its(:keys) { should == FinModeling::AssetsItem::TYPES }
   end
 
   describe "classify" do
+    let(:ai) { FinModeling::AssetsItem.new("Property Plant And Equipment Net") }
+    subject { ai.classify }
     it "returns the AssetsItem type with the highest probability estimate" do
-      ai = FinModeling::AssetsItem.new("Property Plant And Equipment Net")
       estimates = ai.classification_estimates
-      estimates[ai.classify].should be_within(0.1).of(estimates.values.max)
+      estimates[subject].should be_within(0.1).of(estimates.values.max)
     end
   end
 

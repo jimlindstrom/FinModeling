@@ -10,60 +10,59 @@ describe FinModeling::BalanceSheetCalculation  do
     @period = @balance_sheet.periods.last
   end
 
-  describe "assets_calculation" do
-    it "returns an AssetsCalculation" do
-      @balance_sheet.assets_calculation.should be_an_instance_of FinModeling::AssetsCalculation
+  describe ".assets_calculation" do
+    subject { @balance_sheet.assets_calculation }
+    it { should be_a FinModeling::AssetsCalculation }
+    its(:label) { should match /asset/i }
+
+    let(:right_side_sum) { @balance_sheet.liabs_and_equity_calculation.leaf_items_sum(:period=>@period) }
+    specify { subject.leaf_items_sum(:period=>@period).should be_within(1.0).of(right_side_sum) }
+  end
+
+  describe ".liabs_and_equity_calculation" do
+    subject { @balance_sheet.liabs_and_equity_calculation}
+    it { should be_a FinModeling::LiabsAndEquityCalculation }
+    its(:label) { should match /liab.*equity/i }
+  end
+
+  describe ".is_valid?" do
+    context "if none of the asset leaf nodes contains the term 'cash'" do
+      it "returns false" do
+        #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
+        #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
+        #filing.balance_sheet.is_valid?.should be_false
+        pending "Need to find another example of this...."
+      end
     end
-    it "returns the root node of the assets calculation" do
-      @balance_sheet.assets_calculation.label.downcase.should match /asset/
+    context "if none of the liability/equity net income leaf nodes contains the term 'equity'" do
+      it "returns false" do
+        #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
+        #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
+        #filing.balance_sheet.is_valid?.should be_false
+        pending "Need to find another example of this...."
+      end
     end
-    it "sums to the same value as do the liabilities and equity" do
-      left_sum = @balance_sheet.assets_calculation.leaf_items_sum(:period=>@period)
-      right_sum = @balance_sheet.liabs_and_equity_calculation.leaf_items_sum(:period=>@period)
-      left_sum.should be_within(1.0).of(right_sum)
+    context "if the assets total does not match the liabilities and equity total" do
+      it "returns false" do
+        #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
+        #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
+        #filing.balance_sheet.is_valid?.should be_false
+        pending "Need to find another example of this...."
+      end
+    end
+    context "otherwise" do
+      it "returns true" do
+        @balance_sheet.is_valid?.should be_true
+      end
     end
   end
 
-  describe "liabs_and_equity_calculation" do
-    it "returns a LiabsAndEquityCalculation" do
-      @balance_sheet.liabs_and_equity_calculation.should be_an_instance_of FinModeling::LiabsAndEquityCalculation
-    end
-    it "returns the root node of the liability & shareholders' equity calculation" do
-      @balance_sheet.liabs_and_equity_calculation.label.downcase.should match /liab.*equity/
-    end
+  describe ".reformulated" do
+    subject { @balance_sheet.reformulated(@period) }
+    it { should be_a FinModeling::ReformulatedBalanceSheet }
   end
 
-  describe "is_valid?" do
-    it "returns false if none of the asset leaf nodes contains the term 'cash'" do
-      #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-      #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-      #filing.balance_sheet.is_valid?.should be_false
-      pending
-    end
-    it "returns false if none of the liability/equity net income leaf nodes contains the term 'equity'" do
-      #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-      #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-      #filing.balance_sheet.is_valid?.should be_false
-      pending
-    end
-    it "returns false if the assets total does not match the liabilities and equity total" do
-      #ea_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/712515/000119312511149262/0001193125-11-149262-index.htm"
-      #filing = FinModeling::AnnualReportFiling.download ea_2011_annual_rpt
-      #filing.balance_sheet.is_valid?.should be_false
-      pending
-    end
-    it "returns true otherwise" do
-      @balance_sheet.is_valid?.should be_true
-    end
-  end
-
-  describe "reformulated" do
-    it "takes a period and returns a ReformulatedBalanceSheet" do
-      @balance_sheet.reformulated(@period).should be_an_instance_of FinModeling::ReformulatedBalanceSheet
-    end
-  end
-
-  describe "write_constructor" do
+  describe ".write_constructor" do
     before(:all) do
       file_name = "/tmp/finmodeling-bal-sheet.rb"
       item_name = "@bal_sheet"
@@ -72,18 +71,13 @@ describe FinModeling::BalanceSheetCalculation  do
       file.close
 
       eval(File.read(file_name))
-
       @loaded_bs = eval(item_name)
     end
 
-    it "writes itself to a file, and when reloaded, has the same periods" do
-      expected_periods = @balance_sheet.periods.map{|x| x.to_pretty_s}.join(',')
-      @loaded_bs.periods.map{|x| x.to_pretty_s}.join(',').should == expected_periods
-    end
-    it "writes itself to a file, and when reloaded, has the same net operating assets" do
-      period = @balance_sheet.periods.last
-      expected_noa = @balance_sheet.reformulated(period).net_operating_assets.total
-      @loaded_bs.reformulated(period).net_operating_assets.total.should be_within(1.0).of(expected_noa)
+    context "after write_constructor()ing it to a file and then eval()ing the results" do
+      subject { @loaded_bs }
+      it { should have_the_same_periods_as @balance_sheet }
+      it { should have_the_same_reformulated_last_total(:net_operating_assets).as(@balance_sheet) }
     end
   end
 
