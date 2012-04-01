@@ -16,5 +16,9 @@ describe FinModeling::AssetsCalculation  do
     subject { @a.summary(:period=>@period) }
     it { should be_a FinModeling::CalculationSummary }
   end
+
+  describe ".has_cash_item" do
+    pending "Find a test case..."
+  end
 end
 

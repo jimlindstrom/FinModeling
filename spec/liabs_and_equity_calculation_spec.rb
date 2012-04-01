@@ -15,5 +15,9 @@ describe FinModeling::LiabsAndEquityCalculation  do
     subject { @lse.summary(:period=>@period) }
     it { should be_a FinModeling::CalculationSummary }
   end
+
+  describe ".has_equity_item" do
+    pending "Find a test case..."
+  end
 end
 

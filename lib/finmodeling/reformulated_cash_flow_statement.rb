@@ -136,5 +136,17 @@ module FinModeling
       return analysis
     end
 
+    ALLOWED_IMBALANCE = 1.0
+    def flows_are_balanced?
+      (free_cash_flow.total - financing_flows.total) < ALLOWED_IMBALANCE
+    end
+
+    def flows_are_plausible?
+      return [ payments_to_debtholders,
+               payments_to_stockholders,
+               cash_from_operations,
+               cash_investments_in_operations ].all?{ |x| x.total.abs > 1.0 }
+    end
+
   end
 end

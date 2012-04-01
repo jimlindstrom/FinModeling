@@ -1,36 +1,22 @@
 module FinModeling
   class IncomeStatementCalculation < CompanyFilingCalculation
 
+    NI_GOAL   = "net income"
+    NI_LABELS = [ /^net (income|loss|loss income)/,
+                  /^profit loss$/,
+                  /^allocation.*of.*undistributed.*earnings/ ]
+    NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
+                  /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
+                  /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
     def net_income_calculation
-      if @ni.nil?
-        friendly_goal = "net income"
-        label_regexes = [ /^net (income|loss|loss income)/,
-                          /^profit loss$/,
-                          /^allocation.*of.*undistributed.*earnings/ ]
-        id_regexes    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
-                          /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
-                          /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
-        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
-        @ni = NetIncomeCalculation.new(calc)
-      end
-      return @ni
+      @ni ||= NetIncomeCalculation.new(find_calculation_arc(NI_GOAL, NI_LABELS, NI_IDS))
     end
 
     def is_valid?
-      has_revenue_item = false
-      has_tax_item     = false
-      net_income_calculation.leaf_items.each do |leaf|
-        if !has_revenue_item and leaf.name.downcase.matches_regexes?([/revenue/, /sales/])
-          has_revenue_item = true
-        end
-        if !has_tax_item and leaf.name.downcase.matches_regexes?([/tax/])
-          has_tax_item     = true
-        end
-      end
-
-      puts "income statement's net income calculation lacks tax item" if !has_tax_item 
-      puts "income statement's net income calculation lacks sales/revenue item" if !has_revenue_item 
-      return (has_revenue_item and has_tax_item)
+      puts "income statement's net income calculation lacks tax item"           if !net_income_calculation.has_tax_item?
+      puts "income statement's net income calculation lacks sales/revenue item" if !net_income_calculation.has_revenue_item?
+      return (net_income_calculation.has_revenue_item? && 
+              net_income_calculation.has_tax_item?)
     end
 
     def reformulated(period)

@@ -56,7 +56,7 @@ module FinModeling
 
     protected
 
-    def find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
+    def find_calculation_arc(friendly_goal, label_regexes, id_regexes)
       calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '').matches_regexes?(label_regexes) }
 
       if calc.nil?

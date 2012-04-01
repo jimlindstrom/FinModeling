@@ -1,19 +1,15 @@
 module FinModeling
   class CashFlowStatementCalculation < CompanyFilingCalculation
 
+    CASH_GOAL   = "cash change"
+    CASH_LABELS = [ /^cash and cash equivalents period increase decrease/,
+                    /^(|net )(change|increase|decrease|decrease *increase|increase *decrease) in cash and cash equivalents/,
+                    /^net cash provided by used in continuing operations/]
+    CASH_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)CashAndCashEquivalentsPeriodIncreaseDecrease[_a-z0-9]+/,
+                    /^(|Locator_|loc_)(|us-gaap_)NetCashProvidedByUsedInContinuingOperations[_a-z0-9]+/ ]
+
     def cash_change_calculation
-      if @cash_change.nil?
-        friendly_goal = "cash change"
-        label_regexes = [ /^cash and cash equivalents period increase decrease/,
-                          /^(|net )(change|increase|decrease|decrease *increase|increase *decrease) in cash and cash equivalents/,
-                          /^net cash provided by used in continuing operations/]
-        id_regexes    = [ /^(|Locator_|loc_)(|us-gaap_)CashAndCashEquivalentsPeriodIncreaseDecrease[_a-z0-9]+/,
-                          /^(|Locator_|loc_)(|us-gaap_)NetCashProvidedByUsedInContinuingOperations[_a-z0-9]+/ ]
-  
-        calc = find_and_verify_calculation_arc(friendly_goal, label_regexes, id_regexes)
-        @cash_change = CashChangeCalculation.new(calc)
-      end
-      return @cash_change
+      @cash_change ||= CashChangeCalculation.new(find_calculation_arc(CASH_GOAL, CASH_LABELS, CASH_IDS))
     end
   
     def is_valid?

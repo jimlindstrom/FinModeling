@@ -14,50 +14,28 @@ describe FinModeling::IncomeStatementCalculation  do
     @period = @inc_stmt.periods.last
   end
 
-  describe "net_income_calculation" do
+  describe ".net_income_calculation" do
     subject { @inc_stmt.net_income_calculation }
     it { should be_a FinModeling::NetIncomeCalculation }
     its(:label) { should match /net.*income/i }
   end
 
-  describe "is_valid?" do
-    context "when no node contains the term 'tax'" do
-      #before(:all) do
-      #  @inc_stmt_no_taxes = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement',
-      #                                                                       :delete_tax_item => true)
-      #end
-      it "returns false if none of the net income leaf nodes contains the term 'tax'" do
-        #@inc_stmt_no_taxes.is_valid?.should be_false
-        pending "no good way of setting up this test..."
-      end
-    end
-    context "when no node contains the terms 'sales' or 'revenue'" do
-      #before(:all) do
-      #  @inc_stmt_no_sales = FinModeling::Factory.IncomeStatementCalculation(:sheet => 'google 10-k 2011-12-31 income statement',
-      #                                                                       :delete_sales_item => true)
-      #end
-      it "returns false if none of the net income leaf nodes contains the term 'tax'" do
-        #@inc_stmt_no_sales.is_valid?.should be_false
-        pending "no good way of setting up this test..."
-      end
-    end
-    context "otherwise" do
-      subject { @inc_stmt.is_valid? }
-      it { should be_true }
-    end
+  describe ".is_valid?" do
+    subject { @inc_stmt.is_valid? }
+    it { should == (@inc_stmt.net_income_calculation.has_tax_item? && @inc_stmt.net_income_calculation.has_revenue_item?) }
   end
 
-  describe "reformulated" do
+  describe ".reformulated" do
     subject { @inc_stmt.reformulated(@period) } 
     it { should be_a FinModeling::ReformulatedIncomeStatement }
   end
 
-  describe "latest_quarterly_reformulated" do
+  describe ".latest_quarterly_reformulated" do
     subject{ @inc_stmt.latest_quarterly_reformulated(@prev_inc_stmt) }
     it { should be_a FinModeling::ReformulatedIncomeStatement }
   end
 
-  describe "write_constructor" do
+  describe ".write_constructor" do
     before(:all) do
       file_name = "/tmp/finmodeling-inc-stmt.rb"
       item_name = "@inc_stmt"

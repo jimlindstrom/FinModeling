@@ -22,7 +22,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     @reformed_cash_flow_stmt = @cash_flow_stmt.reformulated(@period)
   end
 
-  describe "new" do
+  describe ".new" do
     it "takes a cash change calculation and a period and returns a CalculationSummary" do
       rcfs = FinModeling::ReformulatedCashFlowStatement.new(@period, @cash_flow_stmt.cash_change_calculation.summary(:period=>@period))
       rcfs.should be_an_instance_of FinModeling::ReformulatedCashFlowStatement
@@ -31,7 +31,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
 
   subject { @reformed_cash_flow_stmt }
 
-  describe "cash_from_operations" do
+  describe ".cash_from_operations" do
     subject { @reformed_cash_flow_stmt.cash_from_operations }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up the values of rows with type :c" do
@@ -44,7 +44,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
-  describe "cash_investments_in_operations" do
+  describe ".cash_investments_in_operations" do
     subject { @reformed_cash_flow_stmt.cash_investments_in_operations }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up the values of rows with type :i" do
@@ -57,7 +57,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
-  describe "payments_to_debtholders" do
+  describe ".payments_to_debtholders" do
     subject { @reformed_cash_flow_stmt.payments_to_debtholders }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up the values of rows with type :d, minus the total change in cash" do
@@ -73,7 +73,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
-  describe "payments_to_stockholders" do
+  describe ".payments_to_stockholders" do
     subject { @reformed_cash_flow_stmt.payments_to_stockholders }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up the values of rows with type :f" do
@@ -86,7 +86,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
-  describe "free_cash_flow" do
+  describe ".free_cash_flow" do
     subject { @reformed_cash_flow_stmt.free_cash_flow }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up cash from operations and cash investments in operations" do
@@ -96,13 +96,13 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
-  describe "ni_over_c" do
+  describe ".ni_over_c" do
     subject { @reformed_cash_flow_stmt.ni_over_c(@reformed_inc_stmt) }
     it { should be_an_instance_of Float }
     it { should be_within(0.1).of(@reformed_inc_stmt.comprehensive_income.total / @reformed_cash_flow_stmt.cash_from_operations.total) }
   end
 
-  describe "financing_flows" do
+  describe ".financing_flows" do
     subject { @reformed_cash_flow_stmt.financing_flows }
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "totals up payments to both debtholders and stockholders" do
@@ -112,7 +112,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
     end
   end
 
-  describe "analysis" do
+  describe ".analysis" do
     subject { @reformed_cash_flow_stmt.analysis(@reformed_inc_stmt) }
 
     it { should be_an_instance_of FinModeling::CalculationSummary }
@@ -168,6 +168,14 @@ describe FinModeling::ReformulatedCashFlowStatement  do
         @diff.send(method).total.should be < max
       end
     end
+  end
+
+  describe ".flows_are_balanced?" do
+    pending "Find examples..."
+  end
+
+  describe ".flows_are_plausible?" do
+    pending "Find examples..."
   end
 
 end

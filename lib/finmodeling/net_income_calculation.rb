@@ -37,5 +37,17 @@ module FinModeling
       return thesummary
     end
  
+    def has_revenue_item?
+      @has_revenue_item ||= leaf_items.any? do |leaf|
+        leaf.name.matches_regexes?([/revenue/i, /sales/i])
+      end
+    end
+
+    def has_tax_item?
+      @has_tax_item ||= leaf_items.any? do |leaf|
+        leaf.name.matches_regexes?([/tax/i])
+      end
+    end
+
   end
 end

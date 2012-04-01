@@ -10,12 +10,20 @@ describe FinModeling::NetIncomeCalculation  do
     @ni = filing.income_statement.net_income_calculation
   end
 
-  describe "summary" do
+  describe ".summary" do
     subject { @ni.summary(:period=>@period) }
     it { should be_a FinModeling::CalculationSummary }
     it "should tag each row with an Income Statement Type" do
-      subject.rows.first.type.should be_in(FinModeling::IncomeStatementItem::TYPES)
+      subject.rows.first.type.should be_in(FinModeling::IncomeStatementItem::TYPES) # FIXME: seems weak.
     end
+  end
+
+  describe ".has_revenue_item?" do
+    pending "Find a test case..."
+  end
+
+  describe ".has_tax_item?" do
+    pending "Find a test case..."
   end
 end
 
