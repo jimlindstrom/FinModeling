@@ -44,6 +44,7 @@ require 'finmodeling/cash_change_item_vectors'
 require 'finmodeling/cash_change_item'
 
 require 'finmodeling/company_filing_calculation'
+require 'finmodeling/can_choose_successive_periods'
 require 'finmodeling/balance_sheet_calculation'
 require 'finmodeling/assets_calculation'
 require 'finmodeling/liabs_and_equity_calculation'
@@ -52,6 +53,7 @@ require 'finmodeling/net_income_calculation'
 require 'finmodeling/cash_flow_statement_calculation'
 require 'finmodeling/cash_change_calculation'
 
+require 'finmodeling/net_income_summary_from_differences'
 require 'finmodeling/reformulated_income_statement'
 require 'finmodeling/reformulated_balance_sheet'
 require 'finmodeling/reformulated_cash_flow_statement'
@@ -63,6 +65,9 @@ FinModeling::Classifiers.train
 
 require 'finmodeling/balance_sheet_analyses'
 require 'finmodeling/income_statement_analyses'
+
+require 'finmodeling/forecasted_reformulated_income_statement'
+require 'finmodeling/forecasted_reformulated_balance_sheet'
 
 require 'finmodeling/generic_forecasting_policy'
 require 'finmodeling/constant_forecasting_policy'

@@ -1,5 +1,6 @@
 module FinModeling
   class IncomeStatementCalculation < CompanyFilingCalculation
+    include CanChooseSuccessivePeriods
 
     NI_GOAL   = "net income"
     NI_LABELS = [ /^net (income|loss|loss income)/,
@@ -24,29 +25,27 @@ module FinModeling
                                              net_income_calculation.summary(:period=>period))
     end
 
-    def latest_quarterly_reformulated(prev_income_statement)
-      if (net_income_calculation.periods.quarterly.any?) &&
-         (reformulated(net_income_calculation.periods.quarterly.last).operating_revenues.total.abs > 1.0) && # FIXME: make an is_valid here?
-         (reformulated(net_income_calculation.periods.quarterly.last).cost_of_revenues.total.abs > 1.0) # FIXME: make an is_valid here?
-        return reformulated(net_income_calculation.periods.quarterly.last)
+    def latest_quarterly_reformulated(prev_is)
+      if net_income_calculation.periods.quarterly.any?
+        period = net_income_calculation.periods.quarterly.last
+        lqr = reformulated(period)
 
-      elsif !prev_income_statement
-        return nil
-
-      elsif net_income_calculation.periods.yearly.any? &&
-            prev_income_statement.net_income_calculation.periods.threequarterly.any?
-        is_period = net_income_calculation.periods.yearly.last
-        re_is     = reformulated(is_period)
-  
-        period_1q_thru_3q = prev_income_statement.net_income_calculation.periods.threequarterly.last
-        prev3q  = prev_income_statement.reformulated(period_1q_thru_3q)
-        re_is   = re_is - prev3q
-        return re_is 
+        if (lqr.operating_revenues.total.abs > 1.0) && # FIXME: make an is_valid here?
+           (lqr.cost_of_revenues  .total.abs > 1.0)    # FIXME: make an is_valid here?
+          return lqr
+        end
       end
-  
+
+      return nil if !prev_is
+
+      cur_period, prev_period = choose_successive_periods(net_income_calculation, prev_is.net_income_calculation)
+      if cur_period && prev_period
+        return reformulated(cur_period) - prev_is.reformulated(prev_period)
+      end
+
       return nil
     end
- 
+
     def write_constructor(file, item_name)
       item_calc_name = item_name + "_calc"
       @calculation.write_constructor(file, item_calc_name)

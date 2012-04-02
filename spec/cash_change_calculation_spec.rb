@@ -19,7 +19,7 @@ describe FinModeling::CashChangeCalculation  do
     @cash_final   = @filing.balance_sheet.assets_calculation.summary(:period => bs_period_final  ).rows[0].vals.first
   end
 
-  describe "summary(period)" do
+  describe ".summary" do
     subject{ @cash_changes.summary(:period => @cfs_period_q1_thru_q3) }
     it { should be_an_instance_of FinModeling::CalculationSummary }
 
