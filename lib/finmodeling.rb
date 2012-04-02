@@ -54,6 +54,8 @@ require 'finmodeling/cash_flow_statement_calculation'
 require 'finmodeling/cash_change_calculation'
 
 require 'finmodeling/net_income_summary_from_differences'
+require 'finmodeling/cash_change_summary_from_differences'
+
 require 'finmodeling/reformulated_income_statement'
 require 'finmodeling/reformulated_balance_sheet'
 require 'finmodeling/reformulated_cash_flow_statement'
