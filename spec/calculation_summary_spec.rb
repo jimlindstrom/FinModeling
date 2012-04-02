@@ -55,5 +55,29 @@ describe FinModeling::CalculationSummary do
         subject.rows[row_idx].vals.should == ( @mccs1.rows[row_idx].vals + @mccs2.rows[row_idx].vals )
       end
     end
+
+    context "when the two calculations have different numbers of rows" do
+      before(:all) do
+        @mccs3 = FinModeling::CalculationSummary.new
+        @mccs3.title = "MCCS 3"
+        @mccs3.rows = [ ]
+        @mccs3.rows << FinModeling::CalculationRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4])
+        @mccs3.rows << FinModeling::CalculationRow.new(:key => "Row 2", :vals => [nil, 0, nil, -101, 2.4])
+      end
+      it "raises an error" do
+        lambda { @mccs1 + @mccs3 }.should raise_error
+      end
+    end
+
+    context "when the two calculations have different keys (or the same keys in different orders)" do
+      before(:all) do
+        @mccs3 = FinModeling::CalculationSummary.new
+        @mccs3.title = "MCCS 3"
+        @mccs3.rows = [ FinModeling::CalculationRow.new(:key => "Row 1a", :vals => [nil, 0, nil, -101, 2.4]) ]
+      end
+      it "raises an error" do
+        lambda { @mccs1 + @mccs3 }.should raise_error
+      end
+    end
   end
 end
