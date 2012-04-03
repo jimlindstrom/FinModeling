@@ -12,39 +12,66 @@ class Arguments
     puts "\t\t--no-cache: disable caching"
     puts "\t\t--balance-detail: show details about the balance sheet calculation"
     puts "\t\t--income-detail: show details about the net income calculation"
+    puts "\t\t--show-disclosure <part of title>: show a particular disclosure over time"
     exit
   end
-  
-  def self.parse(args)
-    a = { :stock_symbol => nil, :start_date => nil, :num_forecasts => nil }
+   
+  def self.parse(raw_args)
+    parsed_args = self.default_options
 
-    while args.any? && args.first =~ /^--/
-      case args.first.downcase
-        when '--no-cache'
-          FinModeling::Config.disable_caching
-          puts "Caching is #{FinModeling::Config.caching_enabled? ? "enabled" : "disabled"}"
-        when '--balance-detail'
-          FinModeling::Config.enable_balance_detail
-          puts "Balance sheet detail is #{FinModeling::Config.balance_detail_enabled? ? "enabled" : "disabled"}"
-        when '--income-detail'
-          FinModeling::Config.enable_income_detail
-          puts "Net income detail is #{FinModeling::Config.income_detail_enabled? ? "enabled" : "disabled"}"
-        when '--num-forecasts'
-          a[:num_forecasts] = args[1].to_i
-          self.show_usage_and_exit unless a[:num_forecasts] >= 1
-          puts "Forecasting #{a[:num_forecasts]} periods"
-          args = args[1..-1]
-        else
-          self.show_usage_and_exit
-      end
-      args = args[1..-1]
+    while raw_args.any? && raw_args.first =~ /^--/
+      self.parse_next_option(raw_args, parsed_args)
     end
   
-    self.show_usage_and_exit if args.length != 2
-    a[:stock_symbol]  = args[0]
-    a[:start_date] = Time.parse(args[1])
+    self.show_usage_and_exit if raw_args.length != 2
+    parsed_args[:stock_symbol] = raw_args[0]
+    parsed_args[:start_date  ] = Time.parse(raw_args[1])
   
-    return a
+    return parsed_args
+  end
+
+  private
+
+  def self.default_options
+    { :stock_symbol  => nil, 
+      :start_date    => nil, 
+      :num_forecasts => nil, 
+      :disclosures   => [ ] }
+  end
+
+
+  def self.parse_next_option(raw_args, parsed_args)
+    case raw_args.first.downcase
+      when '--no-cache'
+        FinModeling::Config.disable_caching
+        puts "Caching is #{FinModeling::Config.caching_enabled? ? "enabled" : "disabled"}"
+
+      when '--balance-detail'
+        FinModeling::Config.enable_balance_detail
+        puts "Balance sheet detail is #{FinModeling::Config.balance_detail_enabled? ? "enabled" : "disabled"}"
+
+      when '--income-detail'
+        FinModeling::Config.enable_income_detail
+        puts "Net income detail is #{FinModeling::Config.income_detail_enabled? ? "enabled" : "disabled"}"
+
+      when '--num-forecasts'
+        self.show_usage_and_exit if raw_args.length < 2
+        parsed_args[:num_forecasts] = raw_args[1].to_i
+        self.show_usage_and_exit unless parsed_args[:num_forecasts] >= 1
+        puts "Forecasting #{parsed_args[:num_forecasts]} periods"
+        raw_args.shift
+
+      when '--show-disclosure'
+        self.show_usage_and_exit if raw_args.length < 2
+        parsed_args[:disclosures] << raw_args[1]
+        puts "Showing disclosure: #{parsed_args[:disclosures].last}"
+        raw_args.shift
+
+      else
+        self.show_usage_and_exit
+
+    end
+    raw_args.shift
   end
 end
 
@@ -75,3 +102,13 @@ is_analyses.print
 filings.income_statement_analyses.print_extras if filings.income_statement_analyses.respond_to?(:print_extras)
 
 filings.cash_flow_statement_analyses.print
+
+args[:disclosures].each do |disclosure_title|
+  title_regex = Regexp.new(disclosure_title, Regexp::IGNORECASE)
+  if disclosures = filings.disclosures(title_regex)
+    disclosures.auto_scale!
+    disclosures.print
+  else
+    puts "Couldn't find disclosures called: #{title_regex}"
+  end
+end

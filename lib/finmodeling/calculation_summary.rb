@@ -69,6 +69,17 @@ module FinModeling
       @rows.map{ |row| row.vals.length }.max
     end
 
+    def auto_scale!
+      min_val = @rows.map{ |row| row.vals.map{ |x| x.abs }.min }.min
+      if min_val >= 1000 && min_val < 100000
+        @rows.each { |row| row.vals.map!{ |val| val /    1000.0 } }
+        @rows.each { |row| row.key += " ($KK)" }
+      elsif min_val >= 1000000
+        @rows.each { |row| row.vals.map!{ |val| val / 1000000.0 } }
+        @rows.each { |row| row.key += " ($MM)" }
+      end
+    end
+
     def total(col_idx=0)
       @rows.map{ |row| row.vals[col_idx] }.inject(:+) || 0.0
     end

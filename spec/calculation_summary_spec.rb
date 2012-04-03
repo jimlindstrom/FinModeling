@@ -32,6 +32,38 @@ describe FinModeling::CalculationSummary do
     end
   end
 
+  describe "auto_scale!" do
+    before(:each) do
+      @summary2 = FinModeling::CalculationSummary.new
+    end
+    context "when the minimum abs value is < 1M and >= 1k" do
+      before(:each) do
+        @summary2.rows = [ FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [10000, -1000000, 20000]) ]
+        @summary2.auto_scale!
+      end
+      subject { @summary2 }
+      it "should scale all values down by 1k" do
+        subject.rows.first.vals.should == [10, 1000, 20]
+      end
+      it "should append ' ($KK)' to all keys" do
+        subject.rows.map{ |row| row.key }.all?{ |key| key =~ / \(\$KK\)$/ }.should be_true
+      end
+    end
+    context "when the minimum abs value is >= 1M" do
+      before(:each) do
+        @summary2.rows = [ FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [10000000, 1000000, -25000000]) ]
+        @summary2.auto_scale!
+      end
+      subject { @summary2 }
+      it "should scale all values down by 1k" do
+        subject.rows.first.vals.should == [10, 1, 25]
+      end
+      it "should append ' ($MM)' to all keys" do
+        subject.rows.map{ |row| row.key }.all?{ |key| key =~ / \(\$MM\)$/ }.should be_true
+      end
+    end
+  end
+
   describe "num_value_columns" do
     before(:all) do
       @summary2 = FinModeling::CalculationSummary.new
