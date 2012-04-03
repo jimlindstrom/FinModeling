@@ -70,10 +70,10 @@ module FinModeling
       analysis.header_row = CalculationHeader.new(:key => "", :vals =>  ["Unknown..."])
   
       analysis.rows = []
-      analysis.rows << CalculationRow.new(:key => "C ($MM)",   :vals => [nil])
-      analysis.rows << CalculationRow.new(:key => "I ($MM)",   :vals => [nil])
-      analysis.rows << CalculationRow.new(:key => "d ($MM)",   :vals => [nil])
-      analysis.rows << CalculationRow.new(:key => "F ($MM)",   :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "C   ($MM)", :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "I   ($MM)", :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "d   ($MM)", :vals => [nil])
+      analysis.rows << CalculationRow.new(:key => "F   ($MM)", :vals => [nil])
       analysis.rows << CalculationRow.new(:key => "FCF ($MM)", :vals => [nil])
       analysis.rows << CalculationRow.new(:key => "NI / C",    :vals => [nil])
  
