@@ -35,7 +35,7 @@ module FinModeling
       end
       return @income_statement_analyses
     end
-  
+   
     def cash_flow_statement_analyses
       if !@cash_flow_statement_analyses
         prev_filing, prev_re_cfs = [nil, nil]
@@ -54,6 +54,31 @@ module FinModeling
         @cash_flow_statement_analyses.totals_row_enabled = false
       end
       return @cash_flow_statement_analyses
+    end
+
+    def disclosures(title_regex, period_type=nil)
+      ds = nil
+      self.each do |filing|
+        cur_disclosures = filing.disclosures
+        if ( disclosure = filing.disclosures.find{ |disc| disc.summary(:period => disc.periods.last)
+                                                              .title
+                                                              .gsub(/ \(.*/,'') =~ title_regex } )
+
+          period = case period_type
+            when nil        then disclosure.periods.last
+            when :yearly    then disclosure.periods.yearly.last
+            when :quarterly then disclosure.periods.quarterly.last
+            else                 raise RuntimeError.new("bogus period type")
+          end
+
+          next_d = disclosure.summary(:period => period )
+          next_d.header_row = CalculationHeader.new(:key => "",   :vals => [period.to_pretty_s])
+
+          ds = ds + next_d if  ds
+          ds =      next_d if !ds
+        end
+      end
+      return ds
     end
   
     def choose_forecasting_policy

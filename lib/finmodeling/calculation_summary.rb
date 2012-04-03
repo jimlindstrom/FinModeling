@@ -122,7 +122,11 @@ module FinModeling
 
     def +(mccs)
       raise RuntimeError.new("can't add a CalculationSummary to a #{mccs.class}") if !mccs.is_a?(CalculationSummary)
-      raise RuntimeError.new("can't add CalculationSummaries with different numbers of rows") if @rows.length != mccs.rows.length
+      if @rows.length != mccs.rows.length
+        raise RuntimeError.new("can't add CalculationSummaries with different numbers of rows.\n" +
+                               "1st summary's keys: " +     @rows.map{ |x| x.key }.join(',') + "\n" + 
+                               "2nd summary's keys: " + mccs.rows.map{ |x| x.key }.join(',') ) 
+      end
       if mccs.rows.map{ |x| x.key } != @rows.map{ |x| x.key }
         raise RuntimeError.new("can't add CalculationSummaries with different keys.\n" +
                                "1st summary's keys: " +     @rows.map{ |x| x.key }.join(',') + "\n" + 
