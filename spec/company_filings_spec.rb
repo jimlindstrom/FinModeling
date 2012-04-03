@@ -8,10 +8,29 @@ describe FinModeling::CompanyFilings  do
     @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
   end
 
-  subject { @filings }
-  its(:balance_sheet_analyses) { should be_a FinModeling::BalanceSheetAnalyses }
-  its(:cash_flow_statement_analyses) { should be_a FinModeling::CalculationSummary } # FIXME: model this guy the same way...
-  its(:income_statement_analyses) {should be_a FinModeling::IncomeStatementAnalyses }
+  describe ".balance_sheet_analyses" do
+    subject { @filings.balance_sheet_analyses }
+    it { should be_a FinModeling::BalanceSheetAnalyses }
+    it "should have one column per filing" do
+      subject.num_value_columns.should == @filings.length
+    end
+  end
+
+  describe ".cash_flow_statement_analyses" do
+    subject { @filings.cash_flow_statement_analyses }
+    it { should be_a FinModeling::CalculationSummary }
+    it "should have one column per filing" do
+      subject.num_value_columns.should == @filings.length
+    end
+  end
+
+  describe ".income_statement_analyses" do
+    subject { @filings.income_statement_analyses }
+    it { should be_a FinModeling::IncomeStatementAnalyses }
+    it "should have one column per filing" do
+      subject.num_value_columns.should == @filings.length
+    end
+  end
 
   describe ".choose_forecasting_policy" do
     context "when one or two filings" do
