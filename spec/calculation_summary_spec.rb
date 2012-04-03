@@ -9,7 +9,7 @@ describe FinModeling::CalculationSummary do
     @summary.rows = [ FinModeling::CalculationRow.new(:key => "Row", :vals => [nil, 0, nil, -101, 2.4]) ]
   end
 
-  describe "valid_vals" do
+  describe "valid_vals" do # FIXME: ... this should be on the row, not on the summary ?
     subject { @summary.rows.first.valid_vals }
     it "should return all non-nil values" do
       subject.should == @summary.rows[0].vals.select{ |x| !x.nil? }
@@ -29,6 +29,21 @@ describe FinModeling::CalculationSummary do
     it { should be_a FinModeling::CalculationSummary }
     it "should return a summary of only the requested type" do
       subject.rows.map{ |row| row.type }.uniq.should == [:oa]
+    end
+  end
+
+  describe "num_value_columns" do
+    before(:all) do
+      @summary2 = FinModeling::CalculationSummary.new
+      @summary2.rows = [ ]
+      @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [])
+      @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :fa, :vals => [9])
+      @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [3,2,1])
+      @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :fa, :vals => [1])
+    end
+    subject { @summary2.num_value_columns }
+    it "should return the width of the table (the maximum length of any row's vals)" do
+      subject.should == @summary2.rows.map{ |row| row.vals.length }.max
     end
   end
 
