@@ -38,7 +38,6 @@ module FinModeling
     end
 
     def print(key_width=18, max_decimals=4, val_width=12)
-      #justified_key = @key.fixed_width_left_justify(key_width)
       key_lines = @key.split_into_lines_shorter_than(key_width).map{ |line| line.fixed_width_left_justify(key_width) }
   
       justified_vals = ""
@@ -107,7 +106,8 @@ module FinModeling
     end
 
     def insert_column_before(col_idx, val=nil)
-      ( [@header_row] + @rows ).each{ |row| row.insert_column_before(col_idx, val) }
+      @header_row.insert_column_before(col_idx, val) if @header_row
+      @rows.each{ |row| row.insert_column_before(col_idx, val) }
     end
 
     def total(col_idx=0)
@@ -161,33 +161,82 @@ module FinModeling
       file.puts "#{item_name}.rows = [#{row_item_names.join(',')}]"
     end
 
-    def +(mccs)
-      raise RuntimeError.new("can't add a CalculationSummary to a #{mccs.class}") if !mccs.is_a?(CalculationSummary)
-      if @rows.length != mccs.rows.length
-        raise RuntimeError.new("can't add CalculationSummaries with different numbers of rows.\n" +
-                               "1st summary's keys: " +     @rows.map{ |x| x.key }.join(',') + "\n" + 
-                               "2nd summary's keys: " + mccs.rows.map{ |x| x.key }.join(',') ) 
-      end
-      if mccs.rows.map{ |x| x.key } != @rows.map{ |x| x.key }
-        raise RuntimeError.new("can't add CalculationSummaries with different keys.\n" +
-                               "1st summary's keys: " +     @rows.map{ |x| x.key }.join(',') + "\n" + 
-                               "2nd summary's keys: " + mccs.rows.map{ |x| x.key }.join(',') ) 
-      end
-
+    def +(other)
+      raise RuntimeError.new("can't add a CalculationSummary to a #{other.class}") if !other.is_a?(CalculationSummary)
       multics = CalculationSummary.new
       multics.title = @title
+      multics.rows = []
 
       if @header_row
         multics.header_row = CalculationHeader.new(
                                :key  => @header_row.key.dup, 
-                               :vals => @header_row.vals.dup + mccs.header_row.vals.dup)
+                               :vals => @header_row.vals.dup + other.header_row.vals.dup)
       end
 
-      multics.rows = []
-      0.upto(@rows.length-1).each do |idx|
-        multics.rows << CalculationRow.new(
-                          :key  => @rows[idx].key.dup, 
-                          :vals => @rows[idx].vals.dup + mccs.rows[idx].vals.dup)
+      myrows  = @rows.dup
+      itsrows = other.rows.dup
+      while myrows.any? || itsrows.any?
+        new_row = CalculationRow.new( :key  => "", :vals => [] )
+
+        if    (myrows.any? && itsrows.empty?)
+          new_row.key = myrows.first.key.dup
+          new_row.vals += myrows.first.vals.dup
+          new_row.vals += [""]*other.num_value_column
+
+          myrows.shift
+
+        elsif (myrows.empty? && itsrows.any?)
+          new_row.key = itsrows.first.key.dup
+          new_row.vals += [""]*num_value_columns
+          new_row.vals += itsrows.first.vals.dup
+
+          itsrows.shift
+
+        elsif (myrows.first.key == itsrows.first.key)
+          new_row.key = myrows.first.key.dup
+          new_row.vals += myrows.first.vals.dup 
+          new_row.vals += itsrows.first.vals.dup
+
+          myrows.shift
+          itsrows.shift
+
+        elsif (myrows.first.key < itsrows.first.key)
+          if myrow=myrows.find{|row| row.key == itsrows.first.key }
+            new_row.key = myrows.first.key.dup
+            new_row.vals += myrows.first.vals.dup
+            new_row.vals += itsrows.first.vals.dup
+
+            myrows.delete(myrow)
+            itsrows.shift
+
+          else
+            new_row.key = itsrows.first.key.dup
+            new_row.vals += [""]*num_value_columns
+            new_row.vals += itsrows.first.vals.dup
+
+            itsrows.shift
+          end
+
+        elsif (myrows.first.key > itsrows.first.key)
+          if itsrow=itsrows.find{|row| row.key == myrows.first.key }
+            new_row.key = myrows.first.key.dup
+            new_row.vals += myrows.first.vals.dup 
+            new_row.vals += itsrows.first.vals.dup
+
+            myrows.shift
+            itsrows.delete(itsrow)
+
+          else
+            new_row.key = myrows.first.key.dup
+            new_row.vals += myrows.first.vals.dup
+            new_row.vals += [""]*other.num_value_columns
+
+            myrows.shift
+          end
+
+        end
+
+        multics.rows << new_row
       end
 
       return multics

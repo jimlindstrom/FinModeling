@@ -111,35 +111,25 @@ describe FinModeling::CalculationSummary do
       @mccs1 = FinModeling::CalculationSummary.new
       @mccs1.title = "MCCS 1"
       @mccs1.rows = [ FinModeling::CalculationRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4]) ]
-
-      @mccs2 = FinModeling::CalculationSummary.new
-      @mccs2.title = "MCCS 2"
-      @mccs2.rows = [ FinModeling::CalculationRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4]) ]
     end
 
-    subject { @mccs1 + @mccs2 }
-
-    it { should be_a FinModeling::CalculationSummary }
-    its(:title) { should == @mccs1.title }
-    it "should set the row labels to the first summary's row labels" do
-      subject.rows.map{ |row| row.key }.should == @mccs1.rows.map{ |row| row.key }
-    end
-    it "should merge the values of summary into an array of values in the result" do
-      0.upto(subject.rows.length-1).each do |row_idx|
-        subject.rows[row_idx].vals.should == ( @mccs1.rows[row_idx].vals + @mccs2.rows[row_idx].vals )
-      end
-    end
-
-    context "when the two calculations have different numbers of rows" do
+    context "when the two calculations have different keys (or the same keys in different orders)" do
       before(:all) do
-        @mccs3 = FinModeling::CalculationSummary.new
-        @mccs3.title = "MCCS 3"
-        @mccs3.rows = [ ]
-        @mccs3.rows << FinModeling::CalculationRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4])
-        @mccs3.rows << FinModeling::CalculationRow.new(:key => "Row 2", :vals => [nil, 0, nil, -101, 2.4])
+        @mccs2 = FinModeling::CalculationSummary.new
+        @mccs2.title = "MCCS 2"
+        @mccs2.rows = [ FinModeling::CalculationRow.new(:key => "Row 1", :vals => [nil, 0, nil, -101, 2.4]) ]
       end
-      it "raises an error" do
-        lambda { @mccs1 + @mccs3 }.should raise_error
+      subject { @mccs1 + @mccs2 }
+  
+      it { should be_a FinModeling::CalculationSummary }
+      its(:title) { should == @mccs1.title }
+      it "should set the row labels to the first summary's row labels" do
+        subject.rows.map{ |row| row.key }.should == @mccs1.rows.map{ |row| row.key }
+      end
+      it "should merge the values of summary into an array of values in the result" do
+        0.upto(subject.rows.length-1).each do |row_idx|
+          subject.rows[row_idx].vals.should == ( @mccs1.rows[row_idx].vals + @mccs2.rows[row_idx].vals )
+        end
       end
     end
 
@@ -147,10 +137,18 @@ describe FinModeling::CalculationSummary do
       before(:all) do
         @mccs3 = FinModeling::CalculationSummary.new
         @mccs3.title = "MCCS 3"
-        @mccs3.rows = [ FinModeling::CalculationRow.new(:key => "Row 1a", :vals => [nil, 0, nil, -101, 2.4]) ]
+        @mccs3.rows =  [ FinModeling::CalculationRow.new(:key => "Row 2", :vals => [1, 0, nil, -101, 2.4]) ]
+        @mccs3.rows += [ FinModeling::CalculationRow.new(:key => "Row 1", :vals => [32, 0, nil, nil, 2  ]) ]
       end
-      it "raises an error" do
-        lambda { @mccs1 + @mccs3 }.should raise_error
+      subject { @mccs1 + @mccs3 }
+      it "should have one row per unique key" do
+        subject.rows.map{ |row| row.key }.sort.should == (@mccs1.rows + @mccs3.rows).map{ |row| row.key }.sort.uniq
+      end
+      it "should merge the values of summary into an array of values in the result" do
+        expected_vals = []
+        expected_vals << ([""]*@mccs1.num_value_columns + @mccs3.rows[0].vals)
+        expected_vals << (@mccs1.rows[0].vals +           @mccs3.rows[1].vals)
+        subject.rows.map{ |row| row.vals }.should == expected_vals
       end
     end
   end
