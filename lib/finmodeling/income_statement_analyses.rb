@@ -11,7 +11,7 @@ module FinModeling
       @totals_row_enabled = false
     end
 
-    def print_extras
+    def print_regressions
       if operating_pm_row && operating_pm_row.valid_vals.any?
         lr = operating_pm_row.valid_vals.linear_regression
         puts "\t\toperating pm: "+

@@ -13,6 +13,7 @@ class Arguments
     puts "\t\t--balance-detail: show details about the balance sheet calculation"
     puts "\t\t--income-detail: show details about the net income calculation"
     puts "\t\t--show-disclosure <part of title>: show a particular disclosure over time"
+    puts "\t\t--show-regressions: show the regressions of calculations that are used to do forecasts"
     exit
   end
    
@@ -33,10 +34,11 @@ class Arguments
   private
 
   def self.default_options
-    { :stock_symbol  => nil, 
-      :start_date    => nil, 
-      :num_forecasts => nil, 
-      :disclosures   => [ ] }
+    { :stock_symbol     => nil, 
+      :start_date       => nil, 
+      :num_forecasts    => nil, 
+      :show_regressions => false, 
+      :disclosures      => [ ] }
   end
 
 
@@ -60,6 +62,10 @@ class Arguments
         self.show_usage_and_exit unless parsed_args[:num_forecasts] >= 1
         puts "Forecasting #{parsed_args[:num_forecasts]} periods"
         raw_args.shift
+
+      when '--show-regressions'
+        parsed_args[:show_regressions] = true
+        puts "Showing regressions"
 
       when '--show-disclosure'
         self.show_usage_and_exit if raw_args.length < 2
@@ -93,19 +99,26 @@ bs_analyses = filings.balance_sheet_analyses
 bs_analyses += forecasts.balance_sheet_analyses(filings) if forecasts
 bs_analyses.totals_row_enabled = false 
 bs_analyses.print
-filings.balance_sheet_analyses.print_extras if filings.balance_sheet_analyses.respond_to?(:print_extras)
+if args[:show_regressions] && filings.balance_sheet_analyses.respond_to?(:print_regressions)
+  filings.balance_sheet_analyses.print_regressions 
+end
 
 is_analyses = filings.income_statement_analyses 
 is_analyses += forecasts.income_statement_analyses(filings) if forecasts
 is_analyses.totals_row_enabled = false 
 is_analyses.print
-filings.income_statement_analyses.print_extras if filings.income_statement_analyses.respond_to?(:print_extras)
+if args[:show_regressions] && filings.income_statement_analyses.respond_to?(:print_regressions)
+  filings.income_statement_analyses.print_regressions
+end
 
 filings.cash_flow_statement_analyses.print
 
 args[:disclosures].each do |disclosure_title|
   title_regex = Regexp.new(disclosure_title, Regexp::IGNORECASE)
-  if disclosures = filings.disclosures(title_regex)
+  disclosures   = filings.disclosures(title_regex, :quarterly)
+  disclosures ||= filings.disclosures(title_regex, :yearly   )
+  disclosures ||= filings.disclosures(title_regex            )
+  if disclosures
     disclosures.auto_scale!
     disclosures.print
   else

@@ -11,7 +11,7 @@ module FinModeling
       @totals_row_enabled = false
     end
 
-    def print_extras # FIXME: rename
+    def print_regressions # FIXME: rename
       lr = noa_growth_row.valid_vals.linear_regression
       puts "\t\tNOA growth: "+
            "a:#{lr.a.to_s.cap_decimals(4)}, "+

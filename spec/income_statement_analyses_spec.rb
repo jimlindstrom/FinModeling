@@ -33,10 +33,10 @@ describe FinModeling::IncomeStatementAnalyses do
 
   let(:isa) { FinModeling::IncomeStatementAnalyses.new(@summary) }
 
-  describe ".print_extras" do
+  describe ".print_regressions" do
     subject { isa }
 
-    it { should respond_to(:print_extras) }
+    it { should respond_to(:print_regressions) }
   end
 
   describe ".revenue_growth_row" do

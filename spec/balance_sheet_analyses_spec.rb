@@ -28,10 +28,10 @@ describe FinModeling::BalanceSheetAnalyses do
     its(:totals_row_enabled) { should be_false }
   end
 
-  describe ".print_extras" do
+  describe ".print_regressions" do
     subject { FinModeling::BalanceSheetAnalyses.new(@summary) }
 
-    it { should respond_to(:print_extras) }
+    it { should respond_to(:print_regressions) }
   end
 
   describe ".noa_growth_row" do

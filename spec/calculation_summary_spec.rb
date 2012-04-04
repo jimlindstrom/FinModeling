@@ -43,7 +43,7 @@ describe FinModeling::CalculationSummary do
       end
       subject { @summary2 }
       it "should scale all values down by 1k" do
-        subject.rows.first.vals.should == [10, 1000, 20]
+        subject.rows.first.vals.should == [10.0, -1000.0, 20.0]
       end
       it "should append ' ($KK)' to all keys" do
         subject.rows.map{ |row| row.key }.all?{ |key| key =~ / \(\$KK\)$/ }.should be_true
@@ -56,7 +56,7 @@ describe FinModeling::CalculationSummary do
       end
       subject { @summary2 }
       it "should scale all values down by 1k" do
-        subject.rows.first.vals.should == [10, 1, 25]
+        subject.rows.first.vals.should == [10.0, 1.0, -25.0]
       end
       it "should append ' ($MM)' to all keys" do
         subject.rows.map{ |row| row.key }.all?{ |key| key =~ / \(\$MM\)$/ }.should be_true
