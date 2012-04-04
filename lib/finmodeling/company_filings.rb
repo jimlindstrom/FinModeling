@@ -73,7 +73,7 @@ module FinModeling
 
           if period
             next_d = disclosure.summary(:period => period )
-            next_d.header_row = CalculationHeader.new(:key => "",   :vals => [period.to_pretty_s])
+            next_d.header_row = CalculationHeader.new(:key => "",   :vals => [period.to_pretty_s.gsub(/.* to /,'')])
           end
 
           ds = ds + next_d if  ds

@@ -120,6 +120,13 @@ args[:disclosures].each do |disclosure_title|
   disclosures ||= filings.disclosures(title_regex            )
   if disclosures
     disclosures.auto_scale!
+    if (disclosures.header_row.vals - bs_analyses.header_row.vals).length == 0
+      0.upto(bs_analyses.header_row.vals.length-1) do |idx|
+        if bs_analyses.header_row.vals[idx] != disclosures.header_row.vals[idx]
+          disclosures.insert_column_before(idx, "")
+        end
+      end
+    end
     disclosures.print
   else
     puts "Couldn't find disclosures called: #{title_regex}"

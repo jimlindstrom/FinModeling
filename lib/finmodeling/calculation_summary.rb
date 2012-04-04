@@ -13,6 +13,30 @@ module FinModeling
       ArrayWithStats.new(@vals.select{ |val| !val.nil? })
     end
 
+    def num_vals
+      @vals.length
+    end
+
+    def min_abs_val
+      @vals.map{ |x| x.abs }.min
+    end
+
+    def scale_down_by(val)
+      if val == :thousand
+        @vals.map!{ |val| val / 1000.0 }
+        @key += " ($KK)"
+      elsif val == :million
+        @vals.map!{ |val| val / 1000000.0 }
+        @key += " ($MM)"
+      else
+        raise RuntimeError.new("Bogus val: #{val}")
+      end
+    end
+
+    def insert_column_before(col_idx, val)
+      @vals.insert(col_idx, val)
+    end
+
     def print(key_width=18, max_decimals=4, val_width=12)
       justified_key = @key.fixed_width_left_justify(key_width)
   
@@ -66,18 +90,20 @@ module FinModeling
     end
 
     def num_value_columns
-      @rows.map{ |row| row.vals.length }.max
+      @rows.map{ |row| row.num_vals }.max
     end
 
     def auto_scale!
-      min_val = @rows.map{ |row| row.vals.map{ |x| x.abs }.min }.min
+      min_val = @rows.map{ |row| row.min_abs_val }.min
       if min_val >= 1000 && min_val < 100000
-        @rows.each { |row| row.vals.map!{ |val| val /    1000.0 } }
-        @rows.each { |row| row.key += " ($KK)" }
+        @rows.each { |row| row.scale_down_by(:thousand) }
       elsif min_val >= 1000000
-        @rows.each { |row| row.vals.map!{ |val| val / 1000000.0 } }
-        @rows.each { |row| row.key += " ($MM)" }
+        @rows.each { |row| row.scale_down_by(:million) }
       end
+    end
+
+    def insert_column_before(col_idx, val=nil)
+      ( [@header_row] + @rows ).each{ |row| row.insert_column_before(col_idx, val) }
     end
 
     def total(col_idx=0)

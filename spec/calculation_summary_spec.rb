@@ -9,14 +9,14 @@ describe FinModeling::CalculationSummary do
     @summary.rows = [ FinModeling::CalculationRow.new(:key => "Row", :vals => [nil, 0, nil, -101, 2.4]) ]
   end
 
-  describe "valid_vals" do # FIXME: ... this should be on the row, not on the summary ?
+  describe ".valid_vals" do # FIXME: ... this should be on the row, not on the summary ?
     subject { @summary.rows.first.valid_vals }
     it "should return all non-nil values" do
       subject.should == @summary.rows[0].vals.select{ |x| !x.nil? }
     end
   end
 
-  describe "filter_by_type" do
+  describe ".filter_by_type" do
     before(:all) do
       @summary2 = FinModeling::CalculationSummary.new
       @summary2.rows = [ ]
@@ -32,7 +32,34 @@ describe FinModeling::CalculationSummary do
     end
   end
 
-  describe "auto_scale!" do
+  describe ".insert_column_before" do
+    before(:each) do
+      @summary2 = FinModeling::CalculationSummary.new
+      @summary2.rows = [ ]
+      @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [  4])
+      @summary2.rows << FinModeling::CalculationRow.new(:key => "Row", :type => :oa, :vals => [ 93])
+    end
+    context "when given a column index of 0 through (length-1)" do
+      before(:each) do
+        @summary2.insert_column_before(0)
+      end
+      subject { @summary2 }
+      it "should insert a nil value in every row's vals, at the right column" do
+        subject.rows.map{ |row| row.vals }.should == [ [ nil, 4], [ nil, 93 ] ]
+      end
+    end
+    context "when given a column index greater than (length-1)" do
+      before(:each) do
+        @summary2.insert_column_before(2)
+      end
+      subject { @summary2 }
+      it "should append columns as needed" do
+        subject.rows.map{ |row| row.vals }.should == [ [ 4, nil, nil ], [ 93, nil, nil ] ]
+      end
+    end
+  end
+
+  describe ".auto_scale!" do
     before(:each) do
       @summary2 = FinModeling::CalculationSummary.new
     end
@@ -64,7 +91,7 @@ describe FinModeling::CalculationSummary do
     end
   end
 
-  describe "num_value_columns" do
+  describe ".num_value_columns" do
     before(:all) do
       @summary2 = FinModeling::CalculationSummary.new
       @summary2.rows = [ ]
