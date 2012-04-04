@@ -1,3 +1,8 @@
+Calculation details
+	- Show calculation details by enhancing CalculationSummary::+ to add summaries with non-identical sets of keys
+		- Use this to try to figure out why the change in equity is not equal to comprehensive income, in cases where
+		  we know it.
+
 Statement of Shareholder Equity
 	- Parse this one to get at comprehensive income
 

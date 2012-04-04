@@ -38,7 +38,8 @@ module FinModeling
     end
 
     def print(key_width=18, max_decimals=4, val_width=12)
-      justified_key = @key.fixed_width_left_justify(key_width)
+      #justified_key = @key.fixed_width_left_justify(key_width)
+      key_lines = @key.split_into_lines_shorter_than(key_width).map{ |line| line.fixed_width_left_justify(key_width) }
   
       justified_vals = ""
       @vals.each do |val|
@@ -46,7 +47,10 @@ module FinModeling
         justified_vals += "  " + val_with_commas.cap_decimals(max_decimals).fixed_width_right_justify(val_width) 
       end
    
-      puts "\t" + justified_key + justified_vals
+      puts "\t" + key_lines.shift + justified_vals
+      key_lines.each do |line|
+        puts "\t " + line
+      end
     end
 
     def write_constructor(file, item_name)

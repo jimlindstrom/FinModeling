@@ -23,4 +23,21 @@ class String
   def matches_regexes?(regexes) # FIXME: rename to matches_any?
     return regexes.inject(false){ |matches, regex| matches or regex =~ self }
   end
+
+  def split_into_lines_shorter_than(max_line_width)
+    lines = []
+    cur_line = []
+  
+    split(' ').each do |word|
+      if (cur_line + [word]).join(' ').length > max_line_width
+        lines << cur_line.join(' ')
+        cur_line = []
+      end
+  
+      cur_line << word
+    end
+  
+    lines << cur_line.join(' ') if !cur_line.empty?
+    lines
+  end
 end
