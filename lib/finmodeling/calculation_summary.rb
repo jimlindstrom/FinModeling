@@ -38,7 +38,10 @@ module FinModeling
     end
 
     def print(key_width=18, max_decimals=4, val_width=12)
-      key_lines = @key.split_into_lines_shorter_than(key_width).map{ |line| line.fixed_width_left_justify(key_width) }
+      type_and_key = ""
+      type_and_key += "[#{@type}] " if @type
+      type_and_key += @key
+      key_lines = type_and_key.split_into_lines_shorter_than(key_width).map{ |line| line.fixed_width_left_justify(key_width) }
   
       justified_vals = ""
       @vals.each do |val|
