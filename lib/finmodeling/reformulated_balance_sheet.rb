@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module FinModeling
   class ReformulatedBalanceSheet
     attr_accessor :period
@@ -55,13 +57,21 @@ module FinModeling
       net_operating_assets.total / net_financial_assets.total
     end
 
+    def change_in_noa(prev)
+      net_operating_assets.total - prev.net_operating_assets.total
+    end
+
+    def change_in_cse(prev)
+      common_shareholders_equity.total - prev.common_shareholders_equity.total
+    end
+
     def noa_growth(prev)
-      rate = (net_operating_assets.total - prev.net_operating_assets.total) / prev.net_operating_assets.total
+      rate = change_in_noa(prev) / prev.net_operating_assets.total
       return annualize_rate(prev, rate)
     end
 
     def cse_growth(prev)
-      rate = (common_shareholders_equity.total - prev.common_shareholders_equity.total) / prev.common_shareholders_equity.total
+      rate = change_in_cse(prev) / prev.common_shareholders_equity.total
       return annualize_rate(prev, rate)
     end
   
@@ -91,9 +101,17 @@ module FinModeling
       analysis.rows << CalculationRow.new(:key => "CSE ($MM)", :vals => [common_shareholders_equity.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "Composition Ratio", :vals => [composition_ratio] )
       if prev.nil?
+        if Config.balance_detail_enabled?
+          analysis.rows << CalculationRow.new(:key => "NOA Δ ($MM)", :vals => [nil] )
+          analysis.rows << CalculationRow.new(:key => "CSE Δ ($MM)", :vals => [nil] )
+        end
         analysis.rows << CalculationRow.new(:key => "NOA Growth", :vals => [nil] )
         analysis.rows << CalculationRow.new(:key => "CSE Growth", :vals => [nil] )
       else
+        if Config.balance_detail_enabled?
+          analysis.rows << CalculationRow.new(:key => "NOA Δ ($MM)", :vals => [change_in_noa(prev).to_nearest_million] )
+          analysis.rows << CalculationRow.new(:key => "CSE Δ ($MM)", :vals => [change_in_cse(prev).to_nearest_million] )
+        end
         analysis.rows << CalculationRow.new(:key => "NOA Growth", :vals => [noa_growth(prev)] )
         analysis.rows << CalculationRow.new(:key => "CSE Growth", :vals => [cse_growth(prev)] )
       end
