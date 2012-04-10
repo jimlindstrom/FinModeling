@@ -4,12 +4,13 @@ module FinModeling
 
     CONSTRUCTOR_PATH = File.join(FinModeling::BASE_PATH, "constructors/")
     SCHEMA_VERSION_ITEM = "@schema_version"
-    CURRENT_SCHEMA_VERSION = 1.1
+    CURRENT_SCHEMA_VERSION = 1.2
     # History:
     # 1.0: initial version
     # 1.1: added CFS to quarterly filings
     #      added disclosures
     #      renamed fake(.*)report to cached(.*)report
+    # 1.2: added shareholders' equity statement
 
     def self.download(url)
       uid = url.split("/")[-2..-1].join('-').gsub(/\.[A-zA-z]*$/, '')
@@ -79,14 +80,38 @@ module FinModeling
       return @cash_flow_stmt
     end
 
+    def has_a_shareholder_equity_statement?
+      begin
+        return !shareholder_equity_statement.nil?
+      rescue
+        return false
+      end
+    end
+
+    def shareholder_equity_statement
+      if @shareholder_equity_stmt.nil?
+        calculations=@taxonomy.callb.calculation
+        shareholder_equity_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement(|s) of (share|stock)holders(|') equity(| and comprehensive| and other comprehensive| and comprehensive)(| income| loss| income loss| loss income)$/) ||
+                                                         (x.clean_downcased_title =~ /statements.*of.*changes.*in.*shareholders.*equity/) }
+        if shareholder_equity_stmt.nil?
+          raise RuntimeError.new("Couldn't find shareholders' equity statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+        end
+    
+        @shareholder_equity_stmt = ShareholderEquityStatementCalculation.new(shareholder_equity_stmt)
+      end
+      return @shareholder_equity_stmt
+    end
+
     def is_valid?
       return (income_statement.is_valid? and balance_sheet.is_valid? and cash_flow_statement.is_valid?)
     end
 
     def write_constructor(file, item_name)
-      balance_sheet.write_constructor(      file, bs_name  = item_name + "_bs")
-      income_statement.write_constructor(   file, is_name  = item_name + "_is")
-      cash_flow_statement.write_constructor(file, cfs_name = item_name + "_cfs")
+      balance_sheet               .write_constructor(file, bs_name  = item_name + "_bs" )
+      income_statement            .write_constructor(file, is_name  = item_name + "_is" )
+      cash_flow_statement         .write_constructor(file, cfs_name = item_name + "_cfs")
+      shareholder_equity_statement.write_constructor(file, ses_name = item_name + "_ses") if has_a_shareholder_equity_statement?
+      ses_name = "nil" if !has_a_shareholder_equity_statement?
 
       names_of_discs = []
       disclosures.each_with_index do |disclosure, idx|
@@ -98,7 +123,7 @@ module FinModeling
 
       file.puts "#{SCHEMA_VERSION_ITEM} = #{CURRENT_SCHEMA_VERSION}" 
 
-      file.puts "#{item_name} = FinModeling::CachedAnnualFiling.new(#{bs_name}, #{is_name}, #{cfs_name}, #{names_of_discs_str})"
+      file.puts "#{item_name} = FinModeling::CachedAnnualFiling.new(#{bs_name}, #{is_name}, #{cfs_name}, #{ses_name}, #{names_of_discs_str})"
     end
   end
 end

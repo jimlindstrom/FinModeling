@@ -15,11 +15,31 @@ describe FinModeling::QuarterlyReportFiling  do
   end
 
   subject { @filing }
-  its(:balance_sheet)       { should be_a FinModeling::BalanceSheetCalculation }
-  its(:income_statement)    { should be_a FinModeling::IncomeStatementCalculation }
-  its(:cash_flow_statement) { should be_a FinModeling::CashFlowStatementCalculation }
+  its(:balance_sheet)                { should be_a FinModeling::BalanceSheetCalculation }
+  its(:income_statement)             { should be_a FinModeling::IncomeStatementCalculation }
+  its(:cash_flow_statement)          { should be_a FinModeling::CashFlowStatementCalculation }
 
-  its(:is_valid?) { should == (@filing.income_statement.is_valid? && @filing.balance_sheet.is_valid? && @filing.cash_flow_statement.is_valid?) }
+  context "when the report doesn't have a statement of shareholders' equity" do
+    its(:has_a_shareholder_equity_statement?) { should be_false }
+    #its(:shareholder_equity_statement) { should be_nil } ## should raise an error
+    its(:is_valid?) { should == [@filing.income_statement, 
+                                 @filing.balance_sheet, 
+                                 @filing.cash_flow_statement].all?{|x| x.is_valid?} }
+  end
+  #context "when the report has a statement of shareholders' equity" do
+  #  before(:all) do
+  #    filing_url = "http://www.sec.gov/Archives/edgar/data/789019/000119312511115186/0001193125-11-115186-index.htm"
+  #    @filing = FinModeling::CompanyFiling.download filing_url
+  #  end
+  #  subject { @filing }
+  #
+  #  its(:has_a_shareholder_equity_statement?) { should be_true }
+  #  its(:shareholder_equity_statement) { should be_a FinModeling::EquityStatementCalculation }
+  #  its(:is_valid?) { should == [@filing.income_statement, 
+  #                               @filing.balance_sheet, 
+  #                               @filing.cash_flow_statement,
+  #                               @filing.shareholder_equity_statement].all?{|x| x.is_valid?} }
+  #end
 
   context "after write_constructor()ing it to a file and then eval()ing the results" do
     before(:all) do
@@ -36,15 +56,15 @@ describe FinModeling::QuarterlyReportFiling  do
       @loaded_filing = eval(item_name)
     end
 
-    it "writes itself to a file, and saves a schema version of 1.1" do
-      @schema_version.should be == 1.1
+    it "writes itself to a file, and saves a schema version of 1.2" do
+      @schema_version.should be == 1.2
     end
 
     subject { @loaded_filing }
-    its(:balance_sheet)       { should have_the_same_periods_as(@filing.balance_sheet) }
-    its(:balance_sheet)       { should have_the_same_reformulated_last_total(:net_operating_assets).as(@filing.balance_sheet) }
-    its(:income_statement)    { should have_the_same_reformulated_last_total(:net_financing_income).as(@filing.income_statement) }
-    its(:cash_flow_statement) { should have_the_same_last_total(:cash_change_calculation).as(@filing.cash_flow_statement) }
-    its(:disclosures)         { should have_the_same_last_total(:first).as(@filing.disclosures) }
+    its(:balance_sheet)                { should have_the_same_periods_as(@filing.balance_sheet) }
+    its(:balance_sheet)                { should have_the_same_reformulated_last_total(:net_operating_assets).as(@filing.balance_sheet) }
+    its(:income_statement)             { should have_the_same_reformulated_last_total(:net_financing_income).as(@filing.income_statement) }
+    its(:cash_flow_statement)          { should have_the_same_last_total(:cash_change_calculation).as(@filing.cash_flow_statement) }
+    its(:disclosures)                  { should have_the_same_last_total(:first).as(@filing.disclosures) }
   end
 end

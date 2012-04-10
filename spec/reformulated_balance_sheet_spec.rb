@@ -32,43 +32,51 @@ describe FinModeling::ReformulatedBalanceSheet  do
   describe ".operating_assets" do
     subject { @reformed_bal_sheet.operating_assets }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(26943000000.0) } # FIXME: Why? what's the calc?
+    let(:total_assets) { @bal_sheet.assets_calculation.summary(:period=>@period).total }
+    its(:total) { should be_within(0.1).of(total_assets - @reformed_bal_sheet.financial_assets) }
   end
 
   describe ".financial_assets" do
     subject { @reformed_bal_sheet.financial_assets }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(45631000000.0) } # FIXME: Why? what's the calc?
+    let(:total_assets) { @bal_sheet.assets_calculation.summary(:period=>@period).total }
+    its(:total) { should be_within(0.1).of(total_assets - @reformed_bal_sheet.operating_assets.total) }
   end
 
   describe ".operating_liabilities" do
     subject { @reformed_bal_sheet.operating_liabilities }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(6041000000.0) } # FIXME: Why? what's the calc?
+    let(:total_equity) { @reformed_bal_sheet.common_shareholders_equity.total }
+    let(:total_l_and_e) { @bal_sheet.liabs_and_equity_calculation.summary(:period=>@period).total }
+    let(:total_liabs) { total_l_and_e - total_equity }
+    its(:total) { should be_within(0.1).of(total_liabs - @reformed_bal_sheet.financial_liabilities.total) }
   end
 
   describe ".financial_liabilities" do
     subject { @reformed_bal_sheet.financial_liabilities }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(8388000000.0) } # FIXME: Why? what's the calc?
+    let(:total_equity) { @reformed_bal_sheet.common_shareholders_equity.total }
+    let(:total_l_and_e) { @bal_sheet.liabs_and_equity_calculation.summary(:period=>@period).total }
+    let(:total_liabs) { total_l_and_e - total_equity }
+    its(:total) { should be_within(0.1).of(total_liabs - @reformed_bal_sheet.operating_liabilities.total) }
   end
 
   describe ".net_operating_assets" do
     subject { @reformed_bal_sheet.net_operating_assets }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(20902000000.0) } # FIXME: Why? what's the calc?
+    its(:total) { should be_within(0.1).of(@reformed_bal_sheet.operating_assets.total - @reformed_bal_sheet.operating_liabilities.total) }
   end
 
   describe ".net_financial_assets" do
     subject { @reformed_bal_sheet.net_financial_assets }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(37243000000.0) } # FIXME: Why? what's the calc?
+    its(:total) { should be_within(0.1).of(@reformed_bal_sheet.financial_assets.total - @reformed_bal_sheet.financial_liabilities.total) }
   end
 
   describe ".common_shareholders_equity" do
     subject { @reformed_bal_sheet.common_shareholders_equity }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(58145000000.0) } # FIXME: Why? what's the calc?
+    its(:total) { should be_within(0.1).of(@reformed_bal_sheet.net_operating_assets.total + @reformed_bal_sheet.net_financial_assets.total) }
   end
 
   describe ".composition_ratio" do

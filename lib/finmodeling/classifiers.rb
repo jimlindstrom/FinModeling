@@ -6,6 +6,7 @@ module FinModeling
       FinModeling::LiabsAndEquityItem.load_vectors_and_train
       FinModeling::IncomeStatementItem.load_vectors_and_train
       FinModeling::CashChangeItem.load_vectors_and_train
+      FinModeling::EquityChangeItem.load_vectors_and_train
     end
   end
 end
