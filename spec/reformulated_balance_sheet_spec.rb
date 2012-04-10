@@ -33,7 +33,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
     subject { @reformed_bal_sheet.operating_assets }
     it { should be_a FinModeling::CalculationSummary }
     let(:total_assets) { @bal_sheet.assets_calculation.summary(:period=>@period).total }
-    its(:total) { should be_within(0.1).of(total_assets - @reformed_bal_sheet.financial_assets) }
+    its(:total) { should be_within(0.1).of(total_assets - @reformed_bal_sheet.financial_assets.total) }
   end
 
   describe ".financial_assets" do

@@ -28,7 +28,7 @@ describe FinModeling::AnnualReportFiling  do
   end
   context "when the report has a statement of shareholders' equity" do
     before(:all) do
-      filing_url = "http://www.sec.gov/Archives/edgar/data/789019/000119312511200680/0001193125-11-200680-index.htm"
+      filing_url = "http://www.sec.gov/Archives/edgar/data/315189/000110465910063219/0001104659-10-063219-index.htm"
       @filing = FinModeling::AnnualReportFiling.download filing_url 
     end
     subject { @filing }
@@ -62,6 +62,7 @@ describe FinModeling::AnnualReportFiling  do
       its(:balance_sheet)                { should have_the_same_reformulated_last_total(:net_operating_assets).as(@filing.balance_sheet) }
       its(:income_statement)             { should have_the_same_reformulated_last_total(:net_financing_income).as(@filing.income_statement) }
       its(:cash_flow_statement)          { should have_the_same_last_total(:cash_change_calculation).as(@filing.cash_flow_statement) }
+      its(:shareholder_equity_statement) { should be_a FinModeling::ShareholderEquityStatementCalculation }
       its(:shareholder_equity_statement) { should have_the_same_last_total(:equity_change_calculation).as(@filing.shareholder_equity_statement) }
       its(:disclosures)                  { should have_the_same_last_total(:first).as(@filing.disclosures) }
     end

@@ -42,7 +42,7 @@ module FinModeling
     def write_constructor(file, item_name)
       item_calc_name = item_name + "_calc"
       @calculation.write_constructor(file, item_calc_name)
-      file.puts "#{item_name} = FinModeling::IncomeStatementCalculation.new(#{item_calc_name})"
+      file.puts "#{item_name} = FinModeling::ShareholderEquityStatementCalculation.new(#{item_calc_name})"
     end
 
   end
