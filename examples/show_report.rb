@@ -154,7 +154,7 @@ end
 def print_cash_flow_statement(filing, report_type)
   period = filing.cash_flow_statement.periods.yearly.last    if report_type == :annual_report
   period = filing.cash_flow_statement.periods.quarterly.last if report_type == :quarterly_report
-  puts "Cash Flow Statement (#{period.to_pretty_s})"
+  puts "cash flow statement (#{period.to_pretty_s})"
   
   summaries = []
   summaries << filing.cash_flow_statement.cash_change_calculation.summary(:period => period)
@@ -175,6 +175,18 @@ def print_reformulated_cash_flow_statement(filing, report_type)
   summaries << reformed_cash_flow_stmt.payments_to_stockholders
   summaries << reformed_cash_flow_stmt.free_cash_flow
   summaries << reformed_cash_flow_stmt.financing_flows
+
+  print_summaries(summaries)
+end
+
+def print_shareholder_equity_statement(filing, report_type)
+  return if !filing.has_a_shareholder_equity_statement?
+  period = filing.shareholder_equity_statement.periods.yearly.last    if report_type == :annual_report
+  period = filing.shareholder_equity_statement.periods.quarterly.last if report_type == :quarterly_report
+  puts "shareholder equity statement (#{period.to_pretty_s})"
+  
+  summaries = []
+  summaries << filing.shareholder_equity_statement.equity_change_calculation.summary(:period => period)
 
   print_summaries(summaries)
 end
@@ -213,6 +225,7 @@ print_income_statement(                filing, args[:report_type])
 print_reformulated_income_statement(   filing, args[:report_type])
 print_cash_flow_statement(             filing, args[:report_type])
 print_reformulated_cash_flow_statement(filing, args[:report_type])
+print_shareholder_equity_statement(    filing, args[:report_type])
 print_disclosures(                     filing, args[:report_type]) if args[:show_disclosures]
 
 raise RuntimeError.new("filing is not valid") if !filing.is_valid?
