@@ -52,10 +52,10 @@ module FinModeling
 
     def common_shareholders_equity
       cs = FinModeling::CalculationSummary.new
-      cs.title = "Common Shareholders' Equity, Net of Minority Interest"
+      cs.title = "Common Shareholders' Equity"
       cs.rows = [ CalculationRow.new( :key => "NOA", :vals => [  net_operating_assets.total ] ),
                   CalculationRow.new( :key => "NFA", :vals => [  net_financial_assets.total ] ),
-                  CalculationRow.new( :key => "-MI", :vals => [  -@mi.total                 ] ) ]
+                  CalculationRow.new( :key => "MI",  :vals => [  -@mi.total                 ] ) ]
       return cs
     end
 
