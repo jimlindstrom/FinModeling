@@ -3,7 +3,7 @@ module FinModeling
     include HasStringClassifier
 
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "classifiers/laei_")
-    TYPES         = [ :ol, :fl, :cse ]
+    TYPES         = [ :ol, :fl, :cse, :mi ]
 
     has_string_classifier(TYPES, LiabsAndEquityItem)
 

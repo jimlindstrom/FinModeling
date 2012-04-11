@@ -13,7 +13,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Accrued Liabilities Current"},
@@ -115,7 +115,7 @@ module FinModeling
                          {:klass=>:ol, :item_string=>"Accrued Liabilities Current"},
                          {:klass=>:ol, :item_string=>"Pension And Other Postretirement And Postemployment Benefit Plans Liabilities Noncurrent"},
                          {:klass=>:ol, :item_string=>"Other Liabilities Noncurrent"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
                          {:klass=>:cse, :item_string=>"Common Stock Value"},
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
@@ -280,7 +280,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:fl, :item_string=>"Notes And Loans Payable Current"},
                          {:klass=>:ol, :item_string=>"Accounts Payable And Accrued Liabilities Current"},
@@ -376,7 +376,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Other Liabilities Noncurrent"},
                          {:klass=>:fl, :item_string=>"Accrued Income Taxes Current"},
@@ -410,7 +410,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
@@ -447,7 +447,7 @@ module FinModeling
                          {:klass=>:fl, :item_string=>"Accrued Income Taxes Noncurrent"},
                          {:klass=>:ol, :item_string=>"Deferred Revenue Noncurrent"},
                          {:klass=>:ol, :item_string=>"Other Liabilities Noncurrent"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
                          {:klass=>:fl, :item_string=>"Preferred Stock Value"},
                          {:klass=>:cse, :item_string=>"Common Stock Including Additional Paid In Capital"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
@@ -485,7 +485,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Accrued Liabilities Current"},
@@ -512,7 +512,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Deferred Revenue Current"},
@@ -810,7 +810,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Employee Related Liabilities Current"},
@@ -875,7 +875,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:fl, :item_string=>"Convertible Debt Noncurrent"},
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
@@ -971,7 +971,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Accrued Revenue Share Obligation And Rebates"},
@@ -1067,7 +1067,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
 
                          {:klass=>:cse, :item_string=>"Stockholders Equity"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
                          {:klass=>:ol, :item_string=>"Other Liabilities Noncurrent"},
                          {:klass=>:fl, :item_string=>"Accrued Income Taxes Noncurrent"},
                          {:klass=>:ol, :item_string=>"Deferred Revenue Noncurrent"},
@@ -1115,7 +1115,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
@@ -1188,7 +1188,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:fl, :item_string=>"Notes And Loans Payable Current"},
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
@@ -1202,7 +1202,7 @@ module FinModeling
                          {:klass=>:fl, :item_string=>"Preferred Stock Value"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Deferred Revenue Current"},
                          {:klass=>:fl, :item_string=>"Deferred Tax Liabilities Current"},
@@ -1236,7 +1236,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Available For Sale Securities Adjustment Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Foreign Currency Translation Adjustment Net Of Tax"},
 
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
@@ -1330,7 +1330,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Employee Related Liabilities Current"},
@@ -1377,7 +1377,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
                          {:klass=>:fl, :item_string=>"Redeemable Noncontrolling Interest Equity Carrying Amount"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
@@ -1647,7 +1647,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Unappropriated"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Accrued Liabilities Current"},
@@ -1664,7 +1664,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable And  Accrued Liabilities Current"},
                          {:klass=>:ol, :item_string=>"Deferred Revenue Subscription And Support Current"},
@@ -1737,7 +1737,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:fl, :item_string=>"Statutory Accounting Practices Statutory Capital And Surplus Balance"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Accrued Liabilities Current"},
@@ -1861,7 +1861,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Additional Paid In Capital Common Stock"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Deferred Revenue Current"},
                          {:klass=>:ol, :item_string=>"Accounts Payable And  Accrued Liabilities Current"},
@@ -1888,7 +1888,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Employee Related Liabilities Current"},
@@ -1916,7 +1916,7 @@ module FinModeling
                          {:klass=>:cse, :item_string=>"Treasury Stock Value"},
                          {:klass=>:cse, :item_string=>"Retained Earnings Accumulated Deficit"},
                          {:klass=>:cse, :item_string=>"Accumulated Other Comprehensive Income Loss Net Of Tax"},
-                         {:klass=>:fl, :item_string=>"Minority Interest"},
+                         {:klass=>:mi, :item_string=>"Minority Interest"},
 
                          {:klass=>:ol, :item_string=>"Accounts Payable Current"},
                          {:klass=>:ol, :item_string=>"Accrued Liabilities Current"},

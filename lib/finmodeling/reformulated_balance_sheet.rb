@@ -11,6 +11,7 @@ module FinModeling
       @ol  = liabs_and_equity_summary.filter_by_type(:ol)
       @fl  = liabs_and_equity_summary.filter_by_type(:fl)
       @cse = liabs_and_equity_summary.filter_by_type(:cse)
+      @mi  = liabs_and_equity_summary.filter_by_type(:mi)
     end
 
     def operating_assets
@@ -45,11 +46,16 @@ module FinModeling
       return cs
     end
 
+    def minority_interest
+      @mi
+    end
+
     def common_shareholders_equity
       cs = FinModeling::CalculationSummary.new
-      cs.title = "Common Shareholders' Equity"
+      cs.title = "Common Shareholders' Equity, Net of Minority Interest"
       cs.rows = [ CalculationRow.new( :key => "NOA", :vals => [  net_operating_assets.total ] ),
-                  CalculationRow.new( :key => "NFA", :vals => [  net_financial_assets.total ] ) ]
+                  CalculationRow.new( :key => "NFA", :vals => [  net_financial_assets.total ] ),
+                  CalculationRow.new( :key => "-MI", :vals => [  -@mi.total                 ] ) ]
       return cs
     end
 
@@ -98,6 +104,7 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "FA ($MM)",:vals => [financial_assets.total.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "FL ($MM)",:vals => [financial_liabilities.total.to_nearest_million])
       end
+      analysis.rows << CalculationRow.new(:key => "Minority Interest ($MM)", :vals => [minority_interest.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "CSE ($MM)", :vals => [common_shareholders_equity.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "Composition Ratio", :vals => [composition_ratio] )
       if prev.nil?
@@ -122,7 +129,7 @@ module FinModeling
     def self.forecast_next(period, policy, last_re_bs, next_re_is)
       noa = next_re_is.operating_revenues.total / Ratio.new(policy.sales_over_noa).yearly_to_quarterly
       cse = last_re_bs.common_shareholders_equity.total + next_re_is.comprehensive_income.total
-      nfa = cse - noa
+      nfa = cse - noa # FIXME: this looks suspect. What about minority interests?
 
       ForecastedReformulatedBalanceSheet.new(period, noa, nfa, cse)
     end

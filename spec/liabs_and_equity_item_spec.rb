@@ -1,4 +1,4 @@
-# period_array_spec.rb
+# liabs_and_equity_item_spec.rb
 
 require 'spec_helper'
 

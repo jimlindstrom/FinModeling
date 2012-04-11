@@ -7,14 +7,15 @@ module FinModeling
 
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "summaries/equity_change_")
 
-    ALL_STATES = [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ]       
-    NEXT_STATES = { nil            => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ],
-                    :share_issue   => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ],
-                    :share_repurch => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ],
-                    :common_div    => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ],
-                    :net_income    => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ],
-                    :oci           => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ],
-                    :preferred_div => [ :share_issue, :share_repurch, :common_div, :net_income, :oci, :preferred_div ] }
+    ALL_STATES = [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ]       
+    NEXT_STATES = { nil            => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :share_issue   => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :share_repurch => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :minority_int  => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :common_div    => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :net_income    => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :oci           => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ],
+                    :preferred_div => [ :share_issue, :share_repurch, :minority_int, :common_div, :net_income, :oci, :preferred_div ] }
 
     def summary(args)
       summary_cache_key = args[:period].to_pretty_s

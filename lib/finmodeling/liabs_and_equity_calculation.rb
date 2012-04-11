@@ -6,11 +6,12 @@ module FinModeling
 
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "summaries/liabs_and_equity_")
 
-    ALL_STATES  =           [ :ol, :fl, :cse ]
-    NEXT_STATES = { nil  => [ :ol, :fl, :cse ],
-                    :ol  => [ :ol, :fl, :cse ],
-                    :fl  => [ :ol, :fl, :cse ],
-                    :cse => [      :fl, :cse ] }
+    ALL_STATES  =           [ :ol, :fl, :cse, :mi ]
+    NEXT_STATES = { nil  => [ :ol, :fl, :cse, :mi ],
+                    :ol  => [ :ol, :fl, :cse, :mi ],  # operating liabilities
+                    :fl  => [ :ol, :fl, :cse, :mi ],  # financial liabilities
+                    :cse => [ :ol, :fl, :cse, :mi ],  # common shareholder equity
+                    :mi  => [      :fl, :cse, :mi ] } # minority interest
 
     def summary(args)
       summary_cache_key = args[:period].to_pretty_s

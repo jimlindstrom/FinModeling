@@ -6,7 +6,7 @@ module FinModeling
                          { :klass=>:oci, :item_string=>"Noncontrolling Interest Increase From Business Combination" },
                          { :klass=>:share_issue, :item_string=>"Stock Issued During Period Value Acquisitions" },
                          { :klass=>:share_repurch, :item_string=>"Treasury Stock Value Acquired Cost Method" },
-                         { :klass=>:share_issue, :item_string=>"Minority Interest Increase From Stock Issuance" },
+                         { :klass=>:minority_int, :item_string=>"Minority Interest Increase From Stock Issuance" },
                          { :klass=>:common_div, :item_string=>"Dividends Common Stock" },
                          { :klass=>:oci, :item_string=>"Other Comprehensive Income Foreign Currency Transaction And Translation Adjustment Net Of Tax Period Increase Decrease" },
                          { :klass=>:oci, :item_string=>"Other Comprehensive Income Unrealized Gain Loss On Derivatives Arising During Period Net Of Tax" },
@@ -77,7 +77,7 @@ module FinModeling
                          { :klass=>:oci, :item_string=>"Other Comprehensive Income Foreign Currency Transaction And Translation Adjustment Net Of Tax Period Increase Decrease" },
                          { :klass=>:common_div, :item_string=>"Dividends Common Stock Cash" },
                          { :klass=>:share_issue, :item_string=>"Stock Issued During Period Value Share Based Compensation" },
-                         { :klass=>:share_issue, :item_string=>"Minority Interest Decrease From Redemptions" },
+                         { :klass=>:minority_int, :item_string=>"Minority Interest Decrease From Redemptions" },
                          { :klass=>:share_repurch, :item_string=>"Treasury Stock Value Acquired Cost Method" },
 
                          { :klass=>:net_income, :item_string=>"Net Income Loss Available To Common Stockholders Basic" },

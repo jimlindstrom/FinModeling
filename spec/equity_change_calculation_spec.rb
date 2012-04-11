@@ -15,8 +15,10 @@ describe FinModeling::EquityChangeCalculation  do
     bs_period_initial = @filing.balance_sheet.periods[-2]
     bs_period_final   = @filing.balance_sheet.periods[-1]
 
-    @equity_initial = @filing.balance_sheet.reformulated(bs_period_initial).common_shareholders_equity.total
-    @equity_final   = @filing.balance_sheet.reformulated(bs_period_final  ).common_shareholders_equity.total
+    @equity_plus_minority_int_initial = @filing.balance_sheet.reformulated(bs_period_initial).common_shareholders_equity.total + 
+                                        @filing.balance_sheet.reformulated(bs_period_initial).minority_interest         .total
+    @equity_plus_minority_int_final   = @filing.balance_sheet.reformulated(bs_period_final)  .common_shareholders_equity.total +
+                                        @filing.balance_sheet.reformulated(bs_period_final)  .minority_interest         .total
   end
 
   describe ".summary" do
@@ -26,7 +28,7 @@ describe FinModeling::EquityChangeCalculation  do
 
     describe ".total" do
       subject{ @equity_changes.summary(:period => @ses_period).total }
-      it { should be_within(1.0).of(@equity_final - @equity_initial) }
+      it { should be_within(1.0).of(@equity_plus_minority_int_final - @equity_plus_minority_int_initial) }
     end
   end
 end

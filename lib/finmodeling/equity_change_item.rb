@@ -3,8 +3,8 @@ module FinModeling
     include HasStringClassifier
 
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "classifiers/eci_")
-    TYPES         = [ :share_issue, :share_repurch, :common_div, # transactions with shareholders
-                      :net_income, :oci, :preferred_div ]        # comprehensive income
+    TYPES         = [ :share_issue, :minority_int, :share_repurch, :common_div, # transactions with shareholders
+                      :net_income, :oci, :preferred_div ]                       # comprehensive income
 
     # Notes:
     # 1. I need to go back to the EquityChangeCalculation and make sure that it's value mapping policy is accurate

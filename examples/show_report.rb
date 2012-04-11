@@ -42,7 +42,7 @@ class Arguments
 
   protected
 
-  def self.parse_just_a_url(raw_args, parsed)
+  def self.parse_just_a_url(raw_args, parsed_args)
     self.show_usage_and_exit if raw_args.length != 2
 
     parsed_args[:filing_url]  = raw_args[0]

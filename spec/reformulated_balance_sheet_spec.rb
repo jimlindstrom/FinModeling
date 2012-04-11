@@ -73,10 +73,20 @@ describe FinModeling::ReformulatedBalanceSheet  do
     its(:total) { should be_within(0.1).of(@reformed_bal_sheet.financial_assets.total - @reformed_bal_sheet.financial_liabilities.total) }
   end
 
+  describe ".minority_interest" do
+    subject { @reformed_bal_sheet.minority_interest }
+    it { should be_a FinModeling::CalculationSummary }
+    its(:total) { should be_within(0.1).of(@reformed_bal_sheet.net_operating_assets.total + 
+                                           @reformed_bal_sheet.net_financial_assets.total -
+                                           @reformed_bal_sheet.common_shareholders_equity.total) }
+  end
+
   describe ".common_shareholders_equity" do
     subject { @reformed_bal_sheet.common_shareholders_equity }
     it { should be_a FinModeling::CalculationSummary }
-    its(:total) { should be_within(0.1).of(@reformed_bal_sheet.net_operating_assets.total + @reformed_bal_sheet.net_financial_assets.total) }
+    its(:total) { should be_within(0.1).of(@reformed_bal_sheet.net_operating_assets.total + 
+                                           @reformed_bal_sheet.net_financial_assets.total -
+                                           @reformed_bal_sheet.minority_interest.total) }
   end
 
   describe ".composition_ratio" do
@@ -104,7 +114,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
     subject {@reformed_bal_sheet.analysis(@prev_reformed_bal_sheet) }
     it { should be_a FinModeling::CalculationSummary }
     it "contains the expected rows" do
-      expected_keys = ["NOA ($MM)", "NFA ($MM)", "CSE ($MM)",
+      expected_keys = ["NOA ($MM)", "NFA ($MM)", "Minority Interest ($MM)", "CSE ($MM)",
                        "Composition Ratio", "NOA Growth", "CSE Growth" ]
 
       subject.rows.map{ |row| row.key }.should == expected_keys
@@ -135,6 +145,9 @@ describe FinModeling::ReformulatedBalanceSheet  do
     it { should be_a_kind_of FinModeling::ReformulatedBalanceSheet }
     it "should have the given period" do
       subject.period.to_pretty_s == @next_bs_period.to_pretty_s
+    end
+    it "should set minority interest to ...?" do
+      pending "not sure how to treat this"
     end
     it "should set NOA to the same period's operating revenue over the policy's asset turnover" do
       expected_val = next_re_is.operating_revenues.total / FinModeling::Ratio.new(@policy.sales_over_noa).yearly_to_quarterly

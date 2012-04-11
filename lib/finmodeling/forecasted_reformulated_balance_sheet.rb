@@ -37,6 +37,13 @@ module FinModeling
       return cs
     end
 
+    def minority_interest
+      cs = FinModeling::CalculationSummary.new
+      cs.title = "Minority Interest"
+      cs.rows = [ ] # FIXME???
+      return cs
+    end
+
     def common_shareholders_equity
       cs = FinModeling::CalculationSummary.new
       cs.title = "Common Shareholders' Equity"
