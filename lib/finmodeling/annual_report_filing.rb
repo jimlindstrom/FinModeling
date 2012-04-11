@@ -81,6 +81,7 @@ module FinModeling
     end
 
     def has_a_shareholder_equity_statement?
+      #puts "calculations: " + @taxonomy.callb.calculation.map{ |x| x.clean_downcased_title }.join(',')
       begin
         return !shareholder_equity_statement.nil?
       rescue
@@ -91,7 +92,7 @@ module FinModeling
     def shareholder_equity_statement
       if @shareholder_equity_stmt.nil?
         calculations=@taxonomy.callb.calculation
-        shareholder_equity_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement(|s) of (share|stock)holders(|') equity(| and comprehensive| and other comprehensive| and comprehensive)(| income| loss| income loss| loss income)$/) ||
+        shareholder_equity_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement(|s).*of.*(share|stock)holders(|').*equity(|.*and.*comprehensive|.*and.*other.*comprehensive|.*and.*comprehensive)(|.*income|.*loss|.*income.*loss|.*loss.*income)$/) ||
                                                          (x.clean_downcased_title =~ /statements.*of.*changes.*in.*shareholders.*equity/) }
         if shareholder_equity_stmt.nil?
           raise RuntimeError.new("Couldn't find shareholders' equity statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
