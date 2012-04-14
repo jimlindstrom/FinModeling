@@ -4,7 +4,6 @@ require 'spec_helper'
 
 describe FinModeling::ShareholderEquityStatementCalculation  do
   before(:all) do
-    FinModeling::Config::disable_caching  # FIXME!!!
     deere_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/315189/000110465910063219/0001104659-10-063219-index.htm"
     filing = FinModeling::AnnualReportFiling.download deere_2011_annual_rpt
     @stmt = filing.shareholder_equity_statement
