@@ -63,6 +63,7 @@ require 'finmodeling/cash_change_summary_from_differences'
 require 'finmodeling/reformulated_income_statement'
 require 'finmodeling/reformulated_balance_sheet'
 require 'finmodeling/reformulated_cash_flow_statement'
+require 'finmodeling/reformulated_shareholder_equity_statement'
 
 require 'finmodeling/config'
 

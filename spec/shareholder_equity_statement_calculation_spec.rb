@@ -32,10 +32,10 @@ describe FinModeling::ShareholderEquityStatementCalculation  do
     end
   end
 
-  #describe ".reformulated" do
-  #  subject { @stmt.reformulated(@period) }
-  #  it { should be_a FinModeling::ReformulatedShareholderEquityStatement }
-  #end
+  describe ".reformulated" do
+    subject { @stmt.reformulated(@period) }
+    it { should be_a FinModeling::ReformulatedShareholderEquityStatement }
+  end
 
   describe ".write_constructor" do
     before(:all) do
