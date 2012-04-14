@@ -6,12 +6,7 @@ describe FinModeling::AnnualReportFiling  do
   before(:all) do
     company = FinModeling::Company.new(FinModeling::Mocks::Entity.new)
     filing_url = company.annual_reports.last.link
-    FinModeling::Config::disable_caching 
     @filing = FinModeling::AnnualReportFiling.download(filing_url)
-  end
-
-  after(:all) do
-    FinModeling::Config::enable_caching 
   end
 
   subject { @filing }
@@ -29,7 +24,9 @@ describe FinModeling::AnnualReportFiling  do
   context "when the report has a statement of shareholders' equity" do
     before(:all) do
       filing_url = "http://www.sec.gov/Archives/edgar/data/315189/000110465910063219/0001104659-10-063219-index.htm"
+      FinModeling::Config::disable_caching 
       @filing = FinModeling::AnnualReportFiling.download filing_url 
+      FinModeling::Config::enable_caching 
     end
     subject { @filing }
 

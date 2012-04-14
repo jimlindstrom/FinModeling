@@ -1,10 +1,10 @@
-Bump the schema versions (e.g., in 10K and 10Q reports)
 Try to figure out why the change in equity is not equal to comprehensive income, in cases where we know it.
 	- Some 10k's (and even some 10q's?) have Statements of SE
 	- When they don't:
 		- Some 10q's have AOCI broken out on BS. We can look for deltas
 		- Some 10q's have disclosures that list components of OCI or CI
 		- The remaining residual is probably stock-based compensation expense
+	- minority interests makes it screwey. also, preferred dividends?
 
 Reformulated Statement of Shareholder Equity
 

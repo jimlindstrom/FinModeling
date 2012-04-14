@@ -53,10 +53,9 @@ module FinModeling
     def income_statement
       if @income_stmt.nil?
         calculations=@taxonomy.callb.calculation
-        inc_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*operations/) or
-                                          (x.clean_downcased_title =~ /statement[s]*.*of.*earnings/) or
-                                          (x.clean_downcased_title =~ /statement[s]*.*of.*income/) or
-                                          (x.clean_downcased_title =~ /statement[s]*.*of.*net.*income/) }
+        inc_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement(|s).*operations/) or
+                                          (x.clean_downcased_title =~ /statement(|s).*of.*earnings/) or
+                                          (x.clean_downcased_title =~ /statement(|s).*of.*(|net.*)income/) }
         if inc_stmt.nil?
           raise RuntimeError.new("Couldn't find income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end

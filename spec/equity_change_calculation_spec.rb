@@ -5,9 +5,7 @@ require 'spec_helper'
 describe FinModeling::EquityChangeCalculation  do
   before(:all) do
     deere_2011_annual_rpt = "http://www.sec.gov/Archives/edgar/data/315189/000110465910063219/0001104659-10-063219-index.htm"
-    FinModeling::Config::disable_caching 
     @filing = FinModeling::AnnualReportFiling.download(deere_2011_annual_rpt)
-    FinModeling::Config::enable_caching 
     @ses_period = @filing.shareholder_equity_statement.periods.last
 
     @equity_changes = @filing.shareholder_equity_statement.equity_change_calculation

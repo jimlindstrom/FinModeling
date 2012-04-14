@@ -6,12 +6,9 @@ describe FinModeling::QuarterlyReportFiling  do
   before(:all) do
     company = FinModeling::Company.new(FinModeling::Mocks::Entity.new)
     filing_url = company.quarterly_reports.last.link
-    FinModeling::Config::disable_caching 
+    FinModeling::Config::disable_caching
     @filing = FinModeling::QuarterlyReportFiling.download(filing_url)
-  end
-
-  after(:all) do
-    FinModeling::Config::enable_caching 
+    FinModeling::Config::enable_caching
   end
 
   subject { @filing }
@@ -21,25 +18,10 @@ describe FinModeling::QuarterlyReportFiling  do
 
   context "when the report doesn't have a statement of shareholders' equity" do
     its(:has_a_shareholder_equity_statement?) { should be_false }
-    #its(:shareholder_equity_statement) { should be_nil } ## should raise an error
     its(:is_valid?) { should == [@filing.income_statement, 
                                  @filing.balance_sheet, 
                                  @filing.cash_flow_statement].all?{|x| x.is_valid?} }
   end
-  #context "when the report has a statement of shareholders' equity" do
-  #  before(:all) do
-  #    filing_url = "http://www.sec.gov/Archives/edgar/data/789019/000119312511115186/0001193125-11-115186-index.htm"
-  #    @filing = FinModeling::CompanyFiling.download filing_url
-  #  end
-  #  subject { @filing }
-  #
-  #  its(:has_a_shareholder_equity_statement?) { should be_true }
-  #  its(:shareholder_equity_statement) { should be_a FinModeling::EquityStatementCalculation }
-  #  its(:is_valid?) { should == [@filing.income_statement, 
-  #                               @filing.balance_sheet, 
-  #                               @filing.cash_flow_statement,
-  #                               @filing.shareholder_equity_statement].all?{|x| x.is_valid?} }
-  #end
 
   context "after write_constructor()ing it to a file and then eval()ing the results" do
     before(:all) do
