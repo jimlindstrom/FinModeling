@@ -26,7 +26,7 @@ module FinModeling
 
     def comprehensive_income
       cs = FinModeling::CalculationSummary.new
-      cs.title = "comprehensive_income"
+      cs.title = "Comprehensive Income"
       cs.rows = [ CalculationRow.new(:key => "Net Income",                 :vals => [@net_income   .total] ),
                   CalculationRow.new(:key => "Other Comprehensive Income", :vals => [@oci          .total] ),
                   CalculationRow.new(:key => "Preferred Dividends",        :vals => [@preferred_div.total] ) ]

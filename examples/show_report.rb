@@ -191,6 +191,20 @@ def print_shareholder_equity_statement(filing, report_type)
   print_summaries(summaries)
 end
 
+def print_reformulated_shareholder_equity_statement(filing, report_type)
+  return if !filing.has_a_shareholder_equity_statement?
+  period = filing.shareholder_equity_statement.periods.yearly.last    if report_type == :annual_report
+  period = filing.shareholder_equity_statement.periods.quarterly.last if report_type == :quarterly_report
+  
+  reformed_shareholder_equity_stmt = filing.shareholder_equity_statement.reformulated(period)
+
+  summaries = []
+  summaries << reformed_shareholder_equity_stmt.transactions_with_shareholders
+  summaries << reformed_shareholder_equity_stmt.comprehensive_income
+
+  print_summaries(summaries)
+end
+
 def print_disclosures(filing, report_type)
   puts "Disclosures"
 
@@ -217,15 +231,16 @@ if args[:filing_url].nil?
   args[:filing_url] = get_company_filing_url(args[:stock_symbol], args[:report_type], args[:report_offset])
 end
 
-filing = get_filing(        args[:filing_url], args[:report_type])
+filing = get_filing(args[:filing_url], args[:report_type])
 
-print_balance_sheet(                   filing, args[:report_type])
-print_reformulated_balance_sheet(      filing, args[:report_type])
-print_income_statement(                filing, args[:report_type])
-print_reformulated_income_statement(   filing, args[:report_type])
-print_cash_flow_statement(             filing, args[:report_type])
-print_reformulated_cash_flow_statement(filing, args[:report_type])
-print_shareholder_equity_statement(    filing, args[:report_type])
-print_disclosures(                     filing, args[:report_type]) if args[:show_disclosures]
+print_balance_sheet(                            filing, args[:report_type])
+print_reformulated_balance_sheet(               filing, args[:report_type])
+print_income_statement(                         filing, args[:report_type])
+print_reformulated_income_statement(            filing, args[:report_type])
+print_cash_flow_statement(                      filing, args[:report_type])
+print_reformulated_cash_flow_statement(         filing, args[:report_type])
+print_shareholder_equity_statement(             filing, args[:report_type])
+print_reformulated_shareholder_equity_statement(filing, args[:report_type])
+print_disclosures(                              filing, args[:report_type]) if args[:show_disclosures]
 
 raise RuntimeError.new("filing is not valid") if !filing.is_valid?
