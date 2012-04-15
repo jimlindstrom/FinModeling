@@ -5,6 +5,8 @@ module FinModeling
       @noa = noa
       @nfa = nfa
       @cse = cse
+
+      @minority_interest = FinModeling::CalculationSummary.new
     end
 
     def operating_assets
@@ -34,13 +36,6 @@ module FinModeling
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Financial Assets"
       cs.rows = [ CalculationRow.new( :key => "NFA", :vals => [@nfa] ) ]
-      return cs
-    end
-
-    def minority_interest
-      cs = FinModeling::CalculationSummary.new
-      cs.title = "Minority Interest"
-      cs.rows = [ ] # FIXME???
       return cs
     end
 

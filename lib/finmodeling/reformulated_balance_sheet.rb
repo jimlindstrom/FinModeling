@@ -3,51 +3,36 @@
 module FinModeling
   class ReformulatedBalanceSheet
     attr_accessor :period
+    attr_accessor :operating_assets, :financial_assets
+    attr_accessor :operating_liabilities, :financial_liabilities
+    attr_accessor :minority_interest
 
-    def initialize(period, assets_summary, liabs_and_equity_summary)
+    def initialize(period, assets, liabs_and_equity)
       @period = period
-      @oa  = assets_summary.filter_by_type(:oa)
-      @fa  = assets_summary.filter_by_type(:fa)
-      @ol  = liabs_and_equity_summary.filter_by_type(:ol)
-      @fl  = liabs_and_equity_summary.filter_by_type(:fl)
-      @cse = liabs_and_equity_summary.filter_by_type(:cse)
-      @mi  = liabs_and_equity_summary.filter_by_type(:mi)
-    end
 
-    def operating_assets
-      @oa
-    end
+      @operating_assets = assets.filter_by_type(:oa)
+      @financial_assets = assets.filter_by_type(:fa)
+      @operating_liabilities = liabs_and_equity.filter_by_type(:ol)
+      @financial_liabilities = liabs_and_equity.filter_by_type(:fl)
 
-    def financial_assets
-      @fa
-    end
-
-    def operating_liabilities
-      @ol
-    end
-
-    def financial_liabilities
-      @fl
+      #@cse = liabs_and_equity.filter_by_type(:cse)
+      @minority_interest = liabs_and_equity.filter_by_type(:mi)
     end
 
     def net_operating_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Operational Assets"
-      cs.rows = [ CalculationRow.new( :key => "OA", :vals => [  @oa.total ] ),
-                  CalculationRow.new( :key => "OL", :vals => [ -@ol.total ] ) ]
+      cs.rows = [ CalculationRow.new( :key => "OA", :vals => [  @operating_assets.total ] ),
+                  CalculationRow.new( :key => "OL", :vals => [ -@operating_liabilities.total ] ) ]
       return cs
     end
 
     def net_financial_assets
       cs = FinModeling::CalculationSummary.new
       cs.title = "Net Financial Assets"
-      cs.rows = [ CalculationRow.new( :key => "FA", :vals => [  @fa.total ] ),
-                  CalculationRow.new( :key => "FL", :vals => [ -@fl.total ] ) ]
+      cs.rows = [ CalculationRow.new( :key => "FA", :vals => [  @financial_assets.total ] ),
+                  CalculationRow.new( :key => "FL", :vals => [ -@financial_liabilities.total ] ) ]
       return cs
-    end
-
-    def minority_interest
-      @mi
     end
 
     def common_shareholders_equity
@@ -55,7 +40,7 @@ module FinModeling
       cs.title = "Common Shareholders' Equity"
       cs.rows = [ CalculationRow.new( :key => "NOA", :vals => [  net_operating_assets.total ] ),
                   CalculationRow.new( :key => "NFA", :vals => [  net_financial_assets.total ] ),
-                  CalculationRow.new( :key => "MI",  :vals => [  -@mi.total                 ] ) ]
+                  CalculationRow.new( :key => "MI",  :vals => [  -@minority_interest.total ] ) ]
       return cs
     end
 
@@ -89,22 +74,22 @@ module FinModeling
   
       analysis.rows = []
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationRow.new(:key => "A ($MM)",:vals => [@oa.total.to_nearest_million +
-                                                                               @fa.total.to_nearest_million])
-        analysis.rows << CalculationRow.new(:key => "L ($MM)",:vals => [@ol.total.to_nearest_million +
-                                                                               @fl.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "A ($MM)",:vals => [@operating_assets.total.to_nearest_million +
+                                                                        @financial_assets.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "L ($MM)",:vals => [@operating_liabilities.total.to_nearest_million +
+                                                                        @financial_liabilities.total.to_nearest_million])
       end
       analysis.rows << CalculationRow.new(:key => "NOA ($MM)", :vals => [net_operating_assets.total.to_nearest_million])
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationRow.new(:key => "OA ($MM)",:vals => [operating_assets.total.to_nearest_million])
-        analysis.rows << CalculationRow.new(:key => "OL ($MM)",:vals => [operating_liabilities.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "OA ($MM)",:vals => [@operating_assets.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "OL ($MM)",:vals => [@operating_liabilities.total.to_nearest_million])
       end
       analysis.rows << CalculationRow.new(:key => "NFA ($MM)", :vals => [net_financial_assets.total.to_nearest_million])
       if Config.balance_detail_enabled?
-        analysis.rows << CalculationRow.new(:key => "FA ($MM)",:vals => [financial_assets.total.to_nearest_million])
-        analysis.rows << CalculationRow.new(:key => "FL ($MM)",:vals => [financial_liabilities.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "FA ($MM)",:vals => [@financial_assets.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "FL ($MM)",:vals => [@financial_liabilities.total.to_nearest_million])
       end
-      analysis.rows << CalculationRow.new(:key => "Minority Interest ($MM)", :vals => [minority_interest.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "Minority Interest ($MM)", :vals => [@minority_interest.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "CSE ($MM)", :vals => [common_shareholders_equity.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "Composition Ratio", :vals => [composition_ratio] )
       if prev.nil?

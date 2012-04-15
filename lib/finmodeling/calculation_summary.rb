@@ -93,6 +93,7 @@ module FinModeling
       @val_width = 12
       @max_decimals = 4
       @totals_row_enabled = true
+      @rows = [ ]
     end
 
     def num_value_columns
