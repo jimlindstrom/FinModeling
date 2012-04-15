@@ -1,14 +1,15 @@
 module FinModeling
   class ReformulatedIncomeStatement
     attr_accessor :period
+    attr_accessor :operating_revenues, :cost_of_revenues, :operating_expenses
 
     def initialize(period, net_income_summary, tax_rate=0.35)
       @period   = period
       @tax_rate = tax_rate
 
-      @orev  = net_income_summary.filter_by_type(:or   )
-      @cogs  = net_income_summary.filter_by_type(:cogs )
-      @oe    = net_income_summary.filter_by_type(:oe   )
+      @operating_revenues = net_income_summary.filter_by_type(:or  )
+      @cost_of_revenues   = net_income_summary.filter_by_type(:cogs)
+      @operating_expenses = net_income_summary.filter_by_type(:oe  )
       @oibt  = net_income_summary.filter_by_type(:oibt )
       @fibt  = net_income_summary.filter_by_type(:fibt )
       @tax   = net_income_summary.filter_by_type(:tax  )
@@ -20,8 +21,8 @@ module FinModeling
     
       @oibt_tax_effect = (@oibt.total * @tax_rate).round.to_f
     
-      @gm = @orev.total + @cogs.total
-      @oisbt = @gm + @oe.total
+      @gm = @operating_revenues.total + @cost_of_revenues.total
+      @oisbt = @gm + @operating_expenses.total
     
       @oisat = @oisbt + @tax.total + @fibt_tax_effect + @oibt_tax_effect
     
@@ -35,31 +36,19 @@ module FinModeling
       return ReformulatedIncomeStatement.new(@period, net_income_summary, @tax_rate)
     end
 
-    def operating_revenues
-      @orev
-    end
-
-    def cost_of_revenues
-      @cogs
-    end
-
     def gross_revenue
       cs = FinModeling::CalculationSummary.new
       cs.title = "Gross Revenue"
-      cs.rows = [ CalculationRow.new(:key => "Operating Revenues (OR)",   :vals => [@orev.total] ),
-                  CalculationRow.new(:key => "Cost of Goods Sold (COGS)", :vals => [@cogs.total] ) ]
+      cs.rows = [ CalculationRow.new(:key => "Operating Revenues (OR)",   :vals => [@operating_revenues.total] ),
+                  CalculationRow.new(:key => "Cost of Goods Sold (COGS)", :vals => [@cost_of_revenues.total] ) ]
       return cs
-    end
-
-    def operating_expenses
-      @oe
     end
 
     def income_from_sales_before_tax
       cs = FinModeling::CalculationSummary.new
       cs.title = "Operating Income from sales, before tax (OISBT)"
       cs.rows = [ CalculationRow.new(:key => "Gross Margin (GM)", :vals => [@gm] ),
-                  CalculationRow.new(:key => "Operating Expense (OE)", :vals => [@oe.total] ) ]
+                  CalculationRow.new(:key => "Operating Expense (OE)", :vals => [@operating_expenses.total] ) ]
       return cs
     end
 
@@ -194,11 +183,11 @@ module FinModeling
         analysis.header_row = CalculationHeader.new(:key => "",   :vals => [re_bs.period.to_pretty_s])
       end
   
-      analysis.rows << CalculationRow.new(:key => "Revenue ($MM)",   :vals => [operating_revenues.total.to_nearest_million])
+      analysis.rows << CalculationRow.new(:key => "Revenue ($MM)",   :vals => [@operating_revenues.total.to_nearest_million])
       if Config.income_detail_enabled?
-        analysis.rows << CalculationRow.new(:key => "COGS ($MM)",    :vals => [@cogs.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "COGS ($MM)",    :vals => [@cost_of_revenues.total.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "GM ($MM)",      :vals => [@gm.to_nearest_million])
-        analysis.rows << CalculationRow.new(:key => "OE ($MM)",      :vals => [@oe.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "OE ($MM)",      :vals => [@operating_expenses.total.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "OISBT ($MM)",   :vals => [income_from_sales_before_tax.total.to_nearest_million])
       end
       analysis.rows << CalculationRow.new(:key => "Core OI ($MM)",   :vals => [income_from_sales_after_tax.total.to_nearest_million])
