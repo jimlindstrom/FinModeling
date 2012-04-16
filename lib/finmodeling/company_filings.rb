@@ -1,57 +1,62 @@
 module FinModeling
   class CompanyFilings < Array
+    def re_bs_arr
+      @re_bs_arr ||= self.map{ |filing| filing.balance_sheet.reformulated(filing.balance_sheet.periods.last) }
+    end
+
+    def re_is_arr
+      @re_is_arr ||= ([nil] + self).each_cons(2).map do |prev_filing, filing| 
+        filing.income_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.income_statement : nil) 
+      end
+    end
+
+    def re_cfs_arr
+      @re_cfs_arr ||= ([nil] + self).each_cons(2).map do |prev_filing, filing| 
+        filing.cash_flow_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.cash_flow_statement : nil) 
+      end
+    end
+
     def balance_sheet_analyses
       if !@balance_sheet_analyses
-        re_bs = nil
-        self.each do |filing|
-          prev_re_bs = re_bs
-          re_bs = filing.balance_sheet.reformulated(filing.balance_sheet.periods.last)
-          next_analysis = re_bs.analysis(prev_re_bs)
-    
-          @balance_sheet_analyses = @balance_sheet_analyses + next_analysis if  @balance_sheet_analyses
-          @balance_sheet_analyses =                           next_analysis if !@balance_sheet_analyses
-        end
-        @balance_sheet_analyses = BalanceSheetAnalyses.new(@balance_sheet_analyses)
+        analyses = ([nil] + re_bs_arr).each_cons(2).map { |prev, cur| cur.analysis(prev) }
+        analyses.delete_if{ |x| x.nil? }
+        @balance_sheet_analyses = BalanceSheetAnalyses.new( analyses.inject(:+) )
       end
       return @balance_sheet_analyses
     end
   
     def income_statement_analyses
       if !@income_statement_analyses
-        prev_re_bs, prev_re_is, prev_filing  = [nil, nil, nil]
-        self.each do |filing|
-          re_is = filing.income_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.income_statement : nil)
-          re_bs = filing.balance_sheet.reformulated(filing.balance_sheet.periods.last)
+        analyses = []
+        self.each_with_index do |filing, idx|
+          prev_re_bs = (idx > 0) ? re_bs_arr[idx-1] : nil
+          prev_re_is = (idx > 0) ? re_is_arr[idx-1] : nil
+          re_bs = re_bs_arr[idx]
+          re_is = re_is_arr[idx]
     
-          next_analysis = FinModeling::ReformulatedIncomeStatement.empty_analysis if !re_is
-          next_analysis = re_is.analysis(re_bs, prev_re_is, prev_re_bs)           if  re_is
-        
-          @income_statement_analyses = @income_statement_analyses + next_analysis if  @income_statement_analyses
-          @income_statement_analyses =                              next_analysis if !@income_statement_analyses
-      
-          prev_re_bs, prev_re_is, prev_filing  = [re_bs, re_is, filing]
+          analyses << (re_is ? re_is.analysis(re_bs, prev_re_is, prev_re_bs) : FinModeling::ReformulatedIncomeStatement.empty_analysis )
         end
-        @income_statement_analyses = IncomeStatementAnalyses.new(@income_statement_analyses)
+
+        analyses.delete_if{ |x| x.nil? }
+        @income_statement_analyses = IncomeStatementAnalyses.new( analyses.inject(:+) )
       end
       return @income_statement_analyses
     end
    
     def cash_flow_statement_analyses
       if !@cash_flow_statement_analyses
-        prev_filing, prev_re_cfs = [nil, nil]
-        self.each do |filing|
-          re_is = filing.income_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.income_statement : nil)
-          re_cfs = filing.cash_flow_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.cash_flow_statement : nil)
+        analyses = []
+        self.each_with_index do |filing, idx|
+          re_is  = re_is_arr[idx]
+          re_cfs = re_cfs_arr[idx]
       
-          next_analysis = FinModeling::ReformulatedCashFlowStatement.empty_analysis if !re_cfs
-          next_analysis = re_cfs.analysis(re_is)                                    if  re_cfs
-        
-          @cash_flow_statement_analyses = @cash_flow_statement_analyses + next_analysis if  @cash_flow_statement_analyses
-          @cash_flow_statement_analyses =                                 next_analysis if !@cash_flow_statement_analyses
-    
-          prev_filing, prev_re_cfs = [filing, re_cfs]
+          analyses << (re_cfs ? re_cfs.analysis(re_is) : FinModeling::ReformulatedCashFlowStatement.empty_analysis)
         end
-        @cash_flow_statement_analyses.totals_row_enabled = false
+
+        analyses.delete_if{ |x| x.nil? }
+        #@cash_flow_statement_analyses = CashFlowStatementAnalyses.new( analyses.inject(:+) )
+        @cash_flow_statement_analyses = analyses.inject(:+)
+        @cash_flow_statement_analyses.totals_row_enabled = false # FIXME: put this on the others too
       end
       return @cash_flow_statement_analyses
     end
