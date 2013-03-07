@@ -2,6 +2,8 @@ require 'fileutils'
 require 'digest' 
 require 'sec_query'
 require 'edgar'
+require 'yahoofinance'
+require 'gsl'
 
 require 'xbrlware-ruby19'
 require 'xbrlware-extras'
@@ -64,6 +66,8 @@ require 'finmodeling/reformulated_income_statement'
 require 'finmodeling/reformulated_balance_sheet'
 require 'finmodeling/reformulated_cash_flow_statement'
 require 'finmodeling/reformulated_shareholder_equity_statement'
+
+require 'finmodeling/company_beta'
 
 require 'finmodeling/config'
 

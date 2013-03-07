@@ -18,6 +18,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency("sec_query")
   gem.add_dependency("naive_bayes")
   gem.add_dependency("statsample")
+  gem.add_dependency("yahoofinance")
+  gem.add_dependency("gsl")
 
   gem.add_development_dependency("rspec", "2.5")
   gem.add_development_dependency("rake")
