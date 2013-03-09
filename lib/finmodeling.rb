@@ -68,6 +68,7 @@ require 'finmodeling/reformulated_cash_flow_statement'
 require 'finmodeling/reformulated_shareholder_equity_statement'
 
 require 'finmodeling/company_beta'
+require 'finmodeling/fama_french_cost_of_equity'
 require 'finmodeling/reoi_valuation'
 
 require 'finmodeling/config'

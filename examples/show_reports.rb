@@ -132,3 +132,25 @@ args[:disclosures].each do |disclosure_title|
     puts "Couldn't find disclosures called: #{title_regex}"
   end
 end
+
+if forecasts
+  quote = YahooFinance::get_quotes(YahooFinance::ExtendedQuote, args[:stock_symbol].dup).values.first
+  m = /([0-9\.]*)([MB])/.match(quote.marketCap)
+  mkt_cap = m[1].to_f
+  case
+    when m[2]=="M"
+      mkt_cap *= 1000*1000
+    when m[2]=="B"
+      mkt_cap *= 1000*1000*1000
+  end
+  share_price = YahooFinance::get_quotes(YahooFinance::StandardQuote, args[:stock_symbol].dup).values.last.lastTrade.to_f
+  num_shares = mkt_cap / share_price
+
+  ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol]) # don't I need to WACC this first?
+  
+  discount_rate = FinModeling::DiscountRate.new(ecoc + 1.0) # FIXME?
+  expected_ror  = FinModeling::Rate.new(ecoc) # FIXME?
+  
+  valuation = FinModeling::ReOIValuation.new(filings, forecasts, discount_rate, num_shares)
+  valuation.summary.print
+end
