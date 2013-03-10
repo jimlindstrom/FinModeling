@@ -12,6 +12,9 @@ Statement of Shareholder Equity
 	- Not taking into account share-based compensation, dividends payable, etc.
 
 Forecasts
+	- Filtering bogus growth values and then regressing is going to ignore the times when NOA flips
+	  from pos to neg (or vice versa), which is going to lead to material errors. Better to regress on
+	  the raw NOA values and use those to predict future NOA. Then sign changes aren't problematic.
 	- Choosing of policies should probably be bumped to a higher-level package.
 	- Need more sophisticated forecasting policies
 	- Need to have more sophisticated policies fall back on simpler ones (or none) when there's
