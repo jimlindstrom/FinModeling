@@ -18,9 +18,6 @@ module FinModeling
       summary = lookup_cached_summary(summary_cache_key)
       return summary if !summary.nil?
 
-      mapping = Xbrlware::ValueMapping.new
-      mapping.policy[:debit] = :flip
-
       summary = super(:period => args[:period], :mapping => mapping) # FIXME: flip_total should == true!
       if !lookup_cached_classifications(BASE_FILENAME, summary.rows)
         lookahead = [4, summary.rows.length-1].min
@@ -31,6 +28,12 @@ module FinModeling
       save_cached_summary(summary_cache_key, summary)
 
       return summary
+    end
+
+    def mapping
+      m = Xbrlware::ValueMapping.new
+      m.policy[:debit] = :flip
+      m
     end
 
     def has_equity_item
