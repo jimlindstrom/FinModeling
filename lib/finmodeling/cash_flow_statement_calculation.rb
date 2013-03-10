@@ -19,12 +19,12 @@ module FinModeling
       puts "flows are not balanced" if !flows_are_balanced
       none_are_zero = (re_cfs.cash_from_operations.total           != 0) &&
                       (re_cfs.cash_investments_in_operations.total != 0) &&
-                      (re_cfs.payments_to_debtholders.total        != 0) &&
-                      (re_cfs.payments_to_stockholders.total       != 0)
+                      (re_cfs.payments_to_debtholders.total        != 0) #&&
+                      #(re_cfs.payments_to_stockholders.total       != 0) # I relaxed this constraint. Seems it is often legitimately zero
       puts "(re_cfs.cash_from_operations.total           == 0)" if (re_cfs.cash_from_operations.total           == 0)
       puts "(re_cfs.cash_investments_in_operations.total == 0)" if (re_cfs.cash_investments_in_operations.total == 0)
       puts "(re_cfs.payments_to_debtholders.total        == 0)" if (re_cfs.payments_to_debtholders.total        == 0)
-      puts "(re_cfs.payments_to_stockholders.total       == 0)" if (re_cfs.payments_to_stockholders.total       == 0)
+      #puts "(re_cfs.payments_to_stockholders.total       == 0)" if (re_cfs.payments_to_stockholders.total       == 0)
       return (flows_are_balanced && none_are_zero)
     end
 
