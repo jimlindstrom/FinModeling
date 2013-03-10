@@ -4,7 +4,7 @@ module FinModeling
 
     CASH_GOAL   = "cash change"
     CASH_LABELS = [ /^cash and cash equivalents period increase decrease/,
-                    /^(|net )(change|increase|decrease|decrease *increase|increase *decrease) in cash and cash equivalents/,
+                    /^(|net )(change|increase|decrease|decrease *increase|increase *decrease) in cash and(| cash) equivalents/,
                     /^net cash provided by used in (|operating activities )continuing operations/]
     CASH_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)CashAndCashEquivalentsPeriodIncreaseDecrease[_a-z0-9]+/,
                     /^(|Locator_|loc_)(|us-gaap_)NetCashProvidedByUsedIn(|OperatingActivities)ContinuingOperations[_a-z0-9]+/ ]
