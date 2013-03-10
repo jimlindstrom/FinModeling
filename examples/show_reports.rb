@@ -116,6 +116,9 @@ if filings.empty?
   puts "No filings..."
   exit
 end
+filings.each do |filing|
+  raise RuntimeError.new("filing is not valid") if !filing.is_valid?
+end
 
 forecasts = filings.forecasts(filings.choose_forecasting_policy, num_quarters=args[:num_forecasts]) if args[:num_forecasts]
 
