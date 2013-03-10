@@ -16,10 +16,15 @@ module FinModeling
     def is_valid?
       re_cfs = reformulated(periods.last)
       flows_are_balanced = (re_cfs.free_cash_flow.total == (-1*re_cfs.financing_flows.total))
+      puts "flows are not balanced" if !flows_are_balanced
       none_are_zero = (re_cfs.cash_from_operations.total           != 0) &&
                       (re_cfs.cash_investments_in_operations.total != 0) &&
                       (re_cfs.payments_to_debtholders.total        != 0) &&
                       (re_cfs.payments_to_stockholders.total       != 0)
+      puts "(re_cfs.cash_from_operations.total           == 0)" if (re_cfs.cash_from_operations.total           == 0)
+      puts "(re_cfs.cash_investments_in_operations.total == 0)" if (re_cfs.cash_investments_in_operations.total == 0)
+      puts "(re_cfs.payments_to_debtholders.total        == 0)" if (re_cfs.payments_to_debtholders.total        == 0)
+      puts "(re_cfs.payments_to_stockholders.total       == 0)" if (re_cfs.payments_to_stockholders.total       == 0)
       return (flows_are_balanced && none_are_zero)
     end
 
