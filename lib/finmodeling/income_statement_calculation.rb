@@ -3,12 +3,12 @@ module FinModeling
     include CanChooseSuccessivePeriods
 
     NI_GOAL   = "net income"
-    NI_LABELS = [ /^(|consolidated )net (income|loss|loss income)/,
-                  #/^net earnings attributable to.*$/, # FIXME: This may be too permissive...
+    NI_LABELS = [ /^(|consolidated )(comprehensive|net) (income|loss|income loss|loss income)(| net of tax)(| attributable to parent)/,
                   /^profit loss$/,
                   /^allocation.*of.*undistributed.*earnings/ ]
     NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
                   /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
+                  /^ComprehensiveIncomeNetOfTax[_0-9a-z]+/,
                   /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
     def net_income_calculation
       begin
@@ -52,7 +52,12 @@ module FinModeling
 
       cur_period, prev_period = choose_successive_periods(net_income_calculation, prev_is.net_income_calculation)
       if cur_period && prev_period
-        return reformulated(cur_period) - prev_is.reformulated(prev_period)
+        new_re_is = reformulated(cur_period) - prev_is.reformulated(prev_period)
+        # the above subtraction doesn't know what period you want. So let's patch the result to have
+        # a quarterly period with the right end-points
+        new_re_is.period = Xbrlware::Context::Period.new({"start_date"=>prev_period.value["end_date"], 
+                                                          "end_date"  =>cur_period.value["end_date"]})
+        return new_re_is
       end
 
       return nil

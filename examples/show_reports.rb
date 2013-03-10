@@ -173,6 +173,9 @@ if args[:do_valuation]
     dcoc = FinModeling::DebtCostOfCapital.calculate(:before_tax_cost   => FinModeling::Rate.new(args[:before_tax_cost_of_debt]), 
                                                     :marginal_tax_rate => FinModeling::Rate.new(args[:marginal_tax_rate]))
     ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
+    if (ecoc.value < 0.05) || (ecoc.value > 0.30)
+      puts "WARNING: cost of equity capital is highly suspect..."
+    end
     wacc = FinModeling::WeightedAvgCostOfCapital.new(equity_market_val      = YahooFinance::get_market_cap(args[:stock_symbol].dup),
                                                      debt_market_val        = fl,
                                                      cost_of_equity         = ecoc,
