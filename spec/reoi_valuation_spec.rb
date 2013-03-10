@@ -6,18 +6,18 @@ describe FinModeling::ReOIValuation do
     @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2012-10-01")))
     @forecasts = @filings.forecasts(@filings.choose_forecasting_policy, num_forecast_periods=4)
     @discount_rate = FinModeling::DiscountRate.new(1.086) # 8.6% (made up)
-    @expected_ror  = FinModeling::Rate.new(0.086) # 8.6% (made up)
+    @wacc  = FinModeling::Rate.new(0.086) # 8.6% (made up)
     @num_shares = 934882640
   end
 
   describe ".new" do
-    subject { FinModeling::ReOIValuation.new(@filings, @forecasts, @discount_rate, @num_shares) }
+    subject { FinModeling::ReOIValuation.new(@filings, @forecasts, @wacc, @discount_rate, @num_shares) }
 
     it { should be_a FinModeling::ReOIValuation }
   end
 
   describe ".summary" do
-    let(:valuation) { FinModeling::ReOIValuation.new(@filings, @forecasts, @discount_rate, @num_shares) }
+    let(:valuation) { FinModeling::ReOIValuation.new(@filings, @forecasts, @wacc, @discount_rate, @num_shares) }
     subject { valuation.summary }
 
     it { should be_a FinModeling::CalculationSummary }
@@ -48,7 +48,7 @@ describe FinModeling::ReOIValuation do
     it "should show all forecasted ReOIs" do
       prev_re_bses = [@filings.re_bs_arr.last] + @forecasts.reformulated_balance_sheets[0..-2]
       re_ises =  @forecasts.reformulated_income_statements
-      re_ois = re_ises.zip(prev_re_bses).map{ |pair| pair[0].re_oi(pair[1], @expected_ror.value).to_nearest_million }
+      re_ois = re_ises.zip(prev_re_bses).map{ |pair| pair[0].re_oi(pair[1], @wacc.value).to_nearest_million }
 
       reoi_row = subject.rows.find{ |x| x.key == "ReOI ($MM)" }
       reoi_row.vals[1..-1].should == re_ois
@@ -70,7 +70,7 @@ describe FinModeling::ReOIValuation do
       reoi_row = subject.rows.find{ |x| x.key == "ReOI ($MM)" }
       cv_row   = subject.rows.find{ |x| x.key == "CV ($MM)" }
 
-      expected_cv = reoi_row.vals.last / @expected_ror.value # FIXME: this is an assumption of zero-growth CV
+      expected_cv = reoi_row.vals.last / @wacc.value # FIXME: this is an assumption of zero-growth CV
       cv_row.vals[-2].should be_within(10.0).of(expected_cv)
     end
 

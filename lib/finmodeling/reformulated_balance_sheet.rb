@@ -113,6 +113,9 @@ module FinModeling
 
     def self.forecast_next(period, policy, last_re_bs, next_re_is)
       noa = next_re_is.operating_revenues.total / Ratio.new(policy.sales_over_noa).yearly_to_quarterly
+      raise RuntimeError.new("noa is complex! "+
+                             "next OR: #{next_re_is.operating_revenues.total}. "+
+                             "sales/noa: #{Ratio.new(policy.sales_over_noa).yearly_to_quarterly}") if noa.is_a?(Complex)
       cse = last_re_bs.common_shareholders_equity.total + next_re_is.comprehensive_income.total
       nfa = cse - noa # FIXME: this looks suspect. What about minority interests?
 

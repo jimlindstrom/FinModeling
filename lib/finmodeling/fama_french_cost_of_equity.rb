@@ -104,6 +104,7 @@ module FinModeling
   
         monthly_cost_of_equity = mkt_historical_data.rf.last + (c[1] * avg_rm_rf) + (c[2] * avg_smb) + (c[3] * avg_hml)
         annual_cost_of_equity  = ((monthly_cost_of_equity+1.0)**12)-1.0
+        Rate.new(annual_cost_of_equity)
       end
     end
   end

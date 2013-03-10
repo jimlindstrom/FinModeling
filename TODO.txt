@@ -21,6 +21,8 @@ Bugs
 	- Not all disclosure titles *begin* with /^disclosure/.  See CRM's most recent 10-K, for instance.
 	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
 	- show_reports doesn't check filing validity
+	- show_reports is doing a pretty weird, half-assed WACC calculation. Not sure how to best calculate
+	  cost of debt capital, and also not sure how to handle WACC when net debt is negative
 
 Income Statement
 	- It'd be interesting to try to correct for cyclicality.

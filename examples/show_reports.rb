@@ -9,6 +9,9 @@ class Arguments
     puts
     puts "\tOptions:"
     puts "\t\t--num-forecasts <num>: how many periods to forecast"
+    puts "\t\t  --do-valuation: value the company's equity. (requires >= 2 forecasts)"
+    puts "\t\t    --marginal-tax-rate <num>: default is 0.36 (36%) [UNUSED]"
+    puts "\t\t    --before-tax-cost-of-debt <num>: default is 0.05 (5%) [UNUSED]"
     puts "\t\t--no-cache: disable caching"
     puts "\t\t--balance-detail: show details about the balance sheet calculation"
     puts "\t\t--income-detail: show details about the net income calculation"
@@ -34,11 +37,14 @@ class Arguments
   private
 
   def self.default_options
-    { :stock_symbol     => nil, 
-      :start_date       => nil, 
-      :num_forecasts    => nil, 
-      :show_regressions => false, 
-      :disclosures      => [ ] }
+    { :stock_symbol            => nil, 
+      :start_date              => nil, 
+      :num_forecasts           => nil, 
+      :do_valuation            => false, 
+      :marginal_tax_rate       => 0.36, 
+      :before_tax_cost_of_debt => 0.05, 
+      :show_regressions        => false, 
+      :disclosures             => [ ] }
   end
 
 
@@ -61,6 +67,24 @@ class Arguments
         parsed_args[:num_forecasts] = raw_args[1].to_i
         self.show_usage_and_exit unless parsed_args[:num_forecasts] >= 1
         puts "Forecasting #{parsed_args[:num_forecasts]} periods"
+        raw_args.shift
+
+      when '--do-valuation'
+        parsed_args[:do_valuation] = true
+        puts "Doing valuation"
+
+      when '--before-tax-cost-of-debt'
+        self.show_usage_and_exit if raw_args.length < 2
+        parsed_args[:before_tax_cost_of_debt] = raw_args[1].to_f
+        self.show_usage_and_exit unless parsed_args[:before_tax_cost_of_debt] >= 0.00 && parsed_args[:before_tax_cost_of_debt] <= 1.00
+        puts "before tax cost of debt: #{parsed_args[:before_tax_cost_of_debt]}"
+        raw_args.shift
+
+      when '--marginal-tax-rate'
+        self.show_usage_and_exit if raw_args.length < 2
+        parsed_args[:marginal_tax_rate] = raw_args[1].to_f
+        self.show_usage_and_exit unless parsed_args[:marginal_tax_rate] >= 0.00 && parsed_args[:marginal_tax_rate] <= 1.00
+        puts "marginal tax rate: #{parsed_args[:marginal_tax_rate]}"
         raw_args.shift
 
       when '--show-regressions'
@@ -133,24 +157,34 @@ args[:disclosures].each do |disclosure_title|
   end
 end
 
-if forecasts
-  quote = YahooFinance::get_quotes(YahooFinance::ExtendedQuote, args[:stock_symbol].dup).values.first
-  m = /([0-9\.]*)([MB])/.match(quote.marketCap)
-  mkt_cap = m[1].to_f
-  case
-    when m[2]=="M"
-      mkt_cap *= 1000*1000
-    when m[2]=="B"
-      mkt_cap *= 1000*1000*1000
+#	NFA		NFI		NFI/NFA			DCOC			D
+#	-100		-2		 2%			 2%			 100
+#	-100		 2		-2%			 0%			 100
+#	 100		-2		-2%			 0%			-100
+#	 100		 2		 2%			 0%			-100
+if args[:do_valuation]
+  if args[:num_forecasts] && args[:num_forecasts]>=2
+    nfa  = filings.re_bs_arr.last.net_financial_assets.total
+    nfi  = filings.re_is_arr.last.net_financing_income.total
+    d = 0.0
+    dcoc = FinModeling::DebtCostOfCapital.calculate(:after_tax_cost => FinModeling::Rate.new(0.0))
+    if (nfa < 0.0) && (nfi < 0.0)
+      d = -nfa
+      dcoc = FinModeling::DebtCostOfCapital.calculate(:after_tax_cost => FinModeling::Rate.new(nfi / nfa))
+    else
+    end
+    ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
+    wacc = FinModeling::WeightedAvgCostOfCapital.new(equity_market_val      = YahooFinance::get_market_cap(args[:stock_symbol].dup),
+                                                     debt_market_val        = d,
+                                                     cost_of_equity         = ecoc,
+                                                     after_tax_cost_of_debt = dcoc)
+    discount_rate = FinModeling::DiscountRate.new(wacc.rate.value + 1.0)
+    num_shares = YahooFinance::get_num_shares(args[:stock_symbol].dup)
+    valuation = FinModeling::ReOIValuation.new(filings, forecasts, wacc.rate, discount_rate, num_shares)
+  
+    wacc.summary.print 
+    valuation.summary.print
+  else
+    puts "Oops. Can't do valuation without >= 2 forecasts"
   end
-  share_price = YahooFinance::get_quotes(YahooFinance::StandardQuote, args[:stock_symbol].dup).values.last.lastTrade.to_f
-  num_shares = mkt_cap / share_price
-
-  ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol]) # don't I need to WACC this first?
-  
-  discount_rate = FinModeling::DiscountRate.new(ecoc + 1.0) # FIXME?
-  expected_ror  = FinModeling::Rate.new(ecoc) # FIXME?
-  
-  valuation = FinModeling::ReOIValuation.new(filings, forecasts, discount_rate, num_shares)
-  valuation.summary.print
 end
