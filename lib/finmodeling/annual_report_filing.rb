@@ -42,7 +42,7 @@ module FinModeling
                                            (x.clean_downcased_title =~ /statement.*financial.*condition/) or
                                            (x.clean_downcased_title =~ /balance.*sheet/) }
         if bal_sheet.nil?
-          raise RuntimeError.new("Couldn't find balance sheet in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+          raise InvalidFilingError.new("Couldn't find balance sheet in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
     
         @balance_sheet = BalanceSheetCalculation.new(bal_sheet)
@@ -57,7 +57,7 @@ module FinModeling
                                           (x.clean_downcased_title =~ /statement(|s).*of.*earnings/) or
                                           (x.clean_downcased_title =~ /statement(|s).*of.*(|net.*)income/) }
         if inc_stmt.nil?
-          raise RuntimeError.new("Couldn't find income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+          raise InvalidFilingError.new("Couldn't find income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
     
         @income_stmt = IncomeStatementCalculation.new(inc_stmt)
@@ -71,7 +71,7 @@ module FinModeling
         cash_flow_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*cash.*flows/) or
                                                 (x.clean_downcased_title =~ /^cash flows$/) }
         if cash_flow_stmt.nil?
-          raise RuntimeError.new("Couldn't find cash flow statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+          raise InvalidFilingError.new("Couldn't find cash flow statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
     
         @cash_flow_stmt = CashFlowStatementCalculation.new(cash_flow_stmt)
@@ -94,7 +94,7 @@ module FinModeling
         shareholder_equity_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement(|s).*of.*(share|stock)holders(|').*equity(|.*and.*comprehensive|.*and.*other.*comprehensive|.*and.*comprehensive)(|.*income|.*loss|.*income.*loss|.*loss.*income)$/) ||
                                                          (x.clean_downcased_title =~ /statements.*of.*changes.*in.*shareholders.*equity/) }
         if shareholder_equity_stmt.nil?
-          raise RuntimeError.new("Couldn't find shareholders' equity statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+          raise InvalidFilingError.new("Couldn't find shareholders' equity statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
     
         @shareholder_equity_stmt = ShareholderEquityStatementCalculation.new(shareholder_equity_stmt)

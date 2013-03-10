@@ -13,6 +13,8 @@ require 'gsl'
 require 'naive_bayes'
 require 'statsample'
 
+require 'finmodeling/invalid_filing_error'
+
 require 'finmodeling/float_helpers'
 require 'finmodeling/string_helpers'
 require 'finmodeling/factory'

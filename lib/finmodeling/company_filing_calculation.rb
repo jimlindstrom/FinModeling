@@ -61,7 +61,7 @@ module FinModeling
 
       if calc.nil?
         summary_of_arcs = @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; ")
-        raise RuntimeError.new("Couldn't find #{friendly_goal} in: " + summary_of_arcs + ". Tried: #{label_regexes.inspect}.")
+        raise InvalidFilingError.new("Couldn't find #{friendly_goal} in: " + summary_of_arcs + ". Tried: #{label_regexes.inspect}.")
       end
 
       if !calc.item_id.matches_regexes?(id_regexes) 

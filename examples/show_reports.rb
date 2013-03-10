@@ -117,7 +117,14 @@ if filings.empty?
   exit
 end
 filings.each do |filing|
-  raise RuntimeError.new("filing is not valid. type: #{filing.class}. period: #{filing.balance_sheet.periods.last}.") if !filing.is_valid?
+  begin
+    if !filing.is_valid?
+      raise RuntimeError.new("filing is not valid. type: #{filing.class}. period: #{filing.balance_sheet.periods.last}.") 
+    end
+  rescue FinModeling::InvalidFilingError => e
+    pre_msg = "\n\nFiling is not valid. type: #{filing.class}. period: #{filing.balance_sheet.periods.last}.\n"
+    raise e, pre_msg+e.message, e.backtrace
+  end
 end
 
 forecasts = filings.forecasts(filings.choose_forecasting_policy, num_quarters=args[:num_forecasts]) if args[:num_forecasts]
