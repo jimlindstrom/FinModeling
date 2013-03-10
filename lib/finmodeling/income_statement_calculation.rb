@@ -3,7 +3,7 @@ module FinModeling
     include CanChooseSuccessivePeriods
 
     NI_GOAL   = "net income"
-    NI_LABELS = [ /^net (income|loss|loss income)/,
+    NI_LABELS = [ /^(|consolidated )net (income|loss|loss income)/,
                   /^profit loss$/,
                   /^allocation.*of.*undistributed.*earnings/ ]
     NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
