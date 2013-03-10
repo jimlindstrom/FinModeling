@@ -4,6 +4,7 @@ module FinModeling
 
     NI_GOAL   = "net income"
     NI_LABELS = [ /^(|consolidated )net (income|loss|loss income)/,
+                  /^net earnings attributable to.*$/, # FIXME: This may be too permissive...
                   /^profit loss$/,
                   /^allocation.*of.*undistributed.*earnings/ ]
     NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
@@ -13,21 +14,22 @@ module FinModeling
       begin
         @ni ||= NetIncomeCalculation.new(find_calculation_arc(NI_GOAL, NI_LABELS, NI_IDS))
       rescue FinModeling::InvalidFilingError => e
-        self.calculation.print_tree
-        raise e
-      begin
+        pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
+        raise e, pre_msg+e.message, e.backtrace
+      end
     end
 
     def is_valid?
-      if !net_income_calculation.has_tax_item?
-        puts "income statement's net income calculation lacks tax item"           
+      puts "income statement's net income calculation lacks tax item"           if !net_income_calculation.has_tax_item?
+      puts "income statement's net income calculation lacks sales/revenue item" if !net_income_calculation.has_revenue_item?
+      if !net_income_calculation.has_tax_item? || !net_income_calculation.has_tax_item?
+        if net_income_calculation
+          puts "summary:"
+          net_income_calculation.summary(:period => periods.last).print
+        end
+        puts "calculation tree:\n" + self.calculation.sprint_tree
       end
-      if !net_income_calculation.has_revenue_item?
-        puts "income statement's net income calculation lacks sales/revenue item" 
-        puts "leaf items: " + self.leaf_items(:period=>periods.last).map{ |x| x.pretty_name }.join(", ")
-      end
-      return (net_income_calculation.has_revenue_item? && 
-              net_income_calculation.has_tax_item?)
+      return (net_income_calculation.has_revenue_item? && net_income_calculation.has_tax_item?)
     end
 
     def reformulated(period)
