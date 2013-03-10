@@ -37,7 +37,7 @@ module FinModeling
 
     def has_cash_item 
       @has_cash_item = leaf_items.any? do |leaf|
-        leaf.name.downcase.matches_regexes?([/cash/])
+        leaf.name.downcase.matches_any_regex?([/cash/])
       end
     end
 

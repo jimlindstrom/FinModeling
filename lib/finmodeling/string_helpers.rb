@@ -20,7 +20,7 @@ class String
     self.gsub(r, '\1')
   end
 
-  def matches_regexes?(regexes) # FIXME: rename to matches_any?
+  def matches_any_regex?(regexes)
     return regexes.inject(false){ |matches, regex| matches or regex =~ self }
   end
 

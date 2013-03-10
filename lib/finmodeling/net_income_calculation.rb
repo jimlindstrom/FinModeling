@@ -39,13 +39,13 @@ module FinModeling
  
     def has_revenue_item?
       @has_revenue_item ||= leaf_items.any? do |leaf|
-        leaf.name.matches_regexes?([/revenue/i, /sales/i])
+        leaf.name.matches_any_regex?([/revenue/i, /sales/i])
       end
     end
 
     def has_tax_item?
       @has_tax_item ||= leaf_items.any? do |leaf|
-        leaf.name.matches_regexes?([/tax/i])
+        leaf.name.matches_any_regex?([/tax/i])
       end
     end
 

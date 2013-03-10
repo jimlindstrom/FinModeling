@@ -28,7 +28,7 @@ module FinModeling
       mapping.policy[:debit]            = :flip
 
       summary = super(:period => args[:period], :mapping => mapping)
-      if !lookup_cached_classifications(BASE_FILENAME, summary.rows) or true # FIXME: get rid of "or true"
+      if !lookup_cached_classifications(BASE_FILENAME, summary.rows) || true # FIXME: get rid of "or true"
         lookahead = [2, summary.rows.length-1].min
         classify_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::EquityChangeItem, lookahead)
         save_cached_classifications(BASE_FILENAME, summary.rows)

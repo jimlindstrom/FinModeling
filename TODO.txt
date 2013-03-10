@@ -1,3 +1,48 @@
+Forecasts
+	* Filtering bogus growth values and then regressing is going to ignore the 
+	  times when NOA flips from pos to neg (or vice versa), which is going to 
+	  lead to material errors. Better to regress on the raw NOA values and use
+	  those to predict future NOA. Then sign changes aren't problematic.
+	- Detect historicals that are too noisy to forecast from:
+		- R^2 of regressions?
+		- Certain ratios remaining constant-ish (e.g, composition ratios)
+	- Detect historicals with poor earnings quality:
+		- Noisy NI/C
+	- Detect forecasts that look suspect:
+		- Derived values in the forecasts (e.g., composition ratio) remain 
+		  with a standard deviation or two from their trend lines.
+
+Cost of Capital
+	- Fama/French equity cost of capital is producing very noisy results. Some
+	  R_e's are negative, some arein the 30-40% range. Why? And if that's not
+	  fixable, use something simpler like CAPM. Or do both and take the one that's
+	  more plausible?
+	- Debt cost of capital - try to estimate before tax cost of capital by modeling
+	  credit spread as a function of interest coverage. Is there a way to estimate
+	  marginal (not effective) tax rate?
+
+Income Statement
+	- Fix the half-implemented error checking. I'd like it to work like ActiveRecord,
+	  where a class just accumulates its errors nicely, and lets you print them out
+	  whenever it's convenient, and in a well-formatted way, without causing an 
+	  immediate exception.
+	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
+	  (I don't even remember what this refers to...)
+	- net income != comprehensive income.  pull in items from SSE?
+	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
+	  currency exchg, etc)
+	- need to better understand minority interest, noncontrollable blah-blah,
+	  etc. (not a big deal for tech companies, but important for conglomerates, mediaco's, etc)
+	- naming consistency (e.g., rename OIBT as OOIBT?)
+	- naming consistency between operating/financing vs. operational/financial?
+	- Instead of having find_calculation_arc use a discrete set of exact regexes, what about using
+	  a classifier (and minimum confidence threshold), like the row classifier works?
+
+Balance Sheet
+	- Dig into the disclosures. They've got lots more interesting goodness.
+	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
+	- "Redeemable Noncontrolling Interest Equity Carrying Amount"??
+
 Try to figure out why the change in equity is not equal to comprehensive income, in cases where we know it.
 	- Some 10k's (and even some 10q's?) have Statements of SE
 	- When they don't:
@@ -6,44 +51,17 @@ Try to figure out why the change in equity is not equal to comprehensive income,
 		- The remaining residual is probably stock-based compensation expense
 	- minority interests makes it screwey. also, preferred dividends?
 
-Reformulated Statement of Shareholder Equity
-
-Statement of Shareholder Equity
-	- Not taking into account share-based compensation, dividends payable, etc.
-
-Forecasts
-	- Filtering bogus growth values and then regressing is going to ignore the times when NOA flips
-	  from pos to neg (or vice versa), which is going to lead to material errors. Better to regress on
-	  the raw NOA values and use those to predict future NOA. Then sign changes aren't problematic.
-	- Choosing of policies should probably be bumped to a higher-level package.
-	- Need more sophisticated forecasting policies
-	- Need to have more sophisticated policies fall back on simpler ones (or none) when there's
-	  too much chaos
-
-Bugs
+Disclosures
 	- Not all disclosure titles *begin* with /^disclosure/.  See CRM's most recent 10-K, for instance.
-	- The "valid vals" thing should hides gaps in data, which silently&crappily affect the regressions.
-
-Income Statement
-	- Instead of having find_calculation_arc use a discrete set of exact regexes, what about using
-	  a classifier (and minimum confidence threshold), like the row classifier works?
-	- It'd be interesting to try to correct for cyclicality.
-	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
-	- net income != comprehensive income.  pull in items from SSE
-	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
-	  currency exchg, etc)
-	- naming consistency (e.g., rename OIBT as OOIBT?)
-	- consistency between operating/financing vs. operational/financial?
-	- need to better understand minority interest, noncontrollable blah-blah,
-	  etc.
-
-Balance Sheet
-	- Dig into the disclosures. They've got lots more interesting goodness.
-	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
-	- "Redeemable Noncontrolling Interest Equity Carrying Amount"??
 
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
 	  transactions.  All 3 of these items are listed in supplementary disclosures.
 	- the classifier's success rate isn't that high.
 	- "I" is defined inversely.
+
+Reformulated Statement of Shareholder Equity
+
+Statement of Shareholder Equity
+	- Not taking into account share-based compensation, dividends payable, etc.
+

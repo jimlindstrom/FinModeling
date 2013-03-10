@@ -30,7 +30,7 @@ module FinModeling
       find_and_tag_special_items(args)
 
       summary = super(:period => args[:period], :mapping => mapping)
-      if !lookup_cached_classifications(BASE_FILENAME, summary.rows) or true # FIXME: get rid of "or true"
+      if !lookup_cached_classifications(BASE_FILENAME, summary.rows) || true # FIXME: get rid of "or true"
         lookahead = [4, summary.rows.length-1].min
         classify_rows(ALL_STATES, NEXT_STATES, summary.rows, FinModeling::CashChangeItem, lookahead)
         save_cached_classifications(BASE_FILENAME, summary.rows)
@@ -45,7 +45,7 @@ module FinModeling
 
     def find_and_tag_special_items(args)
       leaf_items(:period => args[:period]).each do |item|
-        if item.name.matches_regexes?([ /NetIncomeLoss/,
+        if item.name.matches_any_regex?([ /NetIncomeLoss/,
                                         /ProfitLoss/ ])
           item.def = {} if !item.def
           item.def["xbrli:balance"] = "netincome"

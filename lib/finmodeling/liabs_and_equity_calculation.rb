@@ -38,7 +38,7 @@ module FinModeling
 
     def has_equity_item
       @has_equity_item ||= leaf_items.any? do |leaf|
-        leaf.name.downcase.matches_regexes?([/equity/, /stock/])
+        leaf.name.downcase.matches_any_regex?([/equity/, /stock/])
       end
     end
 

@@ -57,14 +57,14 @@ module FinModeling
     protected
 
     def find_calculation_arc(friendly_goal, label_regexes, id_regexes)
-      calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '').matches_regexes?(label_regexes) }
+      calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '').matches_any_regex?(label_regexes) }
 
       if calc.nil?
         summary_of_arcs = @calculation.arcs.map{ |x| "\t\"#{x.label}\"" }.join("\n")
         raise InvalidFilingError.new("Couldn't find #{friendly_goal} in:\n" + summary_of_arcs + "\nTried: #{label_regexes.inspect}.")
       end
 
-      if !calc.item_id.matches_regexes?(id_regexes) 
+      if !calc.item_id.matches_any_regex?(id_regexes) 
         puts "Warning: #{friendly_goal} id is not recognized: #{calc.item_id}"
       end
 
