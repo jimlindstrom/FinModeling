@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency("edgar")
 
   gem.add_dependency("xbrlware-ruby19", "1.1.2.19.2")
-  gem.add_dependency("xbrlware-extras", "1.1.2.19.2")
+  gem.add_dependency("xbrlware-extras", "1.1.2.19.3")
 
   gem.add_dependency("sec_query")
   gem.add_dependency("naive_bayes")
