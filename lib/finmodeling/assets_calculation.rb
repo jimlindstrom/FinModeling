@@ -17,9 +17,6 @@ module FinModeling
       thesummary = lookup_cached_summary(summary_cache_key)
       return thesummary if !thesummary.nil?
 
-      mapping = Xbrlware::ValueMapping.new
-      mapping.policy[:credit] = :flip
-
       thesummary = super(:period => args[:period], :mapping => mapping)
       if !lookup_cached_classifications(BASE_FILENAME, thesummary.rows)
         lookahead = [4, thesummary.rows.length-1].min
@@ -30,6 +27,12 @@ module FinModeling
       save_cached_summary(summary_cache_key, thesummary)
 
       return thesummary
+    end
+
+    def mapping
+      m = Xbrlware::ValueMapping.new
+      m.policy[:credit] = :flip
+      m
     end
 
     def has_cash_item 
