@@ -17,7 +17,7 @@ module FinModeling
     def summary(args)
       summary_cache_key = args[:period].to_pretty_s
       summary = lookup_cached_summary(summary_cache_key)
-      return summary if !summary.nil? and false # FIXME: get rid of "and false"
+      return summary if !summary.nil? && false # FIXME: get rid of "and false"
 
       mapping = Xbrlware::ValueMapping.new
       mapping.policy[:unknown]          = :flip
