@@ -103,6 +103,9 @@ module FinModeling
     end
 
     def is_valid?
+      puts "income statment is not valid" if !income_statement.is_valid?
+      puts "balance sheet is not valid" if !balance_sheet.is_valid?
+      puts "cash flow statement is not valid" if !cash_flow_statement.is_valid?
       return (income_statement.is_valid? and balance_sheet.is_valid? and cash_flow_statement.is_valid?)
     end
 
