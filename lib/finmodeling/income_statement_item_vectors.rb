@@ -19,6 +19,17 @@ module FinModeling
                          {:klass=>:cogs, :item_string=>"Fulfillment Expense"},
                          {:klass=>:cogs, :item_string=>"Fulfillment Expense"},
   
+                         {:klass=>:or, :item_string=>"Net Sales"}, 
+                         {:klass=>:cogs, :item_string=>"Cost of products sold"}, 
+                         {:klass=>:oe, :item_string=>"Marketing, selling and administrative"}, 
+                         {:klass=>:oe, :item_string=>"Advertising and product promotion"}, 
+                         {:klass=>:oe, :item_string=>"Research and development"}, 
+                         {:klass=>:oibt, :item_string=>"Provision for restructuring"}, 
+                         {:klass=>:oibt, :item_string=>"Litigation expense, net"}, 
+                         {:klass=>:fibt, :item_string=>"Equity in net income of affiliates"}, 
+                         {:klass=>:oibt, :item_string=>"Other (income)/expense"}, 
+                         {:klass=>:tax, :item_string=>"Provision for income taxes"}, 
+
                          {:klass=>:or, :item_string=>"Subscription Revenue"}, 
                          {:klass=>:or, :item_string=>"Sales Revenue Net"}, 
                          {:klass=>:cogs, :item_string=>"Cost Of Goods Sold Subscription"}, 
