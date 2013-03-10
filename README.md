@@ -9,284 +9,304 @@ FinModeling is a set of tools for manipulating financial data from SEC Edgar (in
   - trained on medium-to-large NASDAQ tech companies
 - Reformulates GAAP statements to better highlight enterprise value
 - Generates forecasts based on analysis of historical performance
+- Calculates cost of capital using [Fama/French](http://en.wikipedia.org/wiki/Fama%E2%80%93French_three-factor_model) cost of equity, and [WACC](http://en.wikipedia.org/wiki/Weighted_average_cost_of_capital)
+- Performs residual operating income-based valuation.
 
-## Example 1: Forecasting Oracle's Financials Based
+## Example 1: Valuing Oracle's Common Equity, Based on 4 Quarters of History and 2 Quarters of Forecasts
 
 After running "rake install" (to build and install the 'finmodeling' gem), you can run:
 
-    lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_reports.rb --num-forecasts 2 orcl 2011-02-01
+    $ ./examples/show_reports.rb --num-forecasts 2 --do-valuation orcl 2012-02-01
     Forecasting 2 periods
+    Doing valuation
     company name: ORACLE CORP
+    
+    	                      2012-02-29    2012-05-31    2012-08-31    2012-11-30   2013-02-28E   2013-05-28E
+    	NOA ($MM)               29,250.0      32,172.0      29,172.0      31,703.0      31,072.0      33,307.0
+    	NFA ($MM)               14,016.0      11,915.0      14,564.0      11,707.0      14,672.0      15,375.0
+    	Minority Interest          393.0         399.0         407.0         427.0           0.0           0.0
+    	 ($MM)
+    	CSE ($MM)               42,873.0      43,688.0      43,329.0      42,983.0      45,743.0      48,682.0
+    	Composition Ratio         2.0869        2.7001        2.0030        2.7080        2.1177        2.1663
+    	NOA Growth                              0.4590       -0.3218        0.3961       -0.0783        0.3296
+    	CSE Growth                              0.0775       -0.0322       -0.0316        0.2871        0.2909
+    
+    
+    	                      2012-02-29    2012-05-31    2012-08-31    2012-11-30   2013-02-28E   2013-05-28E
+    	Revenue ($MM)            9,039.0      10,916.0       8,181.0       9,094.0       9,748.0      10,450.0
+    	Core OI ($MM)            2,674.0       3,636.0       2,076.0       2,712.0       2,870.0       3,076.0
+    	OI ($MM)                 2,608.0       3,590.0       2,149.0       2,705.0
+    	FI ($MM)                  -110.0        -138.0        -115.0        -124.0        -110.0        -137.0
+    	NI ($MM)                 2,498.0       3,452.0       2,034.0       2,581.0       2,760.0       2,939.0
+    	Gross Margin              0.6008        0.6238        0.5941        0.6077
+    	Sales PM                  0.2958        0.3330        0.2537        0.2981        0.2943        0.2943
+    	Operating PM              0.2885        0.3288        0.2626        0.2974
+    	FI / Sales               -0.0121       -0.0126       -0.0140       -0.0136       -0.0112       -0.0131
+    	NI / Sales                0.2763        0.3162        0.2486        0.2838        0.2831        0.2812
+    	Sales / NOA                             1.4806        1.0199        1.2642        1.2610        1.3949
+    	FI / NFA                               -0.0390       -0.0387       -0.0345       -0.0383       -0.0388
+    	Revenue Growth                          1.1139       -0.6815        0.5286        0.3254        0.3296
+    	Core OI Growth                          2.3835       -0.8918        1.9216        0.2582        0.3296
+    	OI Growth                               2.5532       -0.8693        1.5169
+    	ReOI ($MM)                             2,879.0       1,367.0       2,004.0       2,116.0       2,346.0
+    
+    
+    	                      Unknown...    2012-05-31    2012-08-31    2012-11-30
+    	C ($MM)                                4,057.0       5,431.0         677.0
+    	I ($MM)                              -10,966.0      -7,304.0     -11,021.0
+    	d ($MM)                                9,358.0       4,662.0      13,363.0
+    	F ($MM)                               -2,449.0      -2,789.0      -3,019.0
+    	FCF ($MM)                             -6,909.0      -1,873.0     -10,344.0
+    	NI / C                                  0.8508        0.3745        3.8124
+    
+    Cost of Capital
+    	                      2013-03-10
+    	Market Value of        169,100.0
+    	 Equity ($MM)
+    	Market Value of         23,663.0
+    	 Debt ($MM)
+    	Cost of Equity (%)          7.30
+    	Cost of Debt (%)            3.20
+    	Weighted Avg Cost           6.79
+    	 of Capital (%)
+    
+    ReOI Valuation
+    	                      2012-11-30    2013-02-28   2013-05-28E
+    	ReOI ($MM)                             2,352.0       2,574.0
+    	PV(ReOI) ($MM)                         2,356.0
+    	CV ($MM)                              37,886.0
+    	PV(CV) ($MM)                          37,954.0
+    	Book Value of           42,983.0
+    	 Common Equity
+    	 ($MM)
+    	Enterprise Value        83,293.0
+    	 ($MM)
+    	NFA ($MM)               11,707.0
+    	Value of Common         95,000.0
+    	 Equity ($MM)
+    	# Shares (MM)            4,735.0
+    	Value / Share ($)          20.06
+    
+## Example 2: More Detailed Analysis of Apple's Financials Since 2012-02-01
 
-	                      2011-02-28    2011-05-31    2011-08-31    2011-11-30   2012-02-29E   2012-05-29E
-	NOA ($MM)               28,172.0      28,282.0      25,235.0      27,055.0      27,342.0      29,107.0
-	NFA ($MM)                8,445.0      11,494.0      15,657.0      14,865.0      16,899.0      17,593.0
-	CSE ($MM)               36,617.0      39,776.0      40,892.0      41,920.0      44,241.0      46,700.0
-	Composition Ratio         3.3359        2.4605        1.6117        1.8200        1.6179        1.6545
-	NOA Growth                              0.0155       -0.3638        0.3222        0.0431        0.2888
-	CSE Growth                              0.3886        0.1160        0.1047        0.2412        0.2452
+    $ ./examples/show_reports.rb --balance-detail --income-detail --show-regressions aapl 2012-02-01
+    Balance sheet detail is enabled
+    Net income detail is enabled
+    Showing regressions
+    company name: APPLE INC
+    
+    	                      2012-03-31    2012-06-30    2012-09-29    2012-12-29
+    	A ($MM)                150,934.0     162,896.0     176,064.0     196,088.0
+    	L ($MM)                 48,436.0      51,150.0      57,854.0      68,742.0
+    	NOA ($MM)               -9,931.0      -7,784.0      -5,624.0     -12,661.0
+    	OA ($MM)                38,505.0      43,366.0      52,230.0      56,081.0
+    	OL ($MM)                48,436.0      51,150.0      57,854.0      68,742.0
+    	NFA ($MM)              112,429.0     119,530.0     123,834.0     140,007.0
+    	FA ($MM)               112,429.0     119,530.0     123,834.0     140,007.0
+    	FL ($MM)                     0.0           0.0           0.0           0.0
+    	Minority Interest            0.0           0.0           0.0           0.0
+    	 ($MM)
+    	CSE ($MM)              102,498.0     111,746.0     118,210.0     127,346.0
+    	Composition Ratio        -0.0883       -0.0651       -0.0454       -0.0904
+    	NOA Δ ($MM)                            2,147.0       2,160.0      -7,037.0
+    	CSE Δ ($MM)                            9,248.0       6,464.0       9,136.0
+    	NOA Growth                             -0.6235       -0.7284       24.9157
+    	CSE Growth                              0.4140        0.2530        0.3479
+    
+    		NOA growth: a:-4.9150, b:12.7696, r:0.8642, var:145.5436
+    
+    	                      2012-03-31    2012-06-30    2012-09-29    2012-12-29
+    	Revenue ($MM)           39,186.0      35,023.0      35,966.0      54,512.0
+    	COGS ($MM)             -20,622.0     -20,029.0     -21,565.0     -33,452.0
+    	GM ($MM)                18,564.0      14,994.0      14,401.0      21,060.0
+    	OE ($MM)                -3,180.0      -3,421.0      -3,457.0      -3,850.0
+    	OISBT ($MM)             15,384.0      11,573.0      10,944.0      17,210.0
+    	Core OI ($MM)           11,526.0       8,637.0       8,256.0      12,778.0
+    	OI ($MM)                11,526.0       8,637.0       8,256.0      12,778.0
+    	FI ($MM)                    96.0         187.0         -33.0         300.0
+    	NI ($MM)                11,622.0       8,824.0       8,223.0      13,078.0
+    	Gross Margin              0.4737        0.4281        0.4004        0.3863
+    	Sales PM                  0.2941        0.2466        0.2295        0.2344
+    	Operating PM              0.2941        0.2466        0.2295        0.2344
+    	FI / Sales                0.0024        0.0053       -0.0009        0.0055
+    	NI / Sales                0.2965        0.2519        0.2286        0.2399
+    	Sales / NOA                           -14.3024      -18.5327      -39.3094
+    	FI / NFA                                0.0067       -0.0011        0.0098
+    	Revenue Growth                         -0.3626        0.1124        4.3013
+    	Core OI Growth                         -0.6856       -0.1653        4.7648
+    	OI Growth                              -0.6856       -0.1653        4.7648
+    	ReOI ($MM)                             8,876.0       8,443.0      12,913.0
+    
+    		operating pm: a:0.2806, b:-0.0196, r:-0.8581, var:0.0006
+    		sales / noa: a:-11.5447, b:-12.5035, r:-0.9341, var:119.4351
+    		revenue growth: a:-0.9816, b:2.3320, r:0.9085, var:4.3917
+    		fi / nfa: a:0.0036, b:0.0015, r:0.2729, var:2.1244e-05
+    
+    	                      Unknown...    2012-06-30    2012-09-29    2012-12-29
+    	C ($MM)                               10,189.0       9,136.0      23,426.0
+    	I ($MM)                               -2,971.0      -3,493.0      -2,791.0
+    	d ($MM)                               -7,163.0      -6,109.0     -18,631.0
+    	F ($MM)                                  -55.0         466.0      -2,004.0
+    	FCF ($MM)                              7,218.0       5,643.0      20,635.0
+    	NI / C                                  0.8660        0.9000        0.5582
 
-		NOA growth: a:-0.1619, b:0.1533, r:0.4461, var:0.0787
+## Example 3: Raw Numbers From Nike's Last 10-Q, Including Disclosures
 
-	                      2011-02-28    2011-05-31    2011-08-31    2011-11-30   2012-02-29E   2012-05-29E
-	Revenue ($MM)            8,764.0      10,775.0       8,374.0       8,792.0       9,360.0       9,964.0
-	Core OI ($MM)            2,318.0       3,413.0       2,056.0       2,327.0       2,483.0       2,644.0
-	OI ($MM)                 2,238.0       3,332.0       1,978.0       2,290.0                            
-	FI ($MM)                  -122.0        -123.0        -138.0         -98.0        -163.0        -185.0
-	NI ($MM)                 2,116.0       3,209.0       1,840.0       2,192.0       2,321.0       2,459.0
-	Gross Margin              0.5858        0.6040        0.5679        0.5845                            
-	Sales PM                  0.2644        0.3167        0.2454        0.2646        0.2653        0.2653
-	Operating PM              0.2553        0.3092        0.2361        0.2604                            
-	FI / Sales               -0.0139       -0.0114       -0.0164       -0.0111       -0.0173       -0.0185
-	NI / Sales                0.2414        0.2978        0.2197        0.2493        0.2479        0.2467
-	Sales / NOA                             1.5298        1.1843        1.3936        1.3837        1.4576
-	FI / NFA                               -0.0581       -0.0479       -0.0250       -0.0437       -0.0437
-	Revenue Growth                          1.2695       -0.6321        0.2157        0.2852        0.2888
-	Core OI Growth                          3.6455       -0.8661        0.6443        0.2974        0.2888
-	OI Growth                               3.8474       -0.8737        0.8006                            
-	ReOI ($MM)                             2,647.0       1,290.0       1,683.0       1,833.0       1,993.0
-
-		operating pm: a:0.2739, b:-0.0057, r:-0.2398, var:0.0007
-		asset turnover: a:1.4374, b:-0.0681, r:-0.3914, var:0.0201
-		revenue growth: a:0.8112, b:-0.5268, r:-0.5530, var:0.6050
-		fi / nfa: a:-0.0602, b:0.0165, r:0.9765, var:0.0001
-
-	                      Unknown...    2011-05-31    2011-08-31    2011-11-30
-	C ($MM)                                  -17.0       5,421.0       1,255.0
-	I ($MM)                               -8,380.0     -13,091.0      -9,191.0
-	d ($MM)                                8,688.0       8,568.0       8,956.0
-	F ($MM)                                 -291.0        -898.0      -1,020.0
-	FCF ($MM)                             -8,397.0      -7,670.0      -7,936.0
-	NI / C                               -188.7647        0.3394        1.7466
-
-## Example 2: A Summary of Adobe's Filings Since 2010-11-01
-
-    lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_reports.rb adbe 2010-11-01
-    company name: ADOBE SYSTEMS INC
-
-	                      2010-12-03    2011-03-04    2011-06-03    2011-09-02    2011-12-02
-	NOA (000's)          4,269,074.0   4,374,531.0   4,334,056.0   4,428,947.0   4,458,509.0
-	NFA (000's)            923,313.0   1,050,876.0   1,055,359.0   1,135,011.0   1,324,604.0
-	CSE (000's)          5,192,387.0   5,425,407.0   5,389,415.0   5,563,958.0   5,783,113.0
-	Composition Ratio         4.6236        4.1627        4.1067        3.9021        3.3659
-	NOA Growth                              0.1028       -0.0365        0.0907        0.0270
-	CSE Growth                              0.1925       -0.0263        0.1363        0.1676
-
-		NOA growth: a:0.0610, b:-0.0100, r:-0.2006, var:0.0031
-
-	                      Unknown...    2011-03-04    2011-06-03    2011-09-02    2011-12-02
-	Revenue (000's)                    1,027,706.0   1,023,179.0   1,013,212.0   1,152,161.0
-	Core OI (000's)                      251,831.0     247,172.0     215,630.0     251,253.0
-	OI (000's)                           245,152.0     240,798.0     206,405.0     182,137.0
-	FI (000's)                           -10,561.0     -11,362.0     -11,304.0      -8,418.0
-	NI (000's)                           234,591.0     229,436.0     195,101.0     173,719.0
-	Gross Margin                            0.8952        0.8932        0.8967        0.8989
-	Sales PM                                0.2450        0.2415        0.2128        0.2180
-	Operating PM                            0.2385        0.2353        0.2037        0.1580
-	FI / Sales                             -0.0102       -0.0111       -0.0111       -0.0073
-	NI / Sales                              0.2282        0.2242        0.1925        0.1507
-	Sales / NOA                                           0.2338        0.2337        0.2601
-	FI / NFA                                             -0.0108       -0.0107       -0.0074
-	Revenue Growth                                       -0.0175       -0.0385        0.6744
-	Core OI Growth                                       -0.0721       -0.4216        0.8464
-	OI Growth                                            -0.0693       -0.4610       -0.3944
-	ReOI (000's)                                       135,604.0     102,185.0      75,635.0
-
-		operating pm: a:0.2498, b:-0.0273, r:-0.9434, var:0.0010
-		asset turnover: a:0.2294, b:0.0131, r:0.8641, var:0.0001
-		revenue growth: a:-0.1398, b:0.3459, r:0.8528, var:0.1097
-
-	                      Unknown...    2011-03-04    2011-06-03    2011-09-02    2011-12-02
-	C (000's)                            332,102.0     397,743.0     320,434.0     334,399.0
-	I (000's)                           -226,787.0    -229,749.0    -391,441.0    -385,261.0
-	d (000's)                            -20,966.0     196,511.0     164,509.0      48,818.0
-	F (000's)                            -84,349.0    -364,505.0     -93,502.0       2,044.0
-	FCF (000's)                          105,315.0     167,994.0     -71,007.0     -50,862.0
-	NI / C                                  0.7063        0.5768        0.6088        0.5194
-
-## Example 3: A Detailed View of Adobe's Second-to-Last 10-Q
-
-    lindstro@lindstro-laptop:~/code/finmodels$ ./examples/show_report.rb adbe 10-q -2
-    company name: ADOBE SYSTEMS INC
-    url:          http://www.sec.gov/Archives/edgar/data/796343/000079634311000006/0000796343-11-000006-index.htm
-    Balance Sheet (2011-03-04)
-    Assets (loc_Assets_1)
-	[fa] Cash And Cash Equivalents At Carrying Value                     900,156,000.0
-	[fa] Short Term Investments                                        1,736,679,000.0
-	[oa] Accounts Receivable Net Current                                 533,353,000.0
-	[fa] Deferred Tax Assets Net Current                                  66,928,000.0
-	[oa] Prepaid Expenses Other Assets                                   113,682,000.0
-	[oa] Property Plant And Equipment Net                                453,497,000.0
-	[oa] Goodwill                                                      3,686,073,000.0
-	[oa] Finite Lived Intangible Assets Net                              447,616,000.0
-	[fa] Investment In Lease Receivable                                  207,239,000.0
-	[oa] Other Assets Noncurrent                                         164,801,000.0
-	Total                                                              8,310,024,000.0
-
-    Liabilities and Stockholders' Equity (loc_LiabilitiesAndStockholdersEquity_1)
-	[ol] Accrued Restructuring Current                                     6,759,000.0
-	[fl] Accrued Income Taxes Current                                     57,096,000.0
-	[ol] Capital Lease Obligations Current                                 8,900,000.0
-	[ol] Accrued Liabilities Current                                     458,463,000.0
-	[ol] Accounts Payable Current                                         54,742,000.0
-	[ol] Deferred Revenue Current                                        399,572,000.0
-	[fl] Long Term Debt And Capital Lease Obligations                  1,511,553,000.0
-	[ol] Deferred Revenue Noncurrent                                      43,826,000.0
-	[ol] Accrued Restructuring Noncurrent                                  7,307,000.0
-	[fl] Liability For Uncertain Tax Positions Noncurrent                170,721,000.0
-	[fl] Deferred Tax Liabilities Noncurrent                             120,756,000.0
-	[ol] Other Liabilities Noncurrent                                     44,922,000.0
-	[cse] Treasury Stock Value                                        -3,178,769,000.0
-	[cse] Accumulated Other Comprehensive Income Loss Net Of Tax          28,695,000.0
-	[cse] Retained Earnings Accumulated Deficit                        6,045,631,000.0
-	[cse] Additional Paid In Capital                                   2,529,789,000.0
-	[cse] Common Stock Value                                                  61,000.0
-	[fl] Preferred Stock Value                                                     0.0
-	Total                                                              8,310,024,000.0
-
+    $ ./examples/show_report.rb --show-disclosures NKE 10-q 0
+    Showing disclosures
+    company name: NIKE INC
+    url:          http://www.sec.gov/Archives/edgar/data/320187/000119312513008172/0001193125-13-008172-index.htm
+    Balance Sheet (2012-11-30)
+    Assets (us-gaap_Assets_1)
+    	[fa] Cash And Cash Equivalents At Carrying Value                 2,291,000,000.0
+    	[fa] Available For Sale Securities Current                       1,234,000,000.0
+    	[oa] Accounts Receivable Net Current                             3,188,000,000.0
+    	[oa] Inventory Finished Goods Net Of Reserves                    3,318,000,000.0
+    	[fa] Deferred Tax Assets Net Current                               327,000,000.0
+    	[oa] Prepaid Expense And Other Assets Current                      733,000,000.0
+    	[oa] Assets Of Disposal Group Including Discontinued               344,000,000.0
+    	 Operation Current
+    	[oa] Property Plant And Equipment Gross                          5,310,000,000.0
+    	[oa] Accumulated Depreciation Depletion And Amortization        -3,052,000,000.0
+    	 Property Plant And Equipment
+    	[oa] Intangible Assets Net Excluding Goodwill                      374,000,000.0
+    	[oa] Goodwill                                                      131,000,000.0
+    	[fa] Deferred Income Taxes And Other Assets Noncurrent             973,000,000.0
+    	Total                                                           15,171,000,000.0
+    
+    Liabilities And Stockholders Equity (us-gaap_LiabilitiesAndStockholdersEquity_1)
+    	[fl] Long Term Debt Current                                         58,000,000.0
+    	[fl] Short Term Borrowings                                         100,000,000.0
+    	[ol] Accounts Payable Current                                    1,519,000,000.0
+    	[ol] Accrued Liabilities Current                                 1,879,000,000.0
+    	[fl] Accrued Income Taxes Current                                   45,000,000.0
+    	[ol] Liabilities Of Disposal Group Including Discontinued          198,000,000.0
+    	 Operation Current
+    	[fl] Long Term Debt Noncurrent                                     170,000,000.0
+    	[fl] Deferred Income Taxes And Other Liabilities Noncurrent      1,188,000,000.0
+    	[ol] Commitments And Contingencies                                           0.0
+    	[fl] Temporary Equity Carrying Amount Attributable To Parent                 0.0
+    	[cse] Stockholders Equity                                       10,014,000,000.0
+    	Total                                                           15,171,000,000.0
+    
     Net Operational Assets
-	OA                                                                 5,399,022,000.0
-	OL                                                                -1,024,491,000.0
-	Total                                                              4,374,531,000.0
-
+    	OA                                                              10,346,000,000.0
+    	OL                                                              -3,596,000,000.0
+    	Total                                                            6,750,000,000.0
+    
     Net Financial Assets
-	FA                                                                 2,911,002,000.0
-	FL                                                                -1,860,126,000.0
-	Total                                                              1,050,876,000.0
-
+    	FA                                                               4,825,000,000.0
+    	FL                                                              -1,561,000,000.0
+    	Total                                                            3,264,000,000.0
+    
     Common Shareholders' Equity
-	NOA                                                                4,374,531,000.0
-	NFA                                                                1,050,876,000.0
-	Total                                                              5,425,407,000.0
-
-    Income Statement (2010-12-04 to 2011-03-04)
-    Net Income (Loss) Attributable to Parent (loc_NetIncomeLoss_0)
-	[or] Sales Revenue Goods Net                                         842,689,000.0
-	[or] Sales Revenue Services Net                                       78,846,000.0
-	[or] Subscription Revenue                                            106,171,000.0
-	[cogs] Cost Of Goods Sold                                            -30,717,000.0
-	[cogs] Cost Of Services                                              -29,044,000.0
-	[cogs] Cost Of Goods Sold Subscription                               -47,878,000.0
-	[oe] Research And Development Expense Software Excluding ...        -178,400,000.0
-	[oe] Selling And Marketing Expense                                  -328,078,000.0
-	[oe] General And Administrative Expense                             -100,979,000.0
-	[oibt] Restructuring Charges                                             -41,000.0
-	[oibt] Amortization Of Intangible Assets                             -10,235,000.0
-	[fibt] Other Nonoperating Income                                        -817,000.0
-	[fibt] Interest Expense                                              -17,020,000.0
-	[fibt] Gain Loss On Investments                                        1,590,000.0
-	[tax] Income Tax Expense Benefit                                     -51,496,000.0
-	Total                                                                234,591,000.0
-
+    	NOA                                                              6,750,000,000.0
+    	NFA                                                              3,264,000,000.0
+    	MI                                                                          -0.0
+    	Total                                                           10,014,000,000.0
+    
+    Income Statement (2012-09-01 to 2012-11-30)
+    Net Income Loss (us-gaap_NetIncomeLoss_3)
+    	[or] Sales Revenue Net                                           5,955,000,000.0
+    	[cogs] Cost Of Goods Sold                                       -3,425,000,000.0
+    	[oe] Marketing And Advertising Expense                            -613,000,000.0
+    	[oe] General And Administrative Expense                         -1,223,000,000.0
+    	[fibt] Interest Income Expense Nonoperating Net                      1,000,000.0
+    	[fibt] Other Nonoperating Income Expense                            17,000,000.0
+    	[tax] Income Tax Expense Benefit                                  -191,000,000.0
+    	[fiat] Income Loss From Discontinued Operations Net Of Tax        -137,000,000.0
+    	Total                                                              384,000,000.0
+    
     Gross Revenue
-	Operating Revenues (OR)                                            1,027,706,000.0
-	Cost of Goods Sold (COGS)                                           -107,639,000.0
-	Total                                                                920,067,000.0
-
+    	Operating Revenues (OR)                                          5,955,000,000.0
+    	Cost of Goods Sold (COGS)                                       -3,425,000,000.0
+    	Total                                                            2,530,000,000.0
+    
     Operating Income from sales, before tax (OISBT)
-	Gross Margin (GM)                                                    920,067,000.0
-	Operating Expense (OE)                                              -607,457,000.0
-	Total                                                                312,610,000.0
-
+    	Gross Margin (GM)                                                2,530,000,000.0
+    	Operating Expense (OE)                                          -1,836,000,000.0
+    	Total                                                              694,000,000.0
+    
     Operating Income from sales, after tax (OISAT)
-	Operating income from sales (before tax)                             312,610,000.0
-	Reported taxes                                                       -51,496,000.0
-	Taxes on net financing income                                         -5,686,450.0
-	Taxes on other operating income                                       -3,596,600.0
-	Total                                                                251,830,950.0
-
+    	Operating income from sales (before tax)                           694,000,000.0
+    	Reported taxes                                                    -191,000,000.0
+    	Taxes on net financing income                                        6,300,000.0
+    	Taxes on other operating income                                              0.0
+    	Total                                                              509,300,000.0
+    
     Operating income, after tax (OI)
-	Operating income after sales, after tax (OISAT)                      251,830,950.0
-	Other operating income, before tax (OIBT)                            -10,276,000.0
-	Tax on other operating income                                          3,596,600.0
-	Other operating income, after tax (OOIAT)                                      0.0
-	Total                                                                245,151,550.0
-
+    	Operating income after sales, after tax (OISAT)                    509,300,000.0
+    	Other operating income, before tax (OIBT)                                    0.0
+    	Tax on other operating income                                               -0.0
+    	Other operating income, after tax (OOIAT)                                    0.0
+    	Total                                                              509,300,000.0
+    
     Net financing income, after tax (NFI)
-	Financing income, before tax (FIBT)                                  -16,247,000.0
-	Tax effect (FIBT_TAX_EFFECT)                                           5,686,450.0
-	Financing income, after tax (FIAT)                                             0.0
-	Total                                                                -10,560,550.0
-
-    Comprehensive (CI)
-	Operating income, after tax (OI)                                     245,151,550.0
-	Net financing income, after tax (NFI)                                -10,560,550.0
-	Total                                                                234,591,000.0
-
-    Cash Flow Statement (2010-12-04 to 2011-03-04)
-    Cash and Cash Equivalents, Period Increase (Decrease) (loc_CashAndCashEquivalentsPeriodIncreaseDecrease_2)
-	[c] Adjustments Noncash Items To Reconcile Net Income Los...           2,703,000.0
-	[c] Net Income Loss                                                  234,591,000.0
-	[c] Depreciation And Amortization                                     66,286,000.0
-	[c] Share Based Compensation                                          70,992,000.0
-	[c] Deferred Income Taxes And Tax Credits                             28,645,000.0
-	[c] Unrealized Gain Loss On Investments                               -1,330,000.0
-	[c] Increase Decrease In Receivables                                  20,605,000.0
-	[c] Increase Decrease In Prepaid Deferred Expense And Oth...          -2,716,000.0
-	[c] Increase Decrease In Accounts Payable                              2,310,000.0
-	[c] Increase Decrease In Accrued Liabilities                        -110,084,000.0
-	[c] Other Increase Decrease In Provision For Restructuring            -2,526,000.0
-	[c] Increase Decrease In Accrued Income Taxes Payable                  8,905,000.0
-	[c] Increase Decrease In Deferred Revenue                             13,721,000.0
-	[d] Purchases Long Term Investments Other Assets                      -5,389,000.0
-	[i] Payments To Acquire Short Term Investments                      -375,077,000.0
-	[d] Proceeds From Maturities Of Short Term Investments               134,296,000.0
-	[i] Proceeds From Sale Of Short Term Investments                     217,407,000.0
-	[i] Payments To Acquire Property Plant And Equipment                 -32,421,000.0
-	[i] Payments To Acquire Businesses Net Of Cash Acquired              -36,572,000.0
-	[d] Proceeds From Sale Of Available For Sale Securities E...           2,755,000.0
-	[i] Payments For Proceeds From Other Investing Activities               -124,000.0
-	[f] Payments For Repurchase Of Common Stock                         -125,000,000.0
-	[f] Proceeds From Sale Of Treasury Stock                              40,651,000.0
-	[d] Repayments Of Long Term Debt And Capital Securities               -2,169,000.0
-	[d] Effect Of Exchange Rate On Cash And Cash Equivalents                -194,000.0
-	Total                                                                150,265,000.0
-
-    Cash from operations
-	[c] Adjustments Noncash Items To Reconcile Net Income Los...           2,703,000.0
-	[c] Net Income Loss                                                  234,591,000.0
-	[c] Depreciation And Amortization                                     66,286,000.0
-	[c] Share Based Compensation                                          70,992,000.0
-	[c] Deferred Income Taxes And Tax Credits                             28,645,000.0
-	[c] Unrealized Gain Loss On Investments                               -1,330,000.0
-	[c] Increase Decrease In Receivables                                  20,605,000.0
-	[c] Increase Decrease In Prepaid Deferred Expense And Oth...          -2,716,000.0
-	[c] Increase Decrease In Accounts Payable                              2,310,000.0
-	[c] Increase Decrease In Accrued Liabilities                        -110,084,000.0
-	[c] Other Increase Decrease In Provision For Restructuring            -2,526,000.0
-	[c] Increase Decrease In Accrued Income Taxes Payable                  8,905,000.0
-	[c] Increase Decrease In Deferred Revenue                             13,721,000.0
-	Total                                                                332,102,000.0
-
-    Cash investments in operations
-	[i] Payments To Acquire Short Term Investments                      -375,077,000.0
-	[i] Proceeds From Sale Of Short Term Investments                     217,407,000.0
-	[i] Payments To Acquire Property Plant And Equipment                 -32,421,000.0
-	[i] Payments To Acquire Businesses Net Of Cash Acquired              -36,572,000.0
-	[i] Payments For Proceeds From Other Investing Activities               -124,000.0
-	Total                                                               -226,787,000.0
-
-    Payments to debtholders
-	[d] Purchases Long Term Investments Other Assets                      -5,389,000.0
-	[d] Proceeds From Maturities Of Short Term Investments               134,296,000.0
-	[d] Proceeds From Sale Of Available For Sale Securities E...           2,755,000.0
-	[d] Repayments Of Long Term Debt And Capital Securities               -2,169,000.0
-	[d] Effect Of Exchange Rate On Cash And Cash Equivalents                -194,000.0
-	[d] Investment in Cash and Equivalents                              -150,265,000.0
-	Total                                                                -20,966,000.0
-
-    Payments to stockholders
-	[f] Payments For Repurchase Of Common Stock                         -125,000,000.0
-	[f] Proceeds From Sale Of Treasury Stock                              40,651,000.0
-	Total                                                                -84,349,000.0
-
-    Free Cash Flow
-	Cash from Operations (C)                                             332,102,000.0
-	Cash Investment in Operations (I)                                   -226,787,000.0
-	Total                                                                105,315,000.0
-
-    Financing Flows
-	Payments to debtholders (d)                                          -20,966,000.0
-	Payments to stockholders (F)                                         -84,349,000.0
-	Total                                                               -105,315,000.0
-
+    	Financing income, before tax (FIBT)                                 18,000,000.0
+    	Tax effect (FIBT_TAX_EFFECT)                                        -6,300,000.0
+    	Financing income, after tax (FIAT)                                -137,000,000.0
+    	Total                                                             -125,300,000.0
+    
+    Comprehensive income (CI)
+    	Operating income, after tax (OI)                                   509,300,000.0
+    	Net financing income, after tax (NFI)                             -125,300,000.0
+    	Total                                                              384,000,000.0
+    
+    WARNING: cash flow statement period is nil!
+    WARNING: reformulated cash flow statement period is nil!
+    Disclosures
+    Disclosure Identifiable Intangible Asset Balances (http://www.nikeinc.com/taxonomy/role/DisclosureIdentifiableIntangibleAssetBalances)
+    	Finite Lived Intangible Assets Gross                               169,000,000.0
+    	Finite Lived Intangible Assets Accumulated Amortization             78,000,000.0
+    	Indefinite Lived Trademarks                                        283,000,000.0
+    	Total                                                              530,000,000.0
+    
+    Disclosure Accrued Liabilities (http://www.nikeinc.com/taxonomy/role/DisclosureAccruedLiabilities)
+    	Accrued Compensation And Benefits Excluding Taxes Current          502,000,000.0
+    	Accrued Taxes Other Than Income Taxes Current                      238,000,000.0
+    	Accrued Endorsement Liabilities Current                            212,000,000.0
+    	Dividends Payable Current                                          188,000,000.0
+    	Accrued Marketing Costs Current                                    137,000,000.0
+    	Accrued Import And Logistics Costs Current                         124,000,000.0
+    	Derivative Liabilities Current                                      83,000,000.0
+    	Other Accrued Liabilities Current                                  395,000,000.0
+    	Total                                                            1,879,000,000.0
+    
+    Disclosure Financial Assets And Liabilities Measured At Fair Value On Recurring Basis (http://www.nikeinc.com/taxonomy/role/DisclosureFinancialAssetsAndLiabilitiesMeasuredAtFairValueOnRecurringBasis)
+    	Derivative Fair Value Of Derivative Asset                          129,000,000.0
+    	Total                                                              129,000,000.0
+    
+    Disclosure Reconciliation From Basic Earnings Per Share To Diluted Earnings Per Share (http://www.nikeinc.com/taxonomy/role/DisclosureReconciliationFromBasicEarningsPerShareToDilutedEarningsPerShare)
+    	Income Loss From Continuing Operations Per Basic Share                      0.58
+    	Income Loss From Discontinued Operations Net Of Tax Per                    -0.15
+    	 Basic Share
+    	Income Loss From Continuing Operations Per Diluted Share                    0.57
+    	Income Loss From Discontinued Operations Net Of Tax Per                    -0.15
+    	 Diluted Share
+    	Weighted Average Number Of Shares Outstanding Basic                897,000,000.0
+    	Incremental Common Shares Attributable To Share Based               16,100,000.0
+    	 Payment Arrangements
+    	Total                                                             913,100,000.85
+    
+    Disclosure Components Of Assets And Liabilities Classified As Held For Sale (http://www.nikeinc.com/taxonomy/role/DisclosureComponentsOfAssetsAndLiabilitiesClassifiedAsHeldForSale)
+    	Disposal Group Including Discontinued Operation Accounts           129,000,000.0
+    	 Notes And Loans Receivable Net
+    	Disposal Group Including Discontinued Operation Inventory          130,000,000.0
+    	Disposal Group Including Discontinued Operation Deferred            32,000,000.0
+    	 Income Taxes And Other Assets
+    	Disposal Group Including Discontinued Operation Property            53,000,000.0
+    	 Plant And Equipment Net
+    	Disposal Group Including Discontinued Operation Intangible                   0.0
+    	 Assets Net
+    	Disposal Group Including Discontinued Operation Accounts            39,000,000.0
+    	 Payable
+    	Disposal Group Including Discontinued Operation Accrued            127,000,000.0
+    	 Liabilities
+    	Disposal Group Including Discontinued Operation Deferred            32,000,000.0
+    	 Income Taxes Payable And Other Liabilities
+    	Total                                                              542,000,000.0
+    
+    Disclosure Information By Operating Segments (http://www.nikeinc.com/taxonomy/role/DisclosureInformationByOperatingSegments)
+    	Earnings Before Interest And Taxes                                 711,000,000.0
+    	Interest Income Expense Nonoperating Net                             1,000,000.0
+    	Total                                                              712,000,000.0
