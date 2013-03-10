@@ -37,12 +37,21 @@ module FinModeling
       file.puts "#{item_name} = FinModeling::BalanceSheetCalculation.new(#{item_calc_name})"
     end
 
-    ALLOWED_IMBALANCE = 1.0
     def is_balanced
-      left  = assets_calculation          .leaf_items_sum(:period => periods.last)
-      right = liabs_and_equity_calculation.leaf_items_sum(:period => periods.last)
+      left  = assets_calculation          .leaf_items_sum(:period => periods.last, :mapping => assets_calculation.mapping)
+      right = liabs_and_equity_calculation.leaf_items_sum(:period => periods.last, :mapping => liabs_and_equity_calculation.mapping)
 
-      (left - right) < ALLOWED_IMBALANCE
+      is_bal = (left - right) < ((0.5*(left + right))/1000.0)
+      if !is_bal
+        puts "balance sheet last period: #{periods.last.inspect}"
+        puts "balance sheet left  side: #{left}"
+        puts "balance sheet right side: #{right}"
+        puts "left:"
+        assets_calculation.summary(:period => periods.last).print
+        puts "right:"
+        liabs_and_equity_calculation.summary(:period => periods.last).print
+      end
+      is_bal
     end
 
   end
