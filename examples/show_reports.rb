@@ -117,7 +117,7 @@ if filings.empty?
   exit
 end
 filings.each do |filing|
-  raise RuntimeError.new("filing is not valid") if !filing.is_valid?
+  raise RuntimeError.new("filing is not valid. type: #{filing.class}. period: #{filing.balance_sheet.periods.last}.") if !filing.is_valid?
 end
 
 forecasts = filings.forecasts(filings.choose_forecasting_policy, num_quarters=args[:num_forecasts]) if args[:num_forecasts]
