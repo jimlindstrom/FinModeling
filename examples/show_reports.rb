@@ -10,8 +10,8 @@ class Arguments
     puts "\tOptions:"
     puts "\t\t--num-forecasts <num>: how many periods to forecast"
     puts "\t\t  --do-valuation: value the company's equity. (requires >= 2 forecasts)"
-    puts "\t\t    --marginal-tax-rate <num>: default is 0.36 (36%) [UNUSED]"
-    puts "\t\t    --before-tax-cost-of-debt <num>: default is 0.05 (5%) [UNUSED]"
+    puts "\t\t    --marginal-tax-rate <num>: default is 0.36 (36%)"
+    puts "\t\t    --before-tax-cost-of-debt <num>: default is 0.05 (5%)"
     puts "\t\t--no-cache: disable caching"
     puts "\t\t--balance-detail: show details about the balance sheet calculation"
     puts "\t\t--income-detail: show details about the net income calculation"
@@ -167,25 +167,14 @@ args[:disclosures].each do |disclosure_title|
   end
 end
 
-#	NFA		NFI		NFI/NFA			DCOC			D
-#	-100		-2		 2%			 2%			 100
-#	-100		 2		-2%			 0%			 100
-#	 100		-2		-2%			 0%			-100
-#	 100		 2		 2%			 0%			-100
 if args[:do_valuation]
   if args[:num_forecasts] && args[:num_forecasts]>=2
-    nfa  = filings.re_bs_arr.last.net_financial_assets.total
-    nfi  = filings.re_is_arr.last.net_financing_income.total
-    d = 0.0
-    dcoc = FinModeling::DebtCostOfCapital.calculate(:after_tax_cost => FinModeling::Rate.new(0.0))
-    if (nfa < 0.0) && (nfi < 0.0)
-      d = -nfa
-      dcoc = FinModeling::DebtCostOfCapital.calculate(:after_tax_cost => FinModeling::Rate.new(nfi / nfa))
-    else
-    end
+    fl  = filings.re_bs_arr.last.financial_liabilities.total
+    dcoc = FinModeling::DebtCostOfCapital.calculate(:before_tax_cost   => FinModeling::Rate.new(args[:before_tax_cost_of_debt]), 
+                                                    :marginal_tax_rate => FinModeling::Rate.new(args[:marginal_tax_rate]))
     ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
     wacc = FinModeling::WeightedAvgCostOfCapital.new(equity_market_val      = YahooFinance::get_market_cap(args[:stock_symbol].dup),
-                                                     debt_market_val        = d,
+                                                     debt_market_val        = fl,
                                                      cost_of_equity         = ecoc,
                                                      after_tax_cost_of_debt = dcoc)
     discount_rate = FinModeling::DiscountRate.new(wacc.rate.value + 1.0)
