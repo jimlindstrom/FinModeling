@@ -14,8 +14,13 @@ module FinModeling
     end
 
     def is_valid?
-      puts "income statement's net income calculation lacks tax item"           if !net_income_calculation.has_tax_item?
-      puts "income statement's net income calculation lacks sales/revenue item" if !net_income_calculation.has_revenue_item?
+      if !net_income_calculation.has_tax_item?
+        puts "income statement's net income calculation lacks tax item"           
+      end
+      if !net_income_calculation.has_revenue_item?
+        puts "income statement's net income calculation lacks sales/revenue item" 
+        puts "leaf items: " + self.leaf_items(:period=>periods.last).map{ |x| x.pretty_name }.join(", ")
+      end
       return (net_income_calculation.has_revenue_item? && 
               net_income_calculation.has_tax_item?)
     end
