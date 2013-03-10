@@ -19,7 +19,7 @@ module FinModeling
       puts "balance sheet is not valid" if !@balance_sheet.is_valid?
       #puts "cash flow statement is not valid" if !@cash_flow_statement.is_valid?
       #return (@income_statement.is_valid? && @balance_sheet.is_valid? && @cash_flow_statement.is_valid?)
-      return (@income_statement.is_valid? && @balance_sheet.is_valid? && @cash_flow_statement.is_valid?)
+      return (@income_statement.is_valid? && @balance_sheet.is_valid?)
     end
   end
 
