@@ -4,7 +4,7 @@ module FinModeling
 
     NI_GOAL   = "net income"
     NI_LABELS = [ /^(|consolidated )net (income|loss|loss income)/,
-                  /^net earnings attributable to.*$/, # FIXME: This may be too permissive...
+                  #/^net earnings attributable to.*$/, # FIXME: This may be too permissive...
                   /^profit loss$/,
                   /^allocation.*of.*undistributed.*earnings/ ]
     NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
