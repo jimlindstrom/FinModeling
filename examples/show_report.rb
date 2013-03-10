@@ -154,29 +154,38 @@ end
 def print_cash_flow_statement(filing, report_type)
   period = filing.cash_flow_statement.periods.yearly.last    if report_type == :annual_report
   period = filing.cash_flow_statement.periods.quarterly.last if report_type == :quarterly_report
-  puts "cash flow statement (#{period.to_pretty_s})"
-  
-  summaries = []
-  summaries << filing.cash_flow_statement.cash_change_calculation.summary(:period => period)
 
-  print_summaries(summaries)
+  if period
+    puts "cash flow statement (#{period.to_pretty_s})"
+    
+    summaries = []
+    summaries << filing.cash_flow_statement.cash_change_calculation.summary(:period => period)
+  
+    print_summaries(summaries)
+  else
+    puts "WARNING: cash flow statement period is nil!"
+  end
 end
 
 def print_reformulated_cash_flow_statement(filing, report_type)
   period = filing.cash_flow_statement.periods.yearly.last    if report_type == :annual_report
   period = filing.cash_flow_statement.periods.quarterly.last if report_type == :quarterly_report
+
+  if period
+    reformed_cash_flow_stmt  = filing.cash_flow_statement.reformulated(period)
   
-  reformed_cash_flow_stmt  = filing.cash_flow_statement.reformulated(period)
-
-  summaries = []
-  summaries << reformed_cash_flow_stmt.cash_from_operations
-  summaries << reformed_cash_flow_stmt.cash_investments_in_operations
-  summaries << reformed_cash_flow_stmt.payments_to_debtholders
-  summaries << reformed_cash_flow_stmt.payments_to_stockholders
-  summaries << reformed_cash_flow_stmt.free_cash_flow
-  summaries << reformed_cash_flow_stmt.financing_flows
-
-  print_summaries(summaries)
+    summaries = []
+    summaries << reformed_cash_flow_stmt.cash_from_operations
+    summaries << reformed_cash_flow_stmt.cash_investments_in_operations
+    summaries << reformed_cash_flow_stmt.payments_to_debtholders
+    summaries << reformed_cash_flow_stmt.payments_to_stockholders
+    summaries << reformed_cash_flow_stmt.free_cash_flow
+    summaries << reformed_cash_flow_stmt.financing_flows
+  
+    print_summaries(summaries)
+  else
+    puts "WARNING: reformulated cash flow statement period is nil!"
+  end
 end
 
 def print_shareholder_equity_statement(filing, report_type)
