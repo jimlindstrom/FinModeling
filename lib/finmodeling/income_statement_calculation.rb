@@ -10,7 +10,12 @@ module FinModeling
                   /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
                   /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
     def net_income_calculation
-      @ni ||= NetIncomeCalculation.new(find_calculation_arc(NI_GOAL, NI_LABELS, NI_IDS))
+      begin
+        @ni ||= NetIncomeCalculation.new(find_calculation_arc(NI_GOAL, NI_LABELS, NI_IDS))
+      rescue FinModeling::InvalidFilingError => e
+        self.calculation.print_tree
+        raise e
+      begin
     end
 
     def is_valid?
