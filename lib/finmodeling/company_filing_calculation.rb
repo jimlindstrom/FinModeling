@@ -60,8 +60,8 @@ module FinModeling
       calc = @calculation.arcs.find{ |x| x.label.downcase.gsub(/[^a-z ]/, '').matches_regexes?(label_regexes) }
 
       if calc.nil?
-        summary_of_arcs = @calculation.arcs.map{ |x| "\"#{x.label}\"" }.join("; ")
-        raise InvalidFilingError.new("Couldn't find #{friendly_goal} in: " + summary_of_arcs + ". Tried: #{label_regexes.inspect}.")
+        summary_of_arcs = @calculation.arcs.map{ |x| "\t\"#{x.label}\"" }.join("\n")
+        raise InvalidFilingError.new("Couldn't find #{friendly_goal} in:\n" + summary_of_arcs + "\nTried: #{label_regexes.inspect}.")
       end
 
       if !calc.item_id.matches_regexes?(id_regexes) 
