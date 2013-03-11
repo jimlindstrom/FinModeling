@@ -271,7 +271,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       subject.period.to_pretty_s == @next_is_period.to_pretty_s
     end
     it "should set operating_revenue to last year's revenue times the revenue growth" do
-      expected_val = last_re_is.operating_revenues.total * @policy.revenue_growth_on(@next_is_period.value["end_date"])
+      expected_val = last_re_is.operating_revenues.total * @policy.revenueh_on(@next_is_period.value["end_date"])
       subject.operating_revenues.total.should be_within(0.1).of(expected_val)
     end
     it "should set OISAT to operating revenue times sales PM" do

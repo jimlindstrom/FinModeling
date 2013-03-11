@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe FinModeling::ConstantForecastingPolicy  do
   before (:all) do
-    @vals = { :revenue__estimator       => FinModeling::TimeSeriesEstimator.new(0.04, 0.0),
+    @vals = { :revenue_estimator        => FinModeling::TimeSeriesEstimator.new(0.04, 0.0),
               :sales_pm_estimator       => FinModeling::TimeSeriesEstimator.new(0.20, 0.0),
               :fi_over_nfa_estimator    => FinModeling::TimeSeriesEstimator.new(0.01, 0.0),
               :sales_over_noa_estimator => FinModeling::TimeSeriesEstimator.new(2.00, 0.0) }
