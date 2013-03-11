@@ -63,17 +63,10 @@ describe FinModeling::CompanyFilings  do
 
       it { should be_a FinModeling::GenericForecastingPolicy }
     end
-    context "when two or more filings" do
+    context "when three or more filings" do
       let(:filings) { FinModeling::CompanyFilings.new(@filings.last(3)) }
       subject { filings.choose_forecasting_policy }
       it { should be_a FinModeling::ConstantForecastingPolicy }
-
-      let(:isa) { filings.income_statement_analyses }
-
-      its(:revenue_growth) { should be_within(0.01).of(isa.revenue_growth_row.valid_vals.mean) }
-      its(:sales_pm)       { should be_within(0.01).of(isa.operating_pm_row.valid_vals.mean) } # FIXME: name mismatch
-      its(:sales_over_noa) { should be_within(0.01).of(isa.sales_over_noa_row.valid_vals.mean) } 
-      its(:fi_over_nfa)    { should be_within(0.01).of(isa.fi_over_nfa_row.valid_vals.mean) }
     end
   end
 

@@ -12,8 +12,7 @@ module FinModeling
     def valid_vals
       ArrayWithStats.new(@vals.select{ |val| !val.nil? &&
                                              !val.is_a?(Complex) &&
-                                             !val.nan? &&
-                                             val.finite?})
+                                             (!val.is_a?(Float) || (!val.nan? && val.finite?))})
     end
 
     def num_vals

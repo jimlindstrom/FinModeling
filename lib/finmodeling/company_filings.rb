@@ -94,11 +94,15 @@ module FinModeling
       else
         isa = income_statement_analyses
         args = { }
-        args[:revenue_growth] = isa.revenue_growth_row.valid_vals.mean
-        raise RuntimeError.new("rev growth is complex. rev growths: #{isa.revenue_growth_row.valid_vals.inspect}") if args[:revenue_growth].is_a?(Complex)
-        args[:sales_pm      ] = isa.operating_pm_row.valid_vals.mean
-        args[:sales_over_noa] = isa.sales_over_noa_row.valid_vals.mean
-        args[:fi_over_nfa   ] = isa.fi_over_nfa_row.valid_vals.mean
+
+        args[:revenue_estimator]        = TimeSeriesEstimator.from_time_series(re_is_arr.map{ |re_is| re_is.period.value["end_date"] },
+                                                                               re_is_arr.map{ |re_is| re_is.operating_revenues.total })
+        args[:sales_pm_estimator]       = TimeSeriesEstimator.from_time_series(re_is_arr.map{ |re_is| re_is.period.value["end_date"] },
+                                                                               isa.operating_pm_row.valid_vals)
+        args[:sales_over_noa_estimator] = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
+                                                                               isa.sales_over_noa_row.valid_vals)
+        args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
+                                                                               isa.fi_over_nfa_row.valid_vals)
         return FinModeling::ConstantForecastingPolicy.new(args)
       end
     end

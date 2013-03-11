@@ -1,18 +1,18 @@
 module FinModeling
   class GenericForecastingPolicy 
-    def revenue_growth
+    def revenue_on(date)
       0.04
     end
   
-    def sales_pm
+    def sales_pm_on(date)
       0.20
     end
   
-    def fi_over_nfa
+    def fi_over_nfa_on(date)
       0.01
     end
   
-    def sales_over_noa
+    def sales_over_noa_on(date)
       2.00
     end
   end

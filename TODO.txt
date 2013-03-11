@@ -1,8 +1,4 @@
 Forecasts
-	* Filtering bogus growth values and then regressing is going to ignore the 
-	  times when NOA flips from pos to neg (or vice versa), which is going to 
-	  lead to material errors. Better to regress on the raw NOA values and use
-	  those to predict future NOA. Then sign changes aren't problematic.
 	- Detect historicals that are too noisy to forecast from:
 		- R^2 of regressions?
 		- Certain ratios remaining constant-ish (e.g, composition ratios)
@@ -11,6 +7,8 @@ Forecasts
 	- Detect forecasts that look suspect:
 		- Derived values in the forecasts (e.g., composition ratio) remain 
 		  with a standard deviation or two from their trend lines.
+	- Allow assumptions to be tweaked by user: 
+		- How is continuing value calculated? (What long-term g?)
 
 Cost of Capital
 	- Fama/French equity cost of capital is producing very noisy results. Some
@@ -37,6 +35,7 @@ Income Statement
 	- naming consistency between operating/financing vs. operational/financial?
 	- Instead of having find_calculation_arc use a discrete set of exact regexes, what about using
 	  a classifier (and minimum confidence threshold), like the row classifier works?
+	- How to tell if a stock gave off a dividend? Are we tracking those somewhere?
 
 Balance Sheet
 	- Dig into the disclosures. They've got lots more interesting goodness.

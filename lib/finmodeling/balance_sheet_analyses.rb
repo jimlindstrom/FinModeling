@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module FinModeling
 
   class BalanceSheetAnalyses < CalculationSummary
@@ -16,8 +18,9 @@ module FinModeling
       puts "\t\tNOA growth: "+
            "a:#{lr.a.to_s.cap_decimals(4)}, "+
            "b:#{lr.b.to_s.cap_decimals(4)}, "+
-           "r:#{lr.r.to_s.cap_decimals(4)}, "+
-           "var:#{noa_growth_row.valid_vals.variance.to_s.cap_decimals(4)}"
+           "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
+           "σ²:#{noa_growth_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
+           ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit" : "avg fit") )
     end
 
     def noa_growth_row

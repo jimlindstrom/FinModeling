@@ -220,16 +220,9 @@ module FinModeling
     end
 
     def self.forecast_next(period, policy, last_re_bs, last_re_is)
-      operating_revenues = last_re_is.operating_revenues.total * (1.0 + Rate.new(policy.revenue_growth).yearly_to_quarterly)
-      raise RuntimeError.new("or is complex! "+
-                             "last OR: #{last_re_is.operating_revenues.total}. "+
-                             "rev growth: #{(1.0 + Rate.new(policy.revenue_growth).yearly_to_quarterly)}") if operating_revenues.is_a?(Complex)
-      income_from_sales_after_tax = operating_revenues * policy.sales_pm
-      net_financing_income = last_re_bs.net_financial_assets.total * Ratio.new(policy.fi_over_nfa).yearly_to_quarterly
-      raise RuntimeError.new("nfi is complex! "+
-                             "last nfa: #{last_re_bs.net_financial_assets.total}. "+
-                             "fi/nfa: #{Ratio.new(policy.fi_over_nfa).yearly_to_quarterly}") if net_financing_income.is_a?(Complex)
-
+      operating_revenues = policy.revenue_on(period.value["end_date"])
+      income_from_sales_after_tax = operating_revenues * policy.sales_pm_on(period.value["end_date"])
+      net_financing_income = last_re_bs.net_financial_assets.total * Ratio.new(policy.fi_over_nfa_on(period.value["end_date"])).yearly_to_quarterly
       comprehensive_income = income_from_sales_after_tax + net_financing_income
 
       ForecastedReformulatedIncomeStatement.new(period, operating_revenues, 

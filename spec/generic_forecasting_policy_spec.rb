@@ -6,28 +6,29 @@ describe FinModeling::GenericForecastingPolicy  do
   before (:all) do
     @policy = FinModeling::GenericForecastingPolicy.new
   end
+  let(:date) { Date.today }
 
   describe ".revenue_growth" do
-    subject { @policy.revenue_growth }
+    subject { @policy.revenue_on(date) }
     it { should be_a Float }
-    it { should be_within(0.01).of(0.04) } # FIXME: Make this not hard-coded
+    it { should be_within(0.01).of(0.04) }
   end
 
   describe ".sales_pm" do
-    subject { @policy.sales_pm }
+    subject { @policy.sales_pm_on(date) }
     it { should be_a Float }
-    it { should be_within(0.01).of(0.20) } # FIXME: Make this not hard-coded
+    it { should be_within(0.01).of(0.20) }
   end
 
   describe ".fi_over_nfa" do
-    subject { @policy.fi_over_nfa }
+    subject { @policy.fi_over_nfa_on(date) }
     it { should be_a Float }
-    it { should be_within(0.01).of(0.01) } # FIXME: Make this not hard-coded
+    it { should be_within(0.01).of(0.01) }
   end
 
   describe ".sales_over_noa" do
-    subject { @policy.sales_over_noa }
+    subject { @policy.sales_over_noa_on(date) }
     it { should be_a Float }
-    it { should be_within(0.01).of(2.00) } # FIXME: Make this not hard-coded
+    it { should be_within(0.01).of(2.00) }
   end
 end

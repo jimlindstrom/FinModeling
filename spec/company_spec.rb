@@ -47,17 +47,17 @@ describe FinModeling::Company  do
     context "when start date is 1994" do
       let(:start_date) { Time.parse("1994-01-01") }
       subject { company.filings_since_date(start_date) }
-      it { should have(11).items }
+      it { should have_at_least(11).items }
     end
     context "when start date is 2010" do
       let(:start_date) { Time.parse("2010-01-01") }
       subject { company.filings_since_date(start_date) }
-      it { should have( 9).items }
+      it { should have_at_least( 9).items }
     end
     context "when start date is 2011" do
       let(:start_date) { Time.parse("2011-01-01") }
       subject { company.filings_since_date(start_date) }
-      it { should have( 5).items }
+      it { should have_at_least( 5).items }
     end
   end
 end

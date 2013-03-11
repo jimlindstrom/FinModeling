@@ -88,6 +88,7 @@ require 'finmodeling/income_statement_analyses'
 require 'finmodeling/forecasted_reformulated_income_statement'
 require 'finmodeling/forecasted_reformulated_balance_sheet'
 
+require 'finmodeling/time_series_estimator'
 require 'finmodeling/generic_forecasting_policy'
 require 'finmodeling/constant_forecasting_policy'
 require 'finmodeling/forecasts'

@@ -271,20 +271,20 @@ describe FinModeling::ReformulatedIncomeStatement  do
       subject.period.to_pretty_s == @next_is_period.to_pretty_s
     end
     it "should set operating_revenue to last year's revenue times the revenue growth" do
-      expected_val = last_re_is.operating_revenues.total * (1.0 + FinModeling::Rate.new(@policy.revenue_growth).annualize(from=365, to=365/4.0))
-      subject.operating_revenues.total.should == expected_val
+      expected_val = last_re_is.operating_revenues.total * @policy.revenue_growth_on(@next_is_period.value["end_date"])
+      subject.operating_revenues.total.should be_within(0.1).of(expected_val)
     end
     it "should set OISAT to operating revenue times sales PM" do
-      expected_val = subject.operating_revenues.total * @policy.sales_pm
-      subject.income_from_sales_after_tax.total.should == expected_val
+      expected_val = subject.operating_revenues.total * @policy.sales_pm_on(@next_is_period.value["end_date"])
+      subject.income_from_sales_after_tax.total.should be_within(0.1).of(expected_val)
     end
     it "should set NFI to fi_over_nfa times last year's NFA" do
-      expected_val = last_re_bs.net_financial_assets.total * (@policy.fi_over_nfa/4)
-      subject.net_financing_income.total.should == expected_val
+      expected_val = last_re_bs.net_financial_assets.total * (@policy.fi_over_nfa_on(@next_is_period.value["end_date"])/4) # FIXME use Rate.annualize
+      subject.net_financing_income.total.should be_within(0.1).of(expected_val)
     end
     it "should set comprehensive income to OISAT plus NFI" do
       expected_val = subject.income_from_sales_after_tax.total + subject.net_financing_income.total
-      subject.comprehensive_income.total.should == expected_val
+      subject.comprehensive_income.total.should be_within(0.1).of(expected_val)
     end
     it "should have an empty analysis (with the same rows)" do
       subject.analysis(next_re_bs, last_re_is, last_re_bs)
