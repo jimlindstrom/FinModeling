@@ -90,19 +90,21 @@ module FinModeling
   
     def choose_forecasting_policy
       if length < 3
-        return FinModeling::GenericForecastingPolicy.new
+        args = { }
+        args[:operating_revenues] = re_is_arr[-1].operating_revenues.total
+        return FinModeling::GenericForecastingPolicy.new(args)
       else
         isa = income_statement_analyses
         args = { }
 
-        args[:revenue_estimator]        = TimeSeriesEstimator.from_time_series(re_is_arr.map{ |re_is| re_is.period.value["end_date"] },
-                                                                               re_is_arr.map{ |re_is| re_is.operating_revenues.total })
-        args[:sales_pm_estimator]       = TimeSeriesEstimator.from_time_series(re_is_arr.map{ |re_is| re_is.period.value["end_date"] },
-                                                                               isa.operating_pm_row.valid_vals)
+        args[:revenue_estimator]        = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
+                                                                               re_is_arr[1..-1].map{ |re_is| re_is.operating_revenues.total })
+        args[:sales_pm_estimator]       = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
+                                                                               isa.operating_pm_row.vals[1..-1])
         args[:sales_over_noa_estimator] = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
-                                                                               isa.sales_over_noa_row.valid_vals)
+                                                                               isa.sales_over_noa_row.vals[1..-1])
         args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
-                                                                               isa.fi_over_nfa_row.valid_vals)
+                                                                               isa.fi_over_nfa_row.vals[1..-1])
         return FinModeling::ConstantForecastingPolicy.new(args)
       end
     end

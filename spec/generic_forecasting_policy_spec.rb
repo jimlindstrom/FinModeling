@@ -4,14 +4,15 @@ require 'spec_helper'
 
 describe FinModeling::GenericForecastingPolicy  do
   before (:all) do
-    @policy = FinModeling::GenericForecastingPolicy.new
+    @opts = { :operating_revenues=>3.0*1000*1000 }
+    @policy = FinModeling::GenericForecastingPolicy.new(@opts)
   end
   let(:date) { Date.today }
 
   describe ".revenue_growth" do
     subject { @policy.revenue_on(date) }
     it { should be_a Float }
-    it { should be_within(0.01).of(0.04) }
+    it { should be_within(0.01).of(@opts[:operating_revenues]) }
   end
 
   describe ".sales_pm" do

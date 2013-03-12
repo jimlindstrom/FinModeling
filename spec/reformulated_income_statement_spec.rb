@@ -248,7 +248,8 @@ describe FinModeling::ReformulatedIncomeStatement  do
     before (:all) do
       @company = FinModeling::Company.find("aapl")
       @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
-      @policy = FinModeling::GenericForecastingPolicy.new
+      @last_operating_revenues = @filings.last.income_statement.latest_quarterly_reformulated(nil).operating_revenues.total
+      @policy = FinModeling::GenericForecastingPolicy.new(:operating_revenues => @last_operating_revenues)
   
       prev_bs_period = @filings.last.balance_sheet.periods.last
       next_bs_period_value = prev_bs_period.value.next_month.next_month.next_month
@@ -270,8 +271,8 @@ describe FinModeling::ReformulatedIncomeStatement  do
     it "should have the given period" do
       subject.period.to_pretty_s == @next_is_period.to_pretty_s
     end
-    it "should set operating_revenue to last year's revenue times the revenue growth" do
-      expected_val = last_re_is.operating_revenues.total * @policy.revenueh_on(@next_is_period.value["end_date"])
+    it "should set operating_revenue to last year's revenue" do
+      expected_val = last_re_is.operating_revenues.total
       subject.operating_revenues.total.should be_within(0.1).of(expected_val)
     end
     it "should set OISAT to operating revenue times sales PM" do
