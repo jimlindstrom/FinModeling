@@ -24,6 +24,39 @@ Income Statement
 	  where a class just accumulates its errors nicely, and lets you print them out
 	  whenever it's convenient, and in a well-formatted way, without causing an 
 	  immediate exception.
+	- Companies that report comprehensive income aren't parsing well. Which is a shame
+	  because that's even more useful information than the companies that only report
+	  net income.
+		1. EMC has two calculations:
+			http://www.sec.gov/Archives/edgar/data/790070/000079007012000154/0000790070-12-000154-index.htm
+			Calc: Consolidated Income Statements (http://www.emc.com/role/ConsolidatedIncomeStatements)
+				- which ends in net income
+					Net Income (Loss) Attributable to Parent
+			Calc: Consolidated Statements Of Comprehensive Income (http://www.emc.com/role/ConsolidatedStatementsOfComprehensiveIncome)
+				- which ends in comprehensive income
+					Comprehensive Income (Loss), Net of Tax, Attributable to Parent
+				- which references net income
+					Net Income (Loss) Attributable to Parent
+		2. So does BRCM:
+			http://www.sec.gov/Archives/edgar/data/1054374/000105437412000021/0001054374-12-000021-index.htm
+			Calc: Unaudited Condensed Consolidated Statements Of Income (http://www.broadcom.com/role/UnauditedCondensedConsolidatedStatementsOfIncome)
+				- which ends in net income
+					Net Income (Loss) Attributable to Parent
+			Calc: Unaudited Condensed Consolidated Statements Of Comprehensive Income (http://www.broadcom.com/role/UnauditedCondensedC....)
+				- which ends in comprehensive income
+					Comprehensive Income (Loss), Net of Tax, Attributable to Parent
+				- which references net income
+					Net Income (Loss) Attributable to Parent
+		3. So does DGII:
+			http://www.sec.gov/Archives/edgar/data/854775/000085477513000004/0000854775-13-000004-index.htm
+			Calc: Condensed Consolidated Statements Of Operations Unaudited (http://www.digi.com/role/CondensedConsolidatedStatementsOfOperationsUnaudited)
+				- which ends in net income:
+					Net Income (Loss) Attributable to Parent
+			Calc: Condensed Consolidated Statements Of Comprehensive Income (http://www.digi.com/role/CondensedConsolidatedStatementsOfComprehensiveIncome)
+				- which ends in comprehensive income
+					Comprehensive Income (Loss), Net of Tax, Attributable to Parent
+				- which references net income
+					Net Income (Loss) Attributable to Parent
 	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
 	  (I don't even remember what this refers to...)
 	- net income != comprehensive income.  pull in items from SSE?

@@ -38,8 +38,8 @@ module FinModeling
     def balance_sheet
       if @balance_sheet.nil?
         calculations=@taxonomy.callb.calculation
-        bal_sheet = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*financial.*position/) or
-                                           (x.clean_downcased_title =~ /statement.*financial.*condition/) or
+        bal_sheet = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*financial.*position/) ||
+                                           (x.clean_downcased_title =~ /statement.*financial.*condition/) ||
                                            (x.clean_downcased_title =~ /balance.*sheet/) }
         if bal_sheet.nil?
           raise InvalidFilingError.new("Couldn't find balance sheet in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
@@ -53,9 +53,12 @@ module FinModeling
     def income_statement
       if @income_stmt.nil?
         calculations=@taxonomy.callb.calculation
-        inc_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement(|s).*operations/) or
-                                          (x.clean_downcased_title =~ /statement(|s).*of.*earnings/) or
-                                          (x.clean_downcased_title =~ /statement(|s).*of.*(|net.*)income/) }
+        inc_stmt = calculations.find{ |x| ((x.clean_downcased_title =~ /statement(|s).*operations/) ||
+                                           (x.clean_downcased_title =~ /statement(|s).*of.*earnings/) ||
+                                           (x.clean_downcased_title =~ /statement(|s).*of.*(|net.*)income/) ||
+                                           (x.clean_downcased_title =~ /(|net.*)income.*statement(|s)/)) &&
+                                          !(x.clean_downcased_title =~ /comprehensive/) &&
+                                          !(x.clean_downcased_title =~ /disclosure/) }
         if inc_stmt.nil?
           raise InvalidFilingError.new("Couldn't find income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
@@ -68,7 +71,7 @@ module FinModeling
     def cash_flow_statement
       if @cash_flow_stmt.nil?
         calculations=@taxonomy.callb.calculation
-        cash_flow_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*cash.*flows/) or
+        cash_flow_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*cash.*flows/) ||
                                                 (x.clean_downcased_title =~ /^cash flows$/) }
         if cash_flow_stmt.nil?
           raise InvalidFilingError.new("Couldn't find cash flow statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))

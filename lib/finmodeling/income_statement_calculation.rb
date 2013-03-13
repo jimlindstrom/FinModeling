@@ -3,12 +3,11 @@ module FinModeling
     include CanChooseSuccessivePeriods
 
     NI_GOAL   = "net income"
-    NI_LABELS = [ /^(|consolidated )(comprehensive|net) (income|loss|income loss|loss income)(| net of tax)(| attributable to parent)/,
+    NI_LABELS = [ /^(|consolidated )net (|income loss|loss income|income|loss|)(| net of tax)(| attributable to parent)/,
                   /^profit loss$/,
                   /^allocation.*of.*undistributed.*earnings/ ]
     NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
                   /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
-                  /^ComprehensiveIncomeNetOfTax[_0-9a-z]+/,
                   /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
     def net_income_calculation
       begin
@@ -22,12 +21,12 @@ module FinModeling
     def is_valid?
       puts "income statement's net income calculation lacks tax item"           if !net_income_calculation.has_tax_item?
       puts "income statement's net income calculation lacks sales/revenue item" if !net_income_calculation.has_revenue_item?
-      if !net_income_calculation.has_tax_item? || !net_income_calculation.has_tax_item?
+      if !net_income_calculation.has_tax_item? || !net_income_calculation.has_revenue_item?
         if net_income_calculation
           puts "summary:"
           net_income_calculation.summary(:period => periods.last).print
         end
-        puts "calculation tree:\n" + self.calculation.sprint_tree
+        puts "calculation tree:\n" + self.calculation.sprint_tree(indent_count=0, simplified=true)
       end
       return (net_income_calculation.has_revenue_item? && net_income_calculation.has_tax_item?)
     end
