@@ -71,8 +71,8 @@ module FinModeling
     def cash_flow_statement
       if @cash_flow_stmt.nil?
         calculations=@taxonomy.callb.calculation
-        cash_flow_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*cash.*flows/) ||
-                                                (x.clean_downcased_title =~ /^cash flows$/) }
+        cash_flow_stmt = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*cash.*flow(|s)/) ||
+                                                (x.clean_downcased_title =~ /^cash flow(|s)$/) }
         if cash_flow_stmt.nil?
           raise InvalidFilingError.new("Couldn't find cash flow statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end
