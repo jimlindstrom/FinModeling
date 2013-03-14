@@ -1,7 +1,8 @@
 module FinModeling
   class ReOIValuation
-    def initialize(filings, forecasts, wacc, discount_rate, num_shares)
-      @filings, @forecasts, @wacc, @discount_rate, @num_shares = [filings, forecasts, wacc, discount_rate, num_shares]
+    def initialize(filings, forecasts, cost_of_capital, num_shares)
+      @filings, @forecasts, @cost_of_capital, @num_shares = [filings, forecasts, cost_of_capital, num_shares]
+      @discount_rate  = FinModeling::Rate.new(@cost_of_capital.value + 1.0)
     end
 
     def summary
@@ -37,7 +38,7 @@ module FinModeling
     def reoi_vals
       prev_re_bses = [@filings.re_bs_arr.last] + @forecasts.reformulated_balance_sheets[0..-2]
       re_ises =  @forecasts.reformulated_income_statements
-      re_ois = [nil] + re_ises.zip(prev_re_bses).map{ |pair| pair[0].re_oi(pair[1], @wacc.value) }
+      re_ois = [nil] + re_ises.zip(prev_re_bses).map{ |pair| pair[0].re_oi(pair[1], @cost_of_capital.value) }
     end
 
     def pv_reoi_vals
@@ -50,7 +51,7 @@ module FinModeling
 
     def cv_vals
       vals = [nil]*periods.length
-      vals[-2] = reoi_vals.last / (@wacc.value)
+      vals[-2] = reoi_vals.last / (@cost_of_capital.value)
       vals
     end
 

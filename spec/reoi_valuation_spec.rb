@@ -5,19 +5,18 @@ describe FinModeling::ReOIValuation do
     @company = FinModeling::Company.find("aapl")
     @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2012-10-01")))
     @forecasts = @filings.forecasts(@filings.choose_forecasting_policy, num_forecast_periods=4)
-    @discount_rate = FinModeling::DiscountRate.new(1.086) # 8.6% (made up)
-    @wacc  = FinModeling::Rate.new(0.086) # 8.6% (made up)
+    @cost_of_capital  = FinModeling::Rate.new(0.086) # 8.6% (made up)
     @num_shares = 934882640
   end
 
   describe ".new" do
-    subject { FinModeling::ReOIValuation.new(@filings, @forecasts, @wacc, @discount_rate, @num_shares) }
+    subject { FinModeling::ReOIValuation.new(@filings, @forecasts, @cost_of_capital, @num_shares) }
 
     it { should be_a FinModeling::ReOIValuation }
   end
 
   describe ".summary" do
-    let(:valuation) { FinModeling::ReOIValuation.new(@filings, @forecasts, @wacc, @discount_rate, @num_shares) }
+    let(:valuation) { FinModeling::ReOIValuation.new(@filings, @forecasts, @cost_of_capital, @num_shares) }
     subject { valuation.summary }
 
     it { should be_a FinModeling::CalculationSummary }
@@ -48,7 +47,7 @@ describe FinModeling::ReOIValuation do
     it "should show all forecasted ReOIs" do
       prev_re_bses = [@filings.re_bs_arr.last] + @forecasts.reformulated_balance_sheets[0..-2]
       re_ises =  @forecasts.reformulated_income_statements
-      re_ois = re_ises.zip(prev_re_bses).map{ |pair| pair[0].re_oi(pair[1], @wacc.value).to_nearest_million }
+      re_ois = re_ises.zip(prev_re_bses).map{ |pair| pair[0].re_oi(pair[1], @cost_of_capital.value).to_nearest_million }
 
       reoi_row = subject.rows.find{ |x| x.key == "ReOI ($MM)" }
       reoi_row.vals[1..-1].should == re_ois
@@ -60,9 +59,10 @@ describe FinModeling::ReOIValuation do
 
       1.upto(reoi_row.vals.length-2) do |col_idx|
         days_from_now = valuation.periods[col_idx].value - Date.today
-        d = @discount_rate.annualize(from_days=365, to_days=days_from_now)
+        discount_rate  = FinModeling::Rate.new(@cost_of_capital.value + 1.0)
+        d = discount_rate.annualize(from_days=365, to_days=days_from_now)
         expected_pv_reoi = reoi_row.vals[col_idx] / d
-        pv_reoi_row.vals[col_idx].should be_within(1.0).of(expected_pv_reoi)
+        pv_reoi_row.vals[col_idx].should be_within(11.0).of(expected_pv_reoi)
       end
     end
 
@@ -70,7 +70,7 @@ describe FinModeling::ReOIValuation do
       reoi_row = subject.rows.find{ |x| x.key == "ReOI ($MM)" }
       cv_row   = subject.rows.find{ |x| x.key == "CV ($MM)" }
 
-      expected_cv = reoi_row.vals.last / @wacc.value # FIXME: this is an assumption of zero-growth CV
+      expected_cv = reoi_row.vals.last / @cost_of_capital.value # FIXME: this is an assumption of zero-growth CV
       cv_row.vals[-2].should be_within(10.0).of(expected_cv)
     end
 
@@ -81,9 +81,10 @@ describe FinModeling::ReOIValuation do
       1.upto(cv_row.vals.length-2) do |col_idx|
         if cv_row.vals[col_idx]
           days_from_now = valuation.periods[col_idx].value - Date.today
-          d = @discount_rate.annualize(from_days=365, to_days=days_from_now)
+          discount_rate  = FinModeling::Rate.new(@cost_of_capital.value + 1.0)
+          d = discount_rate.annualize(from_days=365, to_days=days_from_now)
           expected_pv_cv = cv_row.vals[col_idx] / d
-          pv_cv_row.vals[col_idx].should be_within(1.0).of(expected_pv_cv)
+          pv_cv_row.vals[col_idx].should be_within(2.0).of(expected_pv_cv)
         end
       end
     end
@@ -102,7 +103,7 @@ describe FinModeling::ReOIValuation do
 
       expected_ev = pv_reoi_row.vals[1..-2].inject(:+) + pv_cv_row.vals.select{ |x| x }.inject(:+) + bv_cse_row.vals.select{ |x| x }.inject(:+)
 
-      ev_row.vals[0].should be_within(1.0).of(expected_ev)
+      ev_row.vals[0].should be_within(2.0).of(expected_ev)
     end
 
     it "should show the book value of net financial assets" do

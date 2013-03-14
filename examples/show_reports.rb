@@ -180,11 +180,10 @@ if args[:do_valuation]
                                                      debt_market_val        = fl,
                                                      cost_of_equity         = ecoc,
                                                      after_tax_cost_of_debt = dcoc)
-    discount_rate = FinModeling::DiscountRate.new(wacc.rate.value + 1.0)
-    num_shares = YahooFinance::get_num_shares(args[:stock_symbol].dup)
-    valuation = FinModeling::ReOIValuation.new(filings, forecasts, wacc.rate, discount_rate, num_shares)
-  
     wacc.summary.print 
+
+    num_shares = YahooFinance::get_num_shares(args[:stock_symbol].dup)
+    valuation = FinModeling::ReOIValuation.new(filings, forecasts, wacc.rate, num_shares)
     valuation.summary.print
   else
     puts "Oops. Can't do valuation without >= 2 forecasts"
