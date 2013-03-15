@@ -1,8 +1,4 @@
 Cost of Capital
-	- Fama/French equity cost of capital is producing very noisy results. Some
-	  R_e's are negative, some arein the 30-40% range. Why? And if that's not
-	  fixable, use something simpler like CAPM. Or do both and take the one that's
-	  more plausible?
 	- Debt cost of capital - try to estimate before tax cost of capital by modeling
 	  credit spread as a function of interest coverage. Is there a way to estimate
 	  marginal (not effective) tax rate?

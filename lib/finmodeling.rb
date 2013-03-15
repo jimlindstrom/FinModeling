@@ -72,7 +72,7 @@ require 'finmodeling/reformulated_balance_sheet'
 require 'finmodeling/reformulated_cash_flow_statement'
 require 'finmodeling/reformulated_shareholder_equity_statement'
 
-require 'finmodeling/company_beta'
+require 'finmodeling/capm'
 require 'finmodeling/debt_cost_of_capital'
 require 'finmodeling/weighted_avg_cost_of_capital'
 require 'finmodeling/fama_french_cost_of_equity'
