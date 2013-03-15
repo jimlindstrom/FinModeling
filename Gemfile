@@ -6,5 +6,7 @@ gem "xbrlware-ruby19", :git => "git://github.com/jimlindstrom/xbrlware-ruby19.gi
 gem "xbrlware-extras", :git => "git://github.com/jimlindstrom/xbrlware-extras.git"
 #gem "xbrlware-extras", :path => "/home/lindstro/code/xbrlware-extras/"
 
+gem "nasdaq_query", :git => "git://github.com/jimlindstrom/nasdaq_query.git"
+
 # Specify your gem's dependencies in finmodeling.gemspec
 gemspec
