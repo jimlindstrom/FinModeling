@@ -69,14 +69,22 @@ module FinModeling
         @monthly_quotes  = @monthly_quotes.select{ |x| dates_to_keep.include?(x.date.gsub(/-[0-9][0-9]$/, "").gsub(/-/, "")) }
       end
   
-      def monthly_returns
+      def monthly_returns(dividends=[])
          @monthly_quotes.each_cons(2)
-                        .map { |pair| (pair[1].adjClose - pair[0].adjClose) / pair[0].adjClose }
+                        .map { |pair| 
+                               div_entry = dividends.find{ |d| d[:ex_eff_date].strftime("%Y-%m") == pair[1].date.gsub(/-[0-9][0-9]$/, "") }
+                               dividend = div_entry ? div_entry[:cash_amt] : 0.0
+                               (pair[1].adjClose - pair[0].adjClose + dividend) / pair[0].adjClose 
+                             }
       end
   
-      def monthly_excess_returns(rf)
+      def monthly_excess_returns(rf, dividends=[])
         @monthly_quotes.each_cons(2)
-                       .map { |pair| (pair[1].adjClose - pair[0].adjClose) / pair[0].adjClose }
+                       .map { |pair| 
+                              div_entry = dividends.find{ |d| d[:ex_eff_date].strftime("%Y-%m") == pair[1].date.gsub(/-[0-9][0-9]$/, "") }
+                              dividend = div_entry ? div_entry[:cash_amt] : 0.0
+                              (pair[1].adjClose - pair[0].adjClose + dividend) / pair[0].adjClose 
+                            }
                        .zip(rf).map{ |pair| pair[0] - pair[1] }
       end
     end
