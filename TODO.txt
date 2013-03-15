@@ -1,9 +1,6 @@
-Cost of Capital
-	- Debt cost of capital - try to estimate before tax cost of capital by modeling
-	  credit spread as a function of interest coverage. Is there a way to estimate
-	  marginal (not effective) tax rate?
-
 Forecasts
+	- Refactor it. The logic is too spread around. Let the user control whether to use
+	  trend, mean, or industry-avg's
 	- Detect historicals that are too noisy to forecast from:
 		- R^2 of regressions?
 		- Certain ratios remaining constant-ish (e.g, composition ratios)
@@ -64,4 +61,10 @@ Reformulated Statement of Shareholder Equity
 
 Statement of Shareholder Equity
 	- Not taking into account share-based compensation, dividends payable, etc.
+
+Cost of Capital
+	- Debt cost of capital - try to estimate before tax cost of capital by modeling
+	  credit spread as a function of interest coverage. Is there a way to estimate
+	  marginal (not effective) tax rate?
+
 
