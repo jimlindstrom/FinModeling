@@ -172,7 +172,8 @@ if args[:do_valuation]
     fl  = filings.re_bs_arr.last.financial_liabilities.total
     dcoc = FinModeling::DebtCostOfCapital.calculate(:before_tax_cost   => FinModeling::Rate.new(args[:before_tax_cost_of_debt]), 
                                                     :marginal_tax_rate => FinModeling::Rate.new(args[:marginal_tax_rate]))
-    ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
+    ecoc = FinModeling::CAPM::EquityCostOfCapital.from_ticker(args[:stock_symbol])
+    #ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
     if (ecoc.value < 0.05) || (ecoc.value > 0.30)
       puts "WARNING: cost of equity capital is highly suspect..."
     end
