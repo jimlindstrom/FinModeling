@@ -5,6 +5,7 @@ require 'sec_query'
 require 'edgar'
 require 'yahoofinance'
 require 'finmodeling/yahoo_finance_helpers.rb'
+require 'nasdaq_query'
 
 require 'xbrlware-ruby19'
 require 'xbrlware-extras'
