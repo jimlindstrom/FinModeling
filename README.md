@@ -1,15 +1,15 @@
 ## Overview
 
-FinModeling is a set of tools for manipulating financial data from SEC Edgar (in [XBRL](http://en.wikipedia.org/wiki/XBRL) format).
+FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](http://en.wikipedia.org/wiki/XBRL)-based filings from SEC Edgar. As of March 2013, it can successfully parse the last 2-5 years of quarterly and annual filings from 52% of the Nasdaq 100 companies. (The remainder fail due to a long-tail distribution of filing formatting peculiarities for which I haven't yet written special-case code to handle.)
 
 ## Features
 
-- Pulls annual (10-k) and quarterly (10-q) financial reports from SEC
+- Pulls annual (10-k) and quarterly (10-q) financial reports from SEC Edgar
 - Uses Naive Bayes Classifiers to classify financial statement items
   - trained on medium-to-large NASDAQ tech companies
 - Reformulates GAAP statements to better highlight enterprise value
 - Generates forecasts based on analysis of historical performance
-- Calculates cost of capital using [Fama/French](http://en.wikipedia.org/wiki/Fama%E2%80%93French_three-factor_model) cost of equity, and [WACC](http://en.wikipedia.org/wiki/Weighted_average_cost_of_capital)
+- Calculates cost of capital using either [CAPM](http://en.wikipedia.org/wiki/Capital_asset_pricing_model) or [Fama/French](http://en.wikipedia.org/wiki/Fama%E2%80%93French_three-factor_model) cost of equity, and [WACC](http://en.wikipedia.org/wiki/Weighted_average_cost_of_capital)
 - Performs residual operating income-based valuation.
 
 ## Example 1: Valuing Oracle's Common Equity, Based on 4 Quarters of History and 2 Quarters of Forecasts
