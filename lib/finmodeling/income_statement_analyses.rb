@@ -21,7 +21,7 @@ module FinModeling
              "b:#{lr.b.to_s.cap_decimals(4)}, "+
              "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
              "σ²:#{revenue_growth_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
-             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit" : "avg fit") )
+             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit [**]" : "avg fit") )
       end
 
       if sales_over_noa_row && sales_over_noa_row.valid_vals.any?
@@ -31,7 +31,7 @@ module FinModeling
              "b:#{lr.b.to_s.cap_decimals(4)}, "+
              "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
              "σ²:#{sales_over_noa_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
-             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit" : "avg fit") )
+             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit [**]" : "avg fit") )
       end
 
       if operating_pm_row && operating_pm_row.valid_vals.any?
@@ -41,7 +41,7 @@ module FinModeling
              "b:#{lr.b.to_s.cap_decimals(4)}, "+
              "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
              "σ²:#{operating_pm_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
-             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit" : "avg fit") )
+             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit [**]" : "avg fit") )
       end
 
       if fi_over_nfa_row && fi_over_nfa_row.valid_vals.any?
@@ -51,7 +51,7 @@ module FinModeling
              "b:#{lr.b.to_s.cap_decimals(4)}, "+
              "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
              "σ²:#{fi_over_nfa_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
-             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit" : "avg fit") )
+             ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit [**]" : "avg fit") )
       end
     end
 

@@ -15,16 +15,28 @@ module FinModeling
 
     def print_regressions # FIXME: rename
       lr = noa_growth_row.valid_vals.linear_regression
-      puts "\t\tNOA growth: "+
+      puts "\t\tNOA growth:        "+
            "a:#{lr.a.to_s.cap_decimals(4)}, "+
            "b:#{lr.b.to_s.cap_decimals(4)}, "+
            "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
            "σ²:#{noa_growth_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
-           ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit" : "avg fit") )
+           ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit [**]" : "avg fit") )
+
+      lr = composition_ratio_row.valid_vals.linear_regression
+      puts "\t\tComposition ratio: "+
+           "a:#{lr.a.to_s.cap_decimals(4)}, "+
+           "b:#{lr.b.to_s.cap_decimals(4)}, "+
+           "r²:#{lr.r2.to_s.cap_decimals(4)}, "+
+           "σ²:#{composition_ratio_row.valid_vals.variance.to_s.cap_decimals(4)}, " +
+           ( (lr.r2 > 0.6) ? "strong fit" : ( (lr.r2 < 0.2) ? "weak fit [**]" : "avg fit") )
     end
 
     def noa_growth_row
       find_row_by_key('NOA Growth')
+    end
+
+    def composition_ratio_row
+      find_row_by_key('Composition Ratio')
     end
 
     def find_row_by_key(key) # FIXME: move this to CalculationSummary
