@@ -2,24 +2,47 @@ module FinModeling
   class BalanceSheetCalculation < CompanyFilingCalculation
 
     ASSETS_GOAL   = "assets"
-    ASSETS_LABELS = [ /(^total *|^consolidated *|^)assets$/,
+    ASSETS_LABELS = [ /(^total *|^consolidated *|^)assets(| BS)$/,
                       /^assets total$/ ]
     ASSETS_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)Assets[_a-z0-9]+/ ]
     def assets_calculation
-      @assets ||= AssetsCalculation.new(find_calculation_arc(ASSETS_GOAL, ASSETS_LABELS, ASSETS_IDS))
+      begin
+        @assets ||= AssetsCalculation.new(find_calculation_arc(ASSETS_GOAL, ASSETS_LABELS, ASSETS_IDS))
+      rescue FinModeling::InvalidFilingError => e
+        pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
+        raise e, pre_msg+e.message, e.backtrace
+      end
     end
   
     LIABS_AND_EQ_GOAL   = "liabilities and equity"
     LIABS_AND_EQ_LABELS = [ /(^total *|^)liabilities.*and.*equity/ ]
     LIABS_AND_EQ_IDS    = [ /.*/ ] # FIXME: no checking...
     def liabs_and_equity_calculation
-       @liabs_and_eq ||= LiabsAndEquityCalculation.new(find_calculation_arc(LIABS_AND_EQ_GOAL, LIABS_AND_EQ_LABELS, LIABS_AND_EQ_IDS))
+      begin
+        @liabs_and_eq ||= LiabsAndEquityCalculation.new(find_calculation_arc(LIABS_AND_EQ_GOAL, LIABS_AND_EQ_LABELS, LIABS_AND_EQ_IDS))
+      rescue FinModeling::InvalidFilingError => e
+        pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
+        raise e, pre_msg+e.message, e.backtrace
+      end
     end
 
     def is_valid?
       puts "balance sheet's assets calculation lacks cash item"                   if !assets_calculation.has_cash_item 
       puts "balance sheet's liabilities and equity calculation lacks equity item" if !liabs_and_equity_calculation.has_equity_item 
       puts "balance sheet's isn't balanced"                                       if !is_balanced
+
+      if !assets_calculation.has_cash_item || !liabs_and_equity_calculation.has_equity_item || !is_balanced
+        if assets_calculation
+          puts "assets summary:"
+          assets_calculation.summary(:period => periods.last).print
+        end
+        if liabs_and_equity_calculation
+          puts "liabs & equity summary:"
+          liabs_and_equity_calculation.summary(:period => periods.last).print
+        end
+        puts "calculation tree:\n" + self.calculation.sprint_tree(indent_count=0, simplified=true)
+      end
+
       return (assets_calculation.has_cash_item && 
               liabs_and_equity_calculation.has_equity_item && 
               is_balanced)

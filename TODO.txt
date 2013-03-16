@@ -13,10 +13,8 @@ Forecasts
 		- How is continuing value calculated? (What long-term g?)
 
 Income Statement
-	- Not able to parse these:
-		./examples/show_reports.rb --show-regressions --num-forecasts 3 --do-valuation xom 2011-09-01
-		./examples/show_reports.rb --show-regressions --num-forecasts 3 --do-valuation bmy 2011-09-01
-		./examples/show_reports.rb --show-regressions --num-forecasts 3 --do-valuation vlo 2011-09-01
+	- A bunch of IS's aren't parsing because the calculation tree has rotations (e.g., the tax items are
+	  showing up at the top.)
 	- Fix the half-implemented error checking. I'd like it to work like ActiveRecord,
 	  where a class just accumulates its errors nicely, and lets you print them out
 	  whenever it's convenient, and in a well-formatted way, without causing an 
