@@ -85,6 +85,7 @@ FinModeling::Classifiers.train
 
 require 'finmodeling/balance_sheet_analyses'
 require 'finmodeling/income_statement_analyses'
+require 'finmodeling/cash_flow_statement_analyses'
 
 require 'finmodeling/forecasted_reformulated_income_statement'
 require 'finmodeling/forecasted_reformulated_balance_sheet'

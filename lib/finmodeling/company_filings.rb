@@ -54,9 +54,8 @@ module FinModeling
         end
 
         analyses.delete_if{ |x| x.nil? }
-        #@cash_flow_statement_analyses = CashFlowStatementAnalyses.new( analyses.inject(:+) )
-        @cash_flow_statement_analyses = analyses.inject(:+)
-        @cash_flow_statement_analyses.totals_row_enabled = false # FIXME: put this on the others too
+        @cash_flow_statement_analyses = CashFlowStatementAnalyses.new( analyses.inject(:+) )
+        @cash_flow_statement_analyses.totals_row_enabled = false
       end
       return @cash_flow_statement_analyses
     end

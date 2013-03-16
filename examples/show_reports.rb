@@ -146,6 +146,9 @@ if args[:show_regressions] && filings.income_statement_analyses.respond_to?(:pri
 end
 
 filings.cash_flow_statement_analyses.print
+if args[:show_regressions] && filings.cash_flow_statement_analyses.respond_to?(:print_regressions)
+  filings.cash_flow_statement_analyses.print_regressions
+end
 
 args[:disclosures].each do |disclosure_title|
   title_regex = Regexp.new(disclosure_title, Regexp::IGNORECASE)
