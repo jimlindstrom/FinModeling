@@ -4,13 +4,14 @@ module FinModeling
 
     CONSTRUCTOR_PATH = File.join(FinModeling::BASE_PATH, "constructors/")
     SCHEMA_VERSION_ITEM = "@schema_version"
-    CURRENT_SCHEMA_VERSION = 1.2
+    CURRENT_SCHEMA_VERSION = 1.3
     # History:
     # 1.0: initial version
     # 1.1: added CFS to quarterly filings
     #      added disclosures
     #      renamed fake(.*)report to cached(.*)report
     # 1.2: added shareholders' equity statement
+    # 1.3: added comprehensive income statement
 
     def self.download(url)
       uid = url.split("/")[-2..-1].join('-').gsub(/\.[A-zA-z]*$/, '')
@@ -69,6 +70,39 @@ module FinModeling
       return @income_stmt
     end
 
+    def has_an_income_statement?
+      begin
+        return income_statement ? true : false
+      rescue
+        return false
+      end
+    end
+
+    def comprehensive_income_statement
+      if @comprehensive_income_stmt.nil?
+        calculations=@taxonomy.callb.calculation
+        inc_stmt = calculations.find{ |x| ((x.clean_downcased_title =~ /statement.*operations/) ||
+                                           (x.clean_downcased_title =~ /statement.*of.*earnings/) ||
+                                           (x.clean_downcased_title =~ /statement.*of.*income/) ||
+                                           (x.clean_downcased_title =~ /income.*statement/)) &&
+                                          ( x.clean_downcased_title =~ /comprehensive/) }
+        if inc_stmt.nil?
+          raise InvalidFilingError.new("Couldn't find comprehensive income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
+        end
+    
+        @comprehensive_income_stmt = ComprehensiveIncomeStatementCalculation.new(inc_stmt)
+      end
+      return @comprehensive_income_stmt
+    end
+
+    def has_a_comprehensive_income_statement?
+      begin
+        return comprehensive_income_statement ? true : false
+      rescue
+        return false
+      end
+    end
+
     def cash_flow_statement
       if @cash_flow_stmt.nil?
         calculations=@taxonomy.callb.calculation
@@ -115,10 +149,13 @@ module FinModeling
     end
 
     def write_constructor(file, item_name)
-      balance_sheet               .write_constructor(file, bs_name  = item_name + "_bs" )
-      income_statement            .write_constructor(file, is_name  = item_name + "_is" )
-      cash_flow_statement         .write_constructor(file, cfs_name = item_name + "_cfs")
-      shareholder_equity_statement.write_constructor(file, ses_name = item_name + "_ses") if has_a_shareholder_equity_statement?
+      balance_sheet                 .write_constructor(file, bs_name  = item_name + "_bs" )
+      income_statement              .write_constructor(file, is_name  = item_name + "_is" ) if has_an_income_statement?
+      comprehensive_income_statement.write_constructor(file, cis_name = item_name + "_cis") if has_a_comprehensive_income_statement?
+      cash_flow_statement           .write_constructor(file, cfs_name = item_name + "_cfs")
+      shareholder_equity_statement  .write_constructor(file, ses_name = item_name + "_ses") if has_a_shareholder_equity_statement?
+      is_name  = "nil" if !has_an_income_statement?
+      cis_name = "nil" if !has_a_comprehensive_income_statement?
       ses_name = "nil" if !has_a_shareholder_equity_statement?
 
       names_of_discs = []
@@ -131,7 +168,7 @@ module FinModeling
 
       file.puts "#{SCHEMA_VERSION_ITEM} = #{CURRENT_SCHEMA_VERSION}" 
 
-      file.puts "#{item_name} = FinModeling::CachedAnnualFiling.new(#{bs_name}, #{is_name}, #{cfs_name}, #{ses_name}, #{names_of_discs_str})"
+      file.puts "#{item_name} = FinModeling::CachedAnnualFiling.new(#{bs_name}, #{is_name}, #{cis_name}, #{cfs_name}, #{ses_name}, #{names_of_discs_str})"
     end
   end
 end

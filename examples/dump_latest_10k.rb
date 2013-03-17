@@ -3,7 +3,7 @@
 require 'finmodeling'
 
 if ARGV.length != 1
-  puts "usage #{__FILE__} <stock symbol>"
+  puts "usage #{__FILE__} <stock symbol | URL>"
   exit
 end
 

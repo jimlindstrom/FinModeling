@@ -1,13 +1,22 @@
 module FinModeling
 
   class CachedAnnualFiling 
-    attr_accessor :balance_sheet, :income_statement, :cash_flow_statement, :shareholder_equity_statement, :disclosures
-    def initialize(bs, is, cfs, ses, disclosures)
-      @balance_sheet                = bs
-      @income_statement             = is
-      @cash_flow_statement          = cfs
-      @shareholder_equity_statement = ses
-      @disclosures                  = disclosures
+    attr_accessor :balance_sheet, :income_statement, :comprehensive_income_statement, :cash_flow_statement, :shareholder_equity_statement, :disclosures
+    def initialize(bs, is, cis, cfs, ses, disclosures)
+      @balance_sheet                  = bs
+      @income_statement               = is
+      @comprehensive_income_statement = cis
+      @cash_flow_statement            = cfs
+      @shareholder_equity_statement   = ses
+      @disclosures                    = disclosures
+    end
+
+    def has_an_income_statement?
+      !@income_statement.nil?
+    end
+
+    def has_a_comprehensive_income_statement?
+      !@comprehensive_income_statement.nil?
     end
 
     def has_a_shareholder_equity_statement?

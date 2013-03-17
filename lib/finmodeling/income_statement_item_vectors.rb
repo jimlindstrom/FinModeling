@@ -93,7 +93,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Nonoperating Income Expense"}, 
                          {:klass=>:fibt, :item_string=>"Gain Loss On Sale Of Equity Investments"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Income Loss From Discontinued Operations Net Of Tax Attributable To Reporting Entity"}, 
+                         {:klass=>:ooiat, :item_string=>"Income Loss From Discontinued Operations Net Of Tax Attributable To Reporting Entity"}, 
   
                          {:klass=>:or, :item_string=>"Sales Revenue Net"}, 
                          {:klass=>:cogs, :item_string=>"Cost Of Goods And Services Sold"}, 
@@ -144,7 +144,7 @@ module FinModeling
                          {:klass=>:oibt, :item_string=>"Restructuring Charges"}, 
                          {:klass=>:fibt, :item_string=>"Nonoperating Income Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Income Loss From Discontinued Operations Net Of Tax"}, 
+                         {:klass=>:ooiat, :item_string=>"Income Loss From Discontinued Operations Net Of Tax"}, 
   
                          {:klass=>:or, :item_string=>"Sales Revenue Goods Net"}, 
                          {:klass=>:or, :item_string=>"Sales Revenue Services Net"}, 

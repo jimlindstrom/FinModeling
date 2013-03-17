@@ -7,12 +7,12 @@ module FinModeling
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "summaries/net_income_")
 
     ALL_STATES  =             [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ]
-    NEXT_STATES = { nil    => [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ],
-                    :or    => [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ],
-                    :cogs  => [      :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ],
-                    :oe    => [             :oe, :oibt, :fibt, :tax, :ooiat, :fiat ],
-                    :oibt  => [                  :oibt, :fibt, :tax, :ooiat, :fiat ], # obit/fibt can cycle back/forth
-                    :fibt  => [                  :obit, :fibt, :tax, :ooiat, :fiat ], # obit/fibt can cycle back/forth
+    NEXT_STATES = { nil    => [ :or                                                ],
+                    :or    => [ :or, :cogs, :oe, :oibt, :fibt                      ],
+                    :cogs  => [      :cogs, :oe, :oibt, :fibt, :tax                ],
+                    :oe    => [             :oe, :oibt, :fibt, :tax                ],
+                    :oibt  => [                  :oibt, :fibt, :tax                ], # obit/fibt can cycle back/forth
+                    :fibt  => [                  :obit, :fibt, :tax                ], # obit/fibt can cycle back/forth
                     :tax   => [                                      :ooiat, :fiat ], # tax can't go to itself. only 1 such item.
                     :ooiat => [                                      :ooiat, :fiat ], # ooiat/fiat can cycle back/forth
                     :fiat  => [                                      :ooiat, :fiat ] }# ooiat/fiat can cycle back/forth

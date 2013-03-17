@@ -1,25 +1,27 @@
 module FinModeling
   class BalanceSheetCalculation < CompanyFilingCalculation
 
-    ASSETS_GOAL   = "assets"
-    ASSETS_LABELS = [ /(^total *|^consolidated *|^)assets(| BS)$/,
-                      /^assets total$/ ]
-    ASSETS_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)Assets[_a-z0-9]+/ ]
+    ASSETS_GOAL        = "assets"
+    ASSETS_LABELS      = [ /(^total *|^consolidated *|^)assets(| BS)$/,
+                           /^assets total$/ ]
+    ASSETS_ANTI_LABELS = [ ]
+    ASSETS_IDS         = [ /^(|Locator_|loc_)(|us-gaap_)Assets[_a-z0-9]+/ ]
     def assets_calculation
       begin
-        @assets ||= AssetsCalculation.new(find_calculation_arc(ASSETS_GOAL, ASSETS_LABELS, ASSETS_IDS))
+        @assets ||= AssetsCalculation.new(find_calculation_arc(ASSETS_GOAL, ASSETS_LABELS, ASSETS_ANTI_LABELS, ASSETS_IDS))
       rescue FinModeling::InvalidFilingError => e
         pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
         raise e, pre_msg+e.message, e.backtrace
       end
     end
   
-    LIABS_AND_EQ_GOAL   = "liabilities and equity"
-    LIABS_AND_EQ_LABELS = [ /(^total *|^)liabilities.*and.*equity/ ]
-    LIABS_AND_EQ_IDS    = [ /.*/ ] # FIXME: no checking...
+    LIABS_AND_EQ_GOAL        = "liabilities and equity"
+    LIABS_AND_EQ_LABELS      = [ /(^total *|^)liabilities.*and.*equity/ ]
+    LIABS_AND_EQ_ANTI_LABELS = [ ]
+    LIABS_AND_EQ_IDS         = [ /.*/ ] # FIXME: no checking...
     def liabs_and_equity_calculation
       begin
-        @liabs_and_eq ||= LiabsAndEquityCalculation.new(find_calculation_arc(LIABS_AND_EQ_GOAL, LIABS_AND_EQ_LABELS, LIABS_AND_EQ_IDS))
+        @liabs_and_eq ||= LiabsAndEquityCalculation.new(find_calculation_arc(LIABS_AND_EQ_GOAL, LIABS_AND_EQ_LABELS, LIABS_AND_EQ_ANTI_LABELS, LIABS_AND_EQ_IDS))
       rescue FinModeling::InvalidFilingError => e
         pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
         raise e, pre_msg+e.message, e.backtrace

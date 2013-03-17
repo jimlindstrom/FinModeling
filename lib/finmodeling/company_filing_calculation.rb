@@ -56,12 +56,13 @@ module FinModeling
 
     protected
 
-    def find_calculation_arc(friendly_goal, label_regexes, id_regexes, criterion=:first)
-      calcs = @calculation.arcs.select{ |x| x.label.downcase.gsub(/[^a-z ]/, '').matches_any_regex?(label_regexes) }
+    def find_calculation_arc(friendly_goal, label_regexes, anti_label_regexes, id_regexes, criterion=:first)
+      calcs = @calculation.arcs.select{ |x|  x.label.downcase.gsub(/[^a-z ]/, '').matches_any_regex?(label_regexes) &&
+                                            !x.label.downcase.gsub(/[^a-z ]/, '').matches_any_regex?(anti_label_regexes) }
 
       if calcs.empty?
         summary_of_arcs = @calculation.arcs.map{ |x| "\t\"#{x.label}\"" }.join("\n")
-        raise InvalidFilingError.new("Couldn't find #{friendly_goal} in:\n" + summary_of_arcs + "\nTried: #{label_regexes.inspect}.")
+        raise InvalidFilingError.new("Couldn't find #{friendly_goal} in:\n" + summary_of_arcs + "\nTried: #{label_regexes.inspect}. (Ignoring: #{anti_label_regexes.inspect}.).")
       end
 
       calc = case

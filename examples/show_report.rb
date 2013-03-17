@@ -124,14 +124,36 @@ def print_reformulated_balance_sheet(filing, report_type)
 end
 
 def print_income_statement(filing, report_type)
-  period  = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
-  period  = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
-  puts "Income Statement (#{period.to_pretty_s})"
+  if filing.has_an_income_statement?
+    period  = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
+    period  = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+    puts "Income Statement (#{period.to_pretty_s})"
+  
+    summaries = []
+    summaries << filing.income_statement.net_income_calculation.summary(:period => period)
+  
+    print_summaries(summaries)
+  else
+    puts "Filing has no income statement."
+    puts 
+  end
+end
 
-  summaries = []
-  summaries << filing.income_statement.net_income_calculation.summary(:period => period)
-
-  print_summaries(summaries)
+def print_comprehensive_income_statement(filing, report_type)
+  if filing.has_a_comprehensive_income_statement?
+    period  = filing.comprehensive_income_statement.comprehensive_income_calculation.periods.yearly.last    if report_type == :annual_report
+    period  = filing.comprehensive_income_statement.comprehensive_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+    puts "Comprehensive Income Statement (#{period.to_pretty_s})"
+  
+    summaries = []
+    summaries << filing.comprehensive_income_statement.comprehensive_income_calculation.summary(:period => period)
+    #summaries << filing.comprehensive_income_statement.summary(:period => period) # when debugging, try printing the whole statement like this.
+  
+    print_summaries(summaries)
+  else
+    puts "Filing has no comprehensive income statement."
+    puts 
+  end
 end
 
 def print_reformulated_income_statement(filing, report_type)
@@ -245,6 +267,7 @@ filing = get_filing(args[:filing_url], args[:report_type])
 print_balance_sheet(                            filing, args[:report_type])
 print_reformulated_balance_sheet(               filing, args[:report_type])
 print_income_statement(                         filing, args[:report_type])
+print_comprehensive_income_statement(           filing, args[:report_type])
 print_reformulated_income_statement(            filing, args[:report_type])
 print_cash_flow_statement(                      filing, args[:report_type])
 print_reformulated_cash_flow_statement(         filing, args[:report_type])

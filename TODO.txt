@@ -1,3 +1,8 @@
+Comprehensive Income Statement
+	- Tree rotations (with Viterbi?)
+	- I turned off something important in writing constructures. Search FIXME. ?
+	- Not very many examples, especially of less common things like FIAT. Find more.
+
 Forecasts
 	- Refactor it. The logic is too spread around. Let the user control whether to use
 	  trend, mean, or industry-avg's
@@ -35,6 +40,8 @@ Income Statement
 
 Balance Sheet
 	- Dig into the disclosures. They've got lots more interesting goodness.
+	- Need to reclassify: credits to shareholders' equity for stock compensation expense
+	- Need to reclassify: dividends payable
 	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
 	- "Redeemable Noncontrolling Interest Equity Carrying Amount"??
 

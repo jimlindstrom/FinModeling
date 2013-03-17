@@ -2,11 +2,12 @@ module FinModeling
   class ShareholderEquityStatementCalculation < CompanyFilingCalculation
     #include CanChooseSuccessivePeriods
 
-    EC_GOAL   = "change in shareholder equity"
-    EC_LABELS = [ /^stockholders equity period increase decrease$/ ]
-    EC_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)StockholdersEquityPeriodIncreaseDecrease[_a-z0-9]+/ ]
+    EC_GOAL        = "change in shareholder equity"
+    EC_LABELS      = [ /^stockholders equity period increase decrease$/ ]
+    EC_ANTI_LABELS = [ ]
+    EC_IDS         = [ /^(|Locator_|loc_)(|us-gaap_)StockholdersEquityPeriodIncreaseDecrease[_a-z0-9]+/ ]
     def equity_change_calculation
-      @ec ||= EquityChangeCalculation.new(find_calculation_arc(EC_GOAL, EC_LABELS, EC_IDS))
+      @ec ||= EquityChangeCalculation.new(find_calculation_arc(EC_GOAL, EC_LABELS, EC_ANTI_LABELS, EC_IDS))
     end
 
     def is_valid?

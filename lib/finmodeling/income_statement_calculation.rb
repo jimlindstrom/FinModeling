@@ -2,16 +2,17 @@ module FinModeling
   class IncomeStatementCalculation < CompanyFilingCalculation
     include CanChooseSuccessivePeriods
 
-    NI_GOAL   = "net income"
-    NI_LABELS = [ /^(|consolidated )net (|income loss|loss income|income|loss|)(| net of tax)(| attributable to parent)/,
-                  /^profit loss$/,
-                  /^allocation.*of.*undistributed.*earnings/ ]
-    NI_IDS    = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
-                  /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
-                  /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
+    NI_GOAL        = "net income"
+    NI_LABELS      = [ /^(|consolidated )net (|income loss|loss income|income|loss|)(| net of tax)(| attributable to parent)/,
+                       /^profit loss$/, # I have a feeling this is from the misguided attempt to parse CI here. Get rid of it...
+                       /^allocation.*of.*undistributed.*earnings/ ]
+    NI_ANTI_LABELS = [ ]
+    NI_IDS         = [ /^(|Locator_|loc_)(|us-gaap_)NetIncomeLoss[_0-9a-z]+/,
+                       /^(|Locator_|loc_)(|us-gaap_)NetIncomeLossAvailableToCommonStockholdersBasic[_0-9a-z]+/,
+                       /^(|Locator_|loc_)(|us-gaap_)ProfitLoss[_0-9a-z]+/ ]
     def net_income_calculation
       begin
-        @ni ||= NetIncomeCalculation.new(find_calculation_arc(NI_GOAL, NI_LABELS, NI_IDS))
+        @ni ||= NetIncomeCalculation.new(find_calculation_arc(NI_GOAL, NI_LABELS, NI_ANTI_LABELS, NI_IDS))
       rescue FinModeling::InvalidFilingError => e
         pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
         raise e, pre_msg+e.message, e.backtrace
