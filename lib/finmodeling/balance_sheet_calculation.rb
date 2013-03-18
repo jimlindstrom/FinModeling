@@ -16,7 +16,7 @@ module FinModeling
     end
   
     LIABS_AND_EQ_GOAL        = "liabilities and equity"
-    LIABS_AND_EQ_LABELS      = [ /(^total *|^)liabilities.*and.*equity/ ]
+    LIABS_AND_EQ_LABELS      = [ /(^total *|^)liabilities.*and.*(equity|stockholders investment)/ ]
     LIABS_AND_EQ_ANTI_LABELS = [ ]
     LIABS_AND_EQ_IDS         = [ /.*/ ] # FIXME: no checking...
     def liabs_and_equity_calculation

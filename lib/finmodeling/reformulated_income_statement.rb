@@ -3,10 +3,10 @@ module FinModeling
     attr_accessor :period
     attr_accessor :operating_revenues, :cost_of_revenues, :operating_expenses
 
-    def initialize(period, net_income_summary, tax_rate=0.35)
+    def initialize(period, net_income_summary, tax_rate=0.35) # FIXME: clarify naming. This is effective tax rate? marginal? statutory?
       @period   = period
       @tax_rate = tax_rate
-
+     
       @operating_revenues = net_income_summary.filter_by_type(:or  )
       @cost_of_revenues   = net_income_summary.filter_by_type(:cogs)
       @operating_expenses = net_income_summary.filter_by_type(:oe  )
@@ -152,6 +152,7 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "GM ($MM)",     :vals => [nil])
         analysis.rows << CalculationRow.new(:key => "OE ($MM)",     :vals => [nil])
         analysis.rows << CalculationRow.new(:key => "OISBT ($MM)",  :vals => [nil])
+        analysis.rows << CalculationRow.new(:key => "FIBT ($MM)",  :vals => [nil])
       end
       analysis.rows << CalculationRow.new(:key => "Core OI ($MM)",  :vals => [nil])
       analysis.rows << CalculationRow.new(:key => "OI ($MM)",       :vals => [nil])
@@ -189,6 +190,7 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "GM ($MM)",      :vals => [@gm.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "OE ($MM)",      :vals => [@operating_expenses.total.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "OISBT ($MM)",   :vals => [income_from_sales_before_tax.total.to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "FIBT ($MM)",    :vals => [@fibt.total.to_nearest_million])
       end
       analysis.rows << CalculationRow.new(:key => "Core OI ($MM)",   :vals => [income_from_sales_after_tax.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "OI ($MM)",        :vals => [operating_income_after_tax.total.to_nearest_million])

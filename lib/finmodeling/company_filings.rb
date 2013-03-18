@@ -5,8 +5,22 @@ module FinModeling
     end
 
     def re_is_arr
+      prev_stmt = nil
       @re_is_arr ||= ([nil] + self).each_cons(2).map do |prev_filing, filing| 
-        filing.income_statement.latest_quarterly_reformulated(prev_filing ? prev_filing.income_statement : nil) 
+        cur_re_is = nil
+        if filing.has_an_income_statement?
+          cur_re_is = filing.income_statement.latest_quarterly_reformulated(prev_stmt)
+          prev_stmt = filing.income_statement
+        elsif filing.has_a_comprehensive_income_statement? &&
+              filing.comprehensive_income_statement
+                    .comprehensive_income_calculation
+                    .has_revenue_item?
+          cur_re_is = filing.comprehensive_income_statement.latest_quarterly_reformulated(prev_stmt)
+          prev_stmt = filing.comprehensive_income_statement
+        else
+          raise RuntimeError.new("Can't create reformulated income statement")
+        end
+        cur_re_is
       end
     end
 

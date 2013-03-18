@@ -157,10 +157,24 @@ def print_comprehensive_income_statement(filing, report_type)
 end
 
 def print_reformulated_income_statement(filing, report_type)
-  period  = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
-  period  = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+  reformed_inc_stmt = nil
 
-  reformed_inc_stmt  = filing.income_statement.reformulated(period)
+  if filing.has_an_income_statement?
+    period  = filing.income_statement.net_income_calculation.periods.yearly.last    if report_type == :annual_report
+    period  = filing.income_statement.net_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+  
+    reformed_inc_stmt  = filing.income_statement.reformulated(period)
+  elsif filing.has_a_comprehensive_income_statement? && 
+        filing.comprehensive_income_statement
+              .comprehensive_income_calculation
+              .has_revenue_item?
+    period  = filing.comprehensive_income_statement.comprehensive_income_calculation.periods.yearly.last    if report_type == :annual_report
+    period  = filing.comprehensive_income_statement.comprehensive_income_calculation.periods.quarterly.last if report_type == :quarterly_report
+  
+    reformed_inc_stmt  = filing.comprehensive_income_statement.reformulated(period)
+  else
+    raise RuntimeError.new("Can't create reformulated income statement")
+  end
 
   summaries = []
   summaries << reformed_inc_stmt.gross_revenue

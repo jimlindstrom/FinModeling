@@ -1,7 +1,36 @@
 Comprehensive Income Statement
-	- Tree rotations (with Viterbi?)
-	- I turned off something important in writing constructures. Search FIXME. ?
+	- Include it in the restated income statement
 	- Not very many examples, especially of less common things like FIAT. Find more.
+
+XBRL items can include Footnotes. Should probably print these out.
+
+Income Statement
+	- In IncomeStatement::latest_quarterly_refactored, it's checking whether the statement has any
+	  quarterly periods, and if so, using the last one. There's a problem with that, some statements
+	  do have quarterly periods, but don't break all lines down to the quarterly level. In this example:
+		./examples/show_reports.rb --income-detail CHRW 2011-09-01
+	  The 2012-12-31 column is missing a $283M income (FIBT) because that item is only given in annual
+	  periods (not the 2012-10-01..2012-12-31 quarterly period). See it in this dump:
+		./examples/dump_latest_10k.rb http://www.sec.gov/Archives/edgar/data/1043277/000104327713000004/0001043277-13-000004-index.htm
+	  Need to modify that method to check whether there are quarterly PERIODS and that all leaf items
+	  have that quarterly period.
+	- Improve the readability of the error checking. One option would be to move to
+	  a system like ActiveRecord's error-handling, in which a class just accumulates its errors 
+	  nicely, and lets you print them out whenever it's convenient, and in a well-formatted way, 
+	  without causing an immediate exception.
+	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
+	  (I don't even remember what this refers to...)
+	- net income != comprehensive income.  pull in items from SSE? and/or parse the comprehensive
+	  income statement.
+	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
+	  currency exchg, etc)
+	- need to better understand minority interest, noncontrollable blah-blah,
+	  etc. (not a big deal for tech companies, but important for conglomerates, mediaco's, etc)
+	- naming consistency (e.g., rename OIBT as OOIBT?)
+	- naming consistency between operating/financing vs. operational/financial?
+	- Instead of having find_calculation_arc use a discrete set of exact regexes, what about using
+	  a classifier (and minimum confidence threshold), like the row classifier works?
+	- How to tell if a stock gave off a dividend? Are we tracking those somewhere?
 
 Forecasts
 	- Refactor it. The logic is too spread around. Let the user control whether to use
@@ -17,30 +46,10 @@ Forecasts
 	- Allow assumptions to be tweaked by user: 
 		- How is continuing value calculated? (What long-term g?)
 
-Income Statement
-	- A bunch of IS's aren't parsing because the calculation tree has rotations (e.g., the tax items are
-	  showing up at the top.)
-	- Fix the half-implemented error checking. I'd like it to work like ActiveRecord,
-	  where a class just accumulates its errors nicely, and lets you print them out
-	  whenever it's convenient, and in a well-formatted way, without causing an 
-	  immediate exception.
-	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
-	  (I don't even remember what this refers to...)
-	- net income != comprehensive income.  pull in items from SSE? and/or parse the comprehensive
-	  income statement.
-	- certain things are being misclassified as FIBT instead of OOIBT. (hedging, 
-	  currency exchg, etc)
-	- need to better understand minority interest, noncontrollable blah-blah,
-	  etc. (not a big deal for tech companies, but important for conglomerates, mediaco's, etc)
-	- naming consistency (e.g., rename OIBT as OOIBT?)
-	- naming consistency between operating/financing vs. operational/financial?
-	- Instead of having find_calculation_arc use a discrete set of exact regexes, what about using
-	  a classifier (and minimum confidence threshold), like the row classifier works?
-	- How to tell if a stock gave off a dividend? Are we tracking those somewhere?
-
 Balance Sheet
 	- Dig into the disclosures. They've got lots more interesting goodness.
 	- Need to reclassify: credits to shareholders' equity for stock compensation expense
+	- Minority interest?
 	- Need to reclassify: dividends payable
 	- The classifier that had been classifying unknown credits/debits is disabled. Replace it?
 	- "Redeemable Noncontrolling Interest Equity Carrying Amount"??

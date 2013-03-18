@@ -141,11 +141,16 @@ module FinModeling
     end
 
     def is_valid?
-      puts "income statment is not valid" if !income_statement.is_valid?
       puts "balance sheet is not valid" if !balance_sheet.is_valid?
+      puts "income statment is not valid" if has_an_income_statement? && !income_statement.is_valid?
+      puts "comprehensive income statment is not valid" if has_a_comprehensive_income_statement? && !comprehensive_income_statement.is_valid?
       #puts "cash flow statement is not valid" if !cash_flow_statement.is_valid?
-      #return (income_statement.is_valid? && balance_sheet.is_valid? && cash_flow_statement.is_valid?)
-      return (income_statement.is_valid? && balance_sheet.is_valid?)
+
+      return false if !balance_sheet.is_valid?
+      return false if has_an_income_statement? && !income_statement.is_valid?
+      return false if has_a_comprehensive_income_statement? && !comprehensive_income_statement.is_valid?
+      #return false if !cash_flow_statement.is_valid? # FIXME: why can't we enable this?
+      return true
     end
 
     def write_constructor(file, item_name)
