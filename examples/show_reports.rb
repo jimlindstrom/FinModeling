@@ -152,7 +152,7 @@ if args[:show_regressions] && filings.balance_sheet_analyses.respond_to?(:print_
 end
 
 is_analyses = filings.income_statement_analyses(wacc.rate.value)
-is_analyses += forecasts.income_statement_analyses(filings) if forecasts
+is_analyses += forecasts.income_statement_analyses(filings, wacc.rate.value) if forecasts
 is_analyses.totals_row_enabled = false 
 is_analyses.print
 if args[:show_regressions] && filings.income_statement_analyses.respond_to?(:print_regressions)

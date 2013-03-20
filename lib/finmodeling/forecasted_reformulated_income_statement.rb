@@ -60,7 +60,7 @@ module FinModeling
       return cs
     end
 
-    def analysis(re_bs, prev_re_is, prev_re_bs)
+    def analysis(re_bs, prev_re_is, prev_re_bs, expected_cost_of_capital)
       analysis = CalculationSummary.new
       analysis.title = ""
       analysis.rows = []
@@ -94,7 +94,7 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "Revenue Growth",:vals => [revenue_growth(prev_re_is)])
         analysis.rows << CalculationRow.new(:key => "Core OI Growth",:vals => [core_oi_growth(prev_re_is)])
         analysis.rows << CalculationRow.new(:key => "OI Growth",     :vals => [nil])
-        analysis.rows << CalculationRow.new(:key => "ReOI ($MM)",    :vals => [re_oi(         prev_re_bs).to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "ReOI ($MM)",    :vals => [re_oi(prev_re_bs, expected_cost_of_capital).to_nearest_million])
       else
         analysis.rows << CalculationRow.new(:key => "Sales / NOA",   :vals => [nil])
         analysis.rows << CalculationRow.new(:key => "FI / NFA",      :vals => [nil])

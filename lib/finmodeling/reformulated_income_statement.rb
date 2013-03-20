@@ -151,7 +151,7 @@ module FinModeling
       return annualize_rate(prev, rate)
     end
 
-    def re_oi(prev_bal_sheet, expected_rate_of_return=0.10)
+    def re_oi(prev_bal_sheet, expected_rate_of_return)
       e_ror = deannualize_rate(prev_bal_sheet, expected_rate_of_return)
       return (operating_income_after_tax.total - (e_ror * prev_bal_sheet.net_operating_assets.total))
     end

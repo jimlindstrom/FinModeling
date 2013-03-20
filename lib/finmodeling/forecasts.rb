@@ -23,7 +23,7 @@ module FinModeling
       return @balance_sheet_analyses
     end
   
-    def income_statement_analyses(filings)
+    def income_statement_analyses(filings, expected_rate_of_return)
       if !@income_statement_analyses
         prev_filing = filings.last
         prev_re_bs = prev_filing.balance_sheet.reformulated(prev_filing.balance_sheet.periods.last)
@@ -31,8 +31,8 @@ module FinModeling
         prev_re_is = prev_filing.income_statement.latest_quarterly_reformulated(prev_cis=nil, prev_prev_is, prev_prev_cis=nil)
       
         @reformulated_income_statements.zip(@reformulated_balance_sheets).each do |re_is, re_bs|
-          next_analysis = FinModeling::ReformulatedIncomeStatement.empty_analysis if !re_is
-          next_analysis = re_is.analysis(re_bs, prev_re_is, prev_re_bs)           if  re_is
+          next_analysis = FinModeling::ReformulatedIncomeStatement.empty_analysis                if !re_is
+          next_analysis = re_is.analysis(re_bs, prev_re_is, prev_re_bs, expected_rate_of_return) if  re_is
         
           @income_statement_analyses = @income_statement_analyses + next_analysis if  @income_statement_analyses
           @income_statement_analyses =                              next_analysis if !@income_statement_analyses
