@@ -4,8 +4,8 @@ describe FinModeling::ReOIValuation do
   before (:all) do
     @company = FinModeling::Company.find("aapl")
     @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2012-10-01")))
-    @forecasts = @filings.forecasts(@filings.choose_forecasting_policy, num_forecast_periods=4)
     @cost_of_capital  = FinModeling::Rate.new(0.086) # 8.6% (made up)
+    @forecasts = @filings.forecasts(@filings.choose_forecasting_policy(@cost_of_capital.value), num_forecast_periods=4)
     @num_shares = 934882640
   end
 

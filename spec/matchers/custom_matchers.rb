@@ -61,8 +61,8 @@ end
 RSpec::Matchers.define :have_the_same_reformulated_last_total do |calc|
   match do |actual|
     period = actual.periods.last
-    val1 = actual  .reformulated(period).send(calc).total
-    val2 = expected.reformulated(period).send(calc).total
+    val1 = actual  .reformulated(period, ci_calc=nil).send(calc).total
+    val2 = expected.reformulated(period, ci_calc=nil).send(calc).total
     (val1 - val2).abs <= 0.1
   end
   chain :as do |expected|

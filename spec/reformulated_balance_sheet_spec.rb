@@ -125,7 +125,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
     before (:all) do
       @company = FinModeling::Company.find("aapl")
       @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
-      @policy = FinModeling::GenericForecastingPolicy.new(:operating_revenues=>@filings.last.income_statement.latest_quarterly_reformulated(nil).operating_revenues.total)
+      @policy = FinModeling::GenericForecastingPolicy.new(:operating_revenues=>@filings.last.income_statement.latest_quarterly_reformulated(nil, nil, nil).operating_revenues.total)
   
       prev_bs_period = @filings.last.balance_sheet.periods.last
       next_bs_period_value = prev_bs_period.value.next_month.next_month.next_month
@@ -136,7 +136,7 @@ describe FinModeling::ReformulatedBalanceSheet  do
       @next_is_period = Xbrlware::Context::Period.new(next_is_period_value)
     end
 
-    let(:last_re_is) { @filings.last.income_statement.latest_quarterly_reformulated(nil) }
+    let(:last_re_is) { @filings.last.income_statement.latest_quarterly_reformulated(ci_calc=nil, prev_is=nil, prev_ci_calc=nil) }
     let(:last_re_bs) { @filings.last.balance_sheet.reformulated(@filings.last.balance_sheet.periods.last) }
     let(:next_re_is) { FinModeling::ReformulatedIncomeStatement.forecast_next(@next_is_period, @policy, last_re_bs, last_re_is) }
 

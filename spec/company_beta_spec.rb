@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe FinModeling::CompanyBeta do
+describe FinModeling::CAPM::Beta do
   describe "#from_ticker" do
     it "returns the right value" do
       index_ticker = "SPY"
@@ -47,7 +47,7 @@ describe FinModeling::CompanyBeta do
       intercept, slope = GSL::Fit::linear(x, y)
       expected_beta = slope
   
-      FinModeling::CompanyBeta.from_ticker(company_ticker, num_days).should be_within(0.1).of(expected_beta)
+      FinModeling::CAPM::Beta.from_ticker(company_ticker, num_days).should be_within(0.1).of(expected_beta) # FIXME: this is now ignorant of dividends...
     end
   end
 end

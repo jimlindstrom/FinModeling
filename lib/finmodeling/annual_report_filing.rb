@@ -87,7 +87,8 @@ module FinModeling
                                            (x.clean_downcased_title =~ /statement.*of.*earnings/) ||
                                            (x.clean_downcased_title =~ /statement.*of.*income/) ||
                                            (x.clean_downcased_title =~ /income.*statement/)) &&
-                                          ( x.clean_downcased_title =~ /comprehensive/) }
+                                           (x.clean_downcased_title =~ /comprehensive/) &&
+                                          !(x.clean_downcased_title =~ /and other comprehensive/) }
         if inc_stmt.nil?
           raise InvalidFilingError.new("Couldn't find comprehensive income statement in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end

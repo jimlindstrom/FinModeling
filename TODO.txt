@@ -1,11 +1,4 @@
-Comprehensive Income Statement
-	- Not very many examples, especially of less common things like FIAT. Find more.
-	- The pension and stock-expense OCIs are getting labeled as operating OCI, which is geting
-	  added back in as other operating income after tax. Really, though, they should be treated
-	  as a core operating expense, since they're about paying the core employees.
-
 XBRL items can include Footnotes. Should probably print these out.
-XBRL includes a "weight" parameter. Is that useable in place of the "mapping" idea used here?
 
 Income Statement
 	- In IncomeStatement::latest_quarterly_refactored, it's checking whether the statement has any
@@ -49,6 +42,12 @@ Forecasts
 	- Allow assumptions to be tweaked by user: 
 		- How is continuing value calculated? (What long-term g?)
 
+Comprehensive Income Statement
+	- Not very many examples, especially of less common things like FIAT. Find more.
+	- The pension and stock-expense OCIs are getting labeled as operating OCI, which is geting
+	  added back in as other operating income after tax. Really, though, they should be treated
+	  as a core operating expense, since they're about paying the core employees.
+
 Balance Sheet
 	- Dig into the disclosures. They've got lots more interesting goodness.
 	- Need to reclassify: credits to shareholders' equity for stock compensation expense
@@ -74,8 +73,6 @@ Cash Flow Statement
 	- the classifier's success rate isn't that high.
 	- "I" is defined inversely.
 
-Reformulated Statement of Shareholder Equity
-
 Statement of Shareholder Equity
 	- Not taking into account share-based compensation, dividends payable, etc.
 
@@ -84,4 +81,53 @@ Cost of Capital
 	  credit spread as a function of interest coverage. Is there a way to estimate
 	  marginal (not effective) tax rate?
 
+XBRL includes a "weight" parameter. Is that useable in place of the "mapping" idea used here?
 
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+require 'finmodeling'
+
+report_paths=["/Users/jimlindstrom/.finmodeling/filings/000110465910063219", "/Users/jimlindstrom/.finmodeling/filings/000119312509153165", "/Users/jimlindstrom/.finmodeling/filings/000119312509214859", "/Users/jimlindstrom/.finmodeling/filings/000119312510012085", "/Users/jimlindstrom/.finmodeling/filings/000119312510030774", "/Users/jimlindstrom/.finmodeling/filings/000119312510088957", "/Users/jimlindstrom/.finmodeling/filings/000119312510162840", "/Users/jimlindstrom/.finmodeling/filings/000119312510238044", "/Users/jimlindstrom/.finmodeling/filings/000119312511010144", "/Users/jimlindstrom/.finmodeling/filings/000119312511104388", "/Users/jimlindstrom/.finmodeling/filings/000119312511134428", "/Users/jimlindstrom/.finmodeling/filings/000119312511192493", "/Users/jimlindstrom/.finmodeling/filings/000119312511199078", "/Users/jimlindstrom/.finmodeling/filings/000119312511282113", "/Users/jimlindstrom/.finmodeling/filings/000119312511282235", "/Users/jimlindstrom/.finmodeling/filings/000119312512023398", "/Users/jimlindstrom/.finmodeling/filings/000119312512025336", "/Users/jimlindstrom/.finmodeling/filings/000119312512182321", "/Users/jimlindstrom/.finmodeling/filings/000119312512314552", "/Users/jimlindstrom/.finmodeling/filings/000119312512444068", "/Users/jimlindstrom/.finmodeling/filings/000119312513022339"]
+ 
+report_paths.each do |report_path|
+
+  puts report_path
+
+  filing=FinModeling::AnnualReportFiling.new(report_path)
+  bs=filing.balance_sheet
+  le=bs.liabs_and_equity_calculation
+  le.periods.each do |period|
+    puts le.calculation.leaf_items(period).select{ |x| x.footnotes }.inspect
+  end
+  a=bs.assets_calculation
+  a.periods.each do |period|
+    puts a.calculation.leaf_items(period).select{ |x| x.footnotes }.inspect
+  end
+
+  puts 
+
+end
+#  #<Xbrlware::Item:0x007fcd631b7b18 
+#    @ins=#<Xbrlware::Instance:0x007fcd63b8cdf0>, 
+#    @name="CommonStockValue", 
+#    @context=Id [eol_PE2035----0910-Q0009_STD_0_20091226_0], 
+#    Entity { Identifier { schema [http://www.sec.gov/CIK], value [] }  },  
+#    period [2009-12-26], 
+#    @precision=nil, 
+#    @decimals="-6", 
+#    @footnotes={"en-US"=>["See Note 2, \"Retrospective Adoption of New Accounting Principles\" of this Form 10-Q."]}, 
+#    @value="8962000000.0", 
+#    @unit=#<Xbrlware::Unit:0x007fcd66db28e8 @id="iso4217_USD", @measure=["iso4217:USD"], @ns="http://www.xbrl.org/2003/instance", @nsp="">, 
+#    @ns="http://xbrl.us/us-gaap/2009-01-31", 
+#    @nsp="us-gaap", 
+#    @def={"xbrli:balance"=>"credit", "name"=>"CommonStockValue", "nillable"=>"true", "xbrli:periodType"=>"instant", "id"=>"us-gaap_CommonStockValue", "type"=>"xbrli:monetaryItemType", "substitutionGroup"=>"xbrli:item"}>
+
+
+# several TODOs:
+# 1. modify xbrlware-extras to write these to the constructors
+#    item = Xbrlware::Item.new(instance, name, context, value, unit, precision, decimals, footnotes)
+# 2. modify CalculationSummary to handle printing footnoes
+# 3. modify the various calculations to extract footnoes and stuff them into the summaries.
+# --- And do it TDD-style.

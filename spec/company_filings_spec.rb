@@ -25,7 +25,7 @@ describe FinModeling::CompanyFilings  do
   end
 
   describe ".income_statement_analyses" do
-    subject { @filings.income_statement_analyses }
+    subject { @filings.income_statement_analyses(e_ror=0.10) }
     it { should be_a FinModeling::IncomeStatementAnalyses }
     it "should have one column per filing" do
       subject.num_value_columns.should == @filings.length
@@ -83,19 +83,19 @@ describe FinModeling::CompanyFilings  do
   describe ".choose_forecasting_policy" do
     context "when one or two filings" do
       let(:filings) { FinModeling::CompanyFilings.new(@filings.last(2)) }
-      subject { filings.choose_forecasting_policy }
+      subject { filings.choose_forecasting_policy(e_ror=0.10) }
 
       it { should be_a FinModeling::GenericForecastingPolicy }
     end
     context "when three or more filings" do
       let(:filings) { FinModeling::CompanyFilings.new(@filings.last(3)) }
-      subject { filings.choose_forecasting_policy }
+      subject { filings.choose_forecasting_policy(e_ror=0.10) }
       it { should be_a FinModeling::ConstantForecastingPolicy }
     end
   end
 
   describe ".forecasts" do
-    let(:policy) { @filings.choose_forecasting_policy }
+    let(:policy) { @filings.choose_forecasting_policy(e_ror=0.10) }
     let(:num_quarters) { 3 }
     subject { @filings.forecasts(policy, num_quarters) }
     it { should be_a FinModeling::Forecasts }

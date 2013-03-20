@@ -52,7 +52,7 @@ describe FinModeling::AnnualReportFiling  do
         @loaded_filing = eval(item_name)
       end
   
-      specify { @schema_version.should be == 1.2 }
+      specify { @schema_version.should be == 1.3 }
   
       subject { @loaded_filing }
       its(:balance_sheet)                { should have_the_same_periods_as(@filing.balance_sheet) }

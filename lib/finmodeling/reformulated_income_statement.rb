@@ -189,7 +189,7 @@ module FinModeling
       return analysis
     end
 
-    def analysis(re_bs, prev_re_is, prev_re_bs, expected_rate_of_return) # FIXME: =0.10
+    def analysis(re_bs, prev_re_is, prev_re_bs, expected_rate_of_return)
       analysis = CalculationSummary.new
       analysis.title = ""
       analysis.rows = []

@@ -15,7 +15,7 @@ describe FinModeling::ReformulatedCashFlowStatement  do
 
     @inc_stmt = filing.income_statement
     @is_period = @inc_stmt.periods.last
-    @reformed_inc_stmt = @inc_stmt.reformulated(@is_period)
+    @reformed_inc_stmt = @inc_stmt.reformulated(@is_period, ci_calc=nil)
 
     @cash_flow_stmt = filing.cash_flow_statement
     @period = @cash_flow_stmt.periods.last

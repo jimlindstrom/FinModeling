@@ -26,12 +26,12 @@ describe FinModeling::IncomeStatementCalculation  do
   end
 
   describe ".reformulated" do
-    subject { @inc_stmt.reformulated(@period) } 
+    subject { @inc_stmt.reformulated(@period, ci_calc=nil) } 
     it { should be_a FinModeling::ReformulatedIncomeStatement }
   end
 
   describe ".latest_quarterly_reformulated" do
-    subject{ @inc_stmt.latest_quarterly_reformulated(@prev_inc_stmt) }
+    subject{ @inc_stmt.latest_quarterly_reformulated(ci_calc=nil, @prev_inc_stmt, prev_ci_calc=nil) }
     it { should be_a FinModeling::ReformulatedIncomeStatement }
   end
 

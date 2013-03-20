@@ -14,7 +14,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
 
     @inc_stmt_2009 = @filing_2009.income_statement
     is_period_2009 = @inc_stmt_2009.periods.last
-    @reformed_inc_stmt_2009 = @inc_stmt_2009.reformulated(is_period_2009)
+    @reformed_inc_stmt_2009 = @inc_stmt_2009.reformulated(is_period_2009, ci_calc=nil)
 
     @bal_sheet_2009 = @filing_2009.balance_sheet
     bs_period_2009 = @bal_sheet_2009.periods.last
@@ -22,7 +22,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
 
     @inc_stmt_2011 = @filing_2011.income_statement
     is_period_2011 = @inc_stmt_2011.periods.last
-    @reformed_inc_stmt_2011 = @inc_stmt_2011.reformulated(is_period_2011)
+    @reformed_inc_stmt_2011 = @inc_stmt_2011.reformulated(is_period_2011, ci_calc=nil)
 
     @bal_sheet_2011 = @filing_2011.balance_sheet
     bs_period_2011 = @bal_sheet_2011.periods.last
@@ -171,7 +171,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
   end
 
   describe "analysis" do
-    subject {@reformed_inc_stmt_2011.analysis(@reformed_bal_sheet_2011, @reformed_inc_stmt_2009, @reformed_bal_sheet_2009) }
+    subject {@reformed_inc_stmt_2011.analysis(@reformed_bal_sheet_2011, @reformed_inc_stmt_2009, @reformed_bal_sheet_2009, e_ror=0.10) }
 
     it { should be_an_instance_of FinModeling::CalculationSummary }
     it "contains the expected rows" do
@@ -191,7 +191,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
   
       @inc_stmt_2011_q3 = @filing_2011_q3.income_statement
       is_period_2011_q3 = @inc_stmt_2011_q3.periods.threequarterly.last
-      @reformed_inc_stmt_2011_q3 = @inc_stmt_2011_q3.reformulated(is_period_2011_q3)
+      @reformed_inc_stmt_2011_q3 = @inc_stmt_2011_q3.reformulated(is_period_2011_q3, ci_calc=nil)
 
       @diff = @reformed_inc_stmt_2011 - @reformed_inc_stmt_2011_q3
     end
@@ -248,7 +248,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     before (:all) do
       @company = FinModeling::Company.find("aapl")
       @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
-      @last_operating_revenues = @filings.last.income_statement.latest_quarterly_reformulated(nil).operating_revenues.total
+      @last_operating_revenues = @filings.last.income_statement.latest_quarterly_reformulated(nil, nil, nil).operating_revenues.total
       @policy = FinModeling::GenericForecastingPolicy.new(:operating_revenues => @last_operating_revenues)
   
       prev_bs_period = @filings.last.balance_sheet.periods.last
@@ -261,7 +261,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
     end
 
     let(:last_re_bs) { @filings.last.balance_sheet.reformulated(@filings.last.balance_sheet.periods.last) }
-    let(:last_re_is) { @filings.last.income_statement.latest_quarterly_reformulated(nil) }
+    let(:last_re_is) { @filings.last.income_statement.latest_quarterly_reformulated(nil, nil, nil) }
     let(:next_re_is) { FinModeling::ReformulatedIncomeStatement.forecast_next(@next_is_period, @policy, last_re_bs, last_re_is) }
     let(:next_re_bs) { FinModeling::ReformulatedBalanceSheet.forecast_next(@next_bs_period, @policy, last_re_bs, next_re_is) }
 
@@ -288,7 +288,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       subject.comprehensive_income.total.should be_within(0.1).of(expected_val)
     end
     it "should have an empty analysis (with the same rows)" do
-      subject.analysis(next_re_bs, last_re_is, last_re_bs)
+      subject.analysis(next_re_bs, last_re_is, last_re_bs, e_ror=0.10)
     end
   end
 end

@@ -38,8 +38,8 @@ describe FinModeling::QuarterlyReportFiling  do
       @loaded_filing = eval(item_name)
     end
 
-    it "writes itself to a file, and saves a schema version of 1.2" do
-      @schema_version.should be == 1.2
+    it "writes itself to a file, and saves a schema version of 1.3" do
+      @schema_version.should be == 1.3
     end
 
     subject { @loaded_filing }
