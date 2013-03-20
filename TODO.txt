@@ -1,8 +1,11 @@
 Comprehensive Income Statement
-	- Include it in the restated income statement
 	- Not very many examples, especially of less common things like FIAT. Find more.
+	- The pension and stock-expense OCIs are getting labeled as operating OCI, which is geting
+	  added back in as other operating income after tax. Really, though, they should be treated
+	  as a core operating expense, since they're about paying the core employees.
 
 XBRL items can include Footnotes. Should probably print these out.
+XBRL includes a "weight" parameter. Is that useable in place of the "mapping" idea used here?
 
 Income Statement
 	- In IncomeStatement::latest_quarterly_refactored, it's checking whether the statement has any

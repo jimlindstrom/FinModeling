@@ -26,7 +26,7 @@ module FinModeling
                          {:klass=>:oe, :item_string=>"Research and development"}, 
                          {:klass=>:oibt, :item_string=>"Provision for restructuring"}, 
                          {:klass=>:oibt, :item_string=>"Litigation expense, net"}, 
-                         {:klass=>:fibt, :item_string=>"Equity in net income of affiliates"}, 
+                         {:klass=>:oibt, :item_string=>"Equity in net income of affiliates"}, 
                          {:klass=>:oibt, :item_string=>"Other (income)/expense"}, 
                          {:klass=>:tax, :item_string=>"Provision for income taxes"}, 
 
@@ -51,7 +51,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
+                         {:klass=>:ooiat_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
   
                          {:klass=>:or, :item_string=>"Sales Revenue Goods Net"}, 
                          {:klass=>:or, :item_string=>"Sales Revenue Services Net"}, 
@@ -91,7 +91,7 @@ module FinModeling
                          {:klass=>:oibt, :item_string=>"Restructuring Charges"}, 
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
                          {:klass=>:fibt, :item_string=>"Nonoperating Income Expense"}, 
-                         {:klass=>:fibt, :item_string=>"Gain Loss On Sale Of Equity Investments"}, 
+                         {:klass=>:oibt, :item_string=>"Gain Loss On Sale Of Equity Investments"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
                          {:klass=>:ooiat, :item_string=>"Income Loss From Discontinued Operations Net Of Tax Attributable To Reporting Entity"}, 
   
@@ -208,7 +208,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Income Loss From Equity Method Investments"},
+                         {:klass=>:ooiat, :item_string=>"Income Loss From Equity Method Investments"},
   
                          {:klass=>:or, :item_string=>"Licenses Revenue"}, 
                          {:klass=>:or, :item_string=>"Maintenance Revenue"}, 
@@ -255,7 +255,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Gain Loss On Sale Of Business"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
+                         {:klass=>:ooiat_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
   
                          {:klass=>:or, :item_string=>"Licenses Revenue"}, 
                          {:klass=>:or, :item_string=>"Maintenance Revenue"}, 
@@ -308,10 +308,10 @@ module FinModeling
                          {:klass=>:oe, :item_string=>"Amortization Of Intangible Assets"}, 
                          {:klass=>:fibt, :item_string=>"Investment Income Interest"}, 
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
-                         {:klass=>:fibt, :item_string=>"Income Loss From Equity Method Investments"}, 
+                         {:klass=>:oibt, :item_string=>"Income Loss From Equity Method Investments"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
+                         {:klass=>:ooiat_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
   
                          {:klass=>:or, :item_string=>"Revenues"}, 
                          {:klass=>:cogs, :item_string=>"Cost Of Revenue"}, 
@@ -367,7 +367,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:klass=>:fibt, :item_string=>"Impairment Of Investments"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
+                         {:klass=>:ooiat_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
   
                          {:klass=>:or, :item_string=>"Sales Revenue Goods Net"}, 
                          {:klass=>:or, :item_string=>"Sales Revenue Services Net"}, 
@@ -515,7 +515,7 @@ module FinModeling
                          {:klass=>:oe, :item_string=>"Research And Development In Process"}, 
                          {:klass=>:oe, :item_string=>"Goodwill And Acquisition Related Intangible Assets Impairment"}, 
                          {:klass=>:fibt, :item_string=>"Gain Loss On Disposition Of Assets"}, 
-                         {:klass=>:fibt, :item_string=>"Equity Method Investment Other Than Temporary Impairment"}, 
+                         {:klass=>:oibt, :item_string=>"Equity Method Investment Other Than Temporary Impairment"}, 
                          {:klass=>:fibt, :item_string=>"Interest Income And Other Expense Net"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
   
@@ -533,7 +533,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Income Loss From Equity Method Investments Net Of Tax"}, 
+                         {:klass=>:ooiat, :item_string=>"Income Loss From Equity Method Investments Net Of Tax"}, 
   
                          {:klass=>:or, :item_string=>"Sales Revenue Net"}, 
                          {:klass=>:cogs, :item_string=>"Cost Of Revenue"}, 
@@ -544,7 +544,7 @@ module FinModeling
                          {:klass=>:fibt, :item_string=>"Interest Expense"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Expense"}, 
                          {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"}, 
-                         {:klass=>:fiat, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
+                         {:klass=>:ooiat_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"}, 
   
                          {:klass=>:or, :item_string=>"Sales Revenue Net"}, 
                          {:klass=>:cogs, :item_string=>"Cost Of Revenue"}, 
@@ -625,7 +625,7 @@ module FinModeling
                          {:klass=>:oe, :item_string=>"Research And Development Expense Software Excluding Acquired In Process Cost"}, 
                          {:klass=>:oe, :item_string=>"Selling And Marketing Expense"}, 
                          {:klass=>:oe, :item_string=>"General And Administrative Expense"}, 
-                         {:klass=>:fibt, :item_string=>"Income Loss From Equity Method Investments"}, 
+                         {:klass=>:oibt, :item_string=>"Income Loss From Equity Method Investments"}, 
                          {:klass=>:oibt, :item_string=>"Amortization Of Intangible Assets"}, 
                          {:klass=>:oibt, :item_string=>"Other Restructuring Costs"}, 
                          {:klass=>:fibt, :item_string=>"Other Nonoperating Income Expense"}, 

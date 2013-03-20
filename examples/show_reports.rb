@@ -127,7 +127,21 @@ filings.each do |filing|
   end
 end
 
-forecasts = filings.forecasts(filings.choose_forecasting_policy, num_quarters=args[:num_forecasts]) if args[:num_forecasts]
+
+fl  = filings.re_bs_arr.last.financial_liabilities.total
+dcoc = FinModeling::DebtCostOfCapital.calculate(:before_tax_cost   => FinModeling::Rate.new(args[:before_tax_cost_of_debt]), 
+                                                :marginal_tax_rate => FinModeling::Rate.new(args[:marginal_tax_rate]))
+ecoc = FinModeling::CAPM::EquityCostOfCapital.from_ticker(args[:stock_symbol])
+#ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
+if (ecoc.value < 0.05) || (ecoc.value > 0.30)
+  puts "WARNING: cost of equity capital is highly suspect..."
+end
+wacc = FinModeling::WeightedAvgCostOfCapital.new(equity_market_val      = YahooFinance::get_market_cap(args[:stock_symbol].dup),
+                                                 debt_market_val        = fl,
+                                                 cost_of_equity         = ecoc,
+                                                 after_tax_cost_of_debt = dcoc)
+
+forecasts = filings.forecasts(filings.choose_forecasting_policy(wacc.rate.value), num_quarters=args[:num_forecasts]) if args[:num_forecasts]
 
 bs_analyses = filings.balance_sheet_analyses 
 bs_analyses += forecasts.balance_sheet_analyses(filings) if forecasts
@@ -137,7 +151,7 @@ if args[:show_regressions] && filings.balance_sheet_analyses.respond_to?(:print_
   filings.balance_sheet_analyses.print_regressions 
 end
 
-is_analyses = filings.income_statement_analyses 
+is_analyses = filings.income_statement_analyses(wacc.rate.value)
 is_analyses += forecasts.income_statement_analyses(filings) if forecasts
 is_analyses.totals_row_enabled = false 
 is_analyses.print
@@ -172,18 +186,6 @@ end
 
 if args[:do_valuation]
   if args[:num_forecasts] && args[:num_forecasts]>=2
-    fl  = filings.re_bs_arr.last.financial_liabilities.total
-    dcoc = FinModeling::DebtCostOfCapital.calculate(:before_tax_cost   => FinModeling::Rate.new(args[:before_tax_cost_of_debt]), 
-                                                    :marginal_tax_rate => FinModeling::Rate.new(args[:marginal_tax_rate]))
-    ecoc = FinModeling::CAPM::EquityCostOfCapital.from_ticker(args[:stock_symbol])
-    #ecoc = FinModeling::FamaFrench::EquityCostOfCapital.from_ticker(args[:stock_symbol])
-    if (ecoc.value < 0.05) || (ecoc.value > 0.30)
-      puts "WARNING: cost of equity capital is highly suspect..."
-    end
-    wacc = FinModeling::WeightedAvgCostOfCapital.new(equity_market_val      = YahooFinance::get_market_cap(args[:stock_symbol].dup),
-                                                     debt_market_val        = fl,
-                                                     cost_of_equity         = ecoc,
-                                                     after_tax_cost_of_debt = dcoc)
     wacc.summary.print 
 
     num_shares = YahooFinance::get_num_shares(args[:stock_symbol].dup)

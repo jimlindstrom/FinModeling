@@ -8,14 +8,17 @@ module FinModeling
       prev_stmt = nil
       @re_is_arr ||= ([nil] + self).each_cons(2).map do |prev_filing, filing| 
         cur_re_is = nil
+        cur_ci_calc  = filing.has_a_comprehensive_income_statement? ? filing.comprehensive_income_statement.comprehensive_income_calculation : nil
+        prev_ci_calc = (prev_filing && prev_filing.has_a_comprehensive_income_statement?) ? 
+                       prev_filing.comprehensive_income_statement.comprehensive_income_calculation : nil
         if filing.has_an_income_statement?
-          cur_re_is = filing.income_statement.latest_quarterly_reformulated(prev_stmt)
+          cur_re_is = filing.income_statement.latest_quarterly_reformulated(cur_ci_calc, prev_stmt, prev_ci_calc)
           prev_stmt = filing.income_statement
         elsif filing.has_a_comprehensive_income_statement? &&
               filing.comprehensive_income_statement
                     .comprehensive_income_calculation
                     .has_revenue_item?
-          cur_re_is = filing.comprehensive_income_statement.latest_quarterly_reformulated(prev_stmt)
+          cur_re_is = filing.comprehensive_income_statement.latest_quarterly_reformulated(prev_stmt, prev_ci_calc)
           prev_stmt = filing.comprehensive_income_statement
         else
           raise RuntimeError.new("Can't create reformulated income statement")
@@ -39,7 +42,7 @@ module FinModeling
       return @balance_sheet_analyses
     end
   
-    def income_statement_analyses
+    def income_statement_analyses(expected_rate_of_return)
       if !@income_statement_analyses
         analyses = []
         self.each_with_index do |filing, idx|
@@ -48,7 +51,7 @@ module FinModeling
           re_bs = re_bs_arr[idx]
           re_is = re_is_arr[idx]
     
-          analyses << (re_is ? re_is.analysis(re_bs, prev_re_is, prev_re_bs) : FinModeling::ReformulatedIncomeStatement.empty_analysis )
+          analyses << (re_is ? re_is.analysis(re_bs, prev_re_is, prev_re_bs, expected_rate_of_return) : FinModeling::ReformulatedIncomeStatement.empty_analysis )
         end
 
         analyses.delete_if{ |x| x.nil? }
@@ -101,13 +104,13 @@ module FinModeling
       return ds
     end
   
-    def choose_forecasting_policy
+    def choose_forecasting_policy(expected_rate_of_return)
       if length < 3
         args = { }
         args[:operating_revenues] = re_is_arr[-1].operating_revenues.total
         return FinModeling::GenericForecastingPolicy.new(args)
       else
-        isa = income_statement_analyses
+        isa = income_statement_analyses(expected_rate_of_return)
         args = { }
 
         args[:revenue_estimator]        = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
@@ -129,7 +132,7 @@ module FinModeling
 
       last_last_is = (self.length >= 2) ? self[-2].income_statement : nil
       puts "warning: last_last_is is nil..." if !last_last_is
-      last_re_is = self.last.income_statement.latest_quarterly_reformulated(last_last_is)
+      last_re_is = self.last.income_statement.latest_quarterly_reformulated(last_cis=nil, last_last_is, last_last_cis=nil)
       raise RuntimeError.new("last_re_is is nil!") if !last_re_is
 
       num_quarters.times do |i|

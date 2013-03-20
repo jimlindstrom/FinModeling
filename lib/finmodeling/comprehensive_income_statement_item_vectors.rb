@@ -14,7 +14,7 @@ module FinModeling
       {:klass=>:fibt, :item_string=>"Interest Expense"},
       {:klass=>:tax, :item_string=>"Income Tax Expense Benefit"},
       {:klass=>:fiat, :item_string=>"Dividends Preferred Stock"},
-      {:klass=>:ooci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"},
+      {:klass=>:ooci_nci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"},
 
       # ALTR
       {:klass=>:or, :item_string=>"Sales Revenue Net"},
@@ -173,13 +173,13 @@ module FinModeling
       {:klass=>:foci, :item_string=>"Other Comprehensive Income Loss Reclassification Adjustment For Sale Of Securities Included In Net Income Net Of Tax"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Unrealized Gain Loss On Derivatives Arising During Period Net Of Tax"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Loss Reclassification Adjustment On Derivatives Included In Net Income Net Of Tax"},
-      {:klass=>:ooci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"},
+      {:klass=>:ooci_nci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"},
 
       # EXPE
       {:klass=>:ni, :item_string=>"Profit Loss"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Foreign Currency Transaction And Translation Gain Loss Arising During Period Net Of Tax"},
       {:klass=>:foci, :item_string=>"Other Comprehensive Income Loss Available For Sale Securities Adjustment Net Of Tax"},
-      {:klass=>:ooci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"},
+      {:klass=>:ooci_nci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"},
 
       # GILD
       {:klass=>:ni, :item_string=>"Profit Loss"},
@@ -188,7 +188,7 @@ module FinModeling
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Unrealized Gain Loss On Derivatives Arising During Period Net Of Tax"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Loss Reclassification Adjustment On Derivatives Included In Net Income Net Of Tax"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Loss Foreign Currency Transaction And Translation Adjustment Net Of Tax"},
-      {:klass=>:ooci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"},
+      {:klass=>:ooci_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"},
 
       # GMCR
       {:klass=>:ni, :item_string=>"Profit Loss"},
@@ -222,7 +222,7 @@ module FinModeling
       {:klass=>:unkoci, :item_string=>"Cash Flow Hedge Gain Loss Reclassified To Earnings Net"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Loss Foreign Currency Transaction And Translation Adjustment Net Of Tax"},
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Foreign Currency Transaction And Translation Adjustment Net Of Tax Portion Attributable To Noncontrolling Interest"},
-      {:klass=>:ooci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"},
+      {:klass=>:ooci_nci, :item_string=>"Net Income Loss Attributable To Noncontrolling Interest"},
 
       # XRAY
       {:klass=>:ni, :item_string=>"Profit Loss"},
@@ -230,6 +230,6 @@ module FinModeling
       {:klass=>:unkoci, :item_string=>"Other Comprehensive Income Unrealized Gain Loss On Derivatives Arising During Period Net Of Tax"},
       {:klass=>:foci, :item_string=>"Other Comprehensive Income Available For Sale Securities Adjustment Net Of Tax Period Increase Decrease"},
       {:klass=>:ooci, :item_string=>"Other Comprehensive Income Minimum Pension Liability Net Adjustment Net Of Tax"},
-      {:klass=>:ooci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"} ]
+      {:klass=>:ooci_nci, :item_string=>"Comprehensive Income Net Of Tax Attributable To Noncontrolling Interest"} ]
   end
 end

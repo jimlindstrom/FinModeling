@@ -32,15 +32,16 @@ module FinModeling
       return (net_income_calculation.has_revenue_item? && net_income_calculation.has_tax_item?)
     end
 
-    def reformulated(period)
+    def reformulated(period, comprehensive_income_calculation)
       return ReformulatedIncomeStatement.new(period, 
-                                             net_income_calculation.summary(:period=>period))
+                                             net_income_calculation.summary(:period=>period),
+                                             comprehensive_income_calculation ? comprehensive_income_calculation.summary(:period=>period) : nil)
     end
 
-    def latest_quarterly_reformulated(prev_is)
+    def latest_quarterly_reformulated(cur_ci_calc, prev_is, prev_ci_calc)
       if net_income_calculation.periods.quarterly.any?
         period = net_income_calculation.periods.quarterly.last
-        lqr = reformulated(period)
+        lqr = reformulated(period, cur_ci_calc)
 
         if (lqr.operating_revenues.total.abs > 1.0) && # FIXME: make an is_valid here?
            (lqr.cost_of_revenues  .total.abs > 1.0)    # FIXME: make an is_valid here?
@@ -52,7 +53,7 @@ module FinModeling
 
       cur_period, prev_period = choose_successive_periods(net_income_calculation, prev_is.net_income_calculation)
       if cur_period && prev_period
-        new_re_is = reformulated(cur_period) - prev_is.reformulated(prev_period)
+        new_re_is = reformulated(cur_period, cur_ci_calc) - prev_is.reformulated(prev_period, prev_ci_calc)
         # the above subtraction doesn't know what period you want. So let's patch the result to have
         # a quarterly period with the right end-points
         new_re_is.period = Xbrlware::Context::Period.new({"start_date"=>prev_period.value["end_date"], 

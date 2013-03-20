@@ -28,7 +28,7 @@ module FinModeling
         prev_filing = filings.last
         prev_re_bs = prev_filing.balance_sheet.reformulated(prev_filing.balance_sheet.periods.last)
         prev_prev_is = (filings.length > 2) ? filings[-2].income_statement : nil
-        prev_re_is = prev_filing.income_statement.latest_quarterly_reformulated(prev_prev_is)
+        prev_re_is = prev_filing.income_statement.latest_quarterly_reformulated(prev_cis=nil, prev_prev_is, prev_prev_cis=nil)
       
         @reformulated_income_statements.zip(@reformulated_balance_sheets).each do |re_is, re_bs|
           next_analysis = FinModeling::ReformulatedIncomeStatement.empty_analysis if !re_is

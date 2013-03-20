@@ -39,9 +39,11 @@ module FinModeling
     def balance_sheet
       if @balance_sheet.nil?
         calculations=@taxonomy.callb.calculation
-        bal_sheet = calculations.find{ |x| (x.clean_downcased_title =~ /statement.*financial.*position/) ||
-                                           (x.clean_downcased_title =~ /statement.*financial.*condition/) ||
-                                           (x.clean_downcased_title =~ /balance.*sheet/) }
+        bal_sheet = calculations.find{ |x| ((x.clean_downcased_title =~ /statement.*financial.*position/) ||
+                                            (x.clean_downcased_title =~ /statement.*financial.*condition/) ||
+                                            (x.clean_downcased_title =~ /balance.*sheet/)) &&
+                                           !(x.clean_downcased_title =~ /^balances included/) &&
+                                           !(x.clean_downcased_title =~ /net of tax/) }
         if bal_sheet.nil?
           raise InvalidFilingError.new("Couldn't find balance sheet in: " + calculations.map{ |x| "\"#{x.clean_downcased_title}\"" }.join("; "))
         end

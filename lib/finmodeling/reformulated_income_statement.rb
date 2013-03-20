@@ -3,18 +3,35 @@ module FinModeling
     attr_accessor :period
     attr_accessor :operating_revenues, :cost_of_revenues, :operating_expenses
 
-    def initialize(period, net_income_summary, tax_rate=0.35) # FIXME: clarify naming. This is effective tax rate? marginal? statutory?
+    def initialize(period, net_income_summary, comprehensive_income_summary, tax_rate=0.35) # FIXME: clarify naming. This is effective tax rate? marginal? statutory?
       @period   = period
       @tax_rate = tax_rate
      
       @operating_revenues = net_income_summary.filter_by_type(:or  )
       @cost_of_revenues   = net_income_summary.filter_by_type(:cogs)
       @operating_expenses = net_income_summary.filter_by_type(:oe  )
-      @oibt  = net_income_summary.filter_by_type(:oibt )
-      @fibt  = net_income_summary.filter_by_type(:fibt )
-      @tax   = net_income_summary.filter_by_type(:tax  )
-      @ooiat = net_income_summary.filter_by_type(:ooiat)
-      @fiat  = net_income_summary.filter_by_type(:fiat )
+      @oibt      = net_income_summary.filter_by_type(:oibt     )
+      @fibt      = net_income_summary.filter_by_type(:fibt     )
+      @tax       = net_income_summary.filter_by_type(:tax      )
+      @ooiat     = net_income_summary.filter_by_type(:ooiat    )
+      @ooiat_nci = net_income_summary.filter_by_type(:ooiat_nci)
+      @fiat      = net_income_summary.filter_by_type(:fiat     )
+
+      # If there is a CI statement:
+      #   Strip O-NCI-OCI out of the NI calculation (***)
+      #   Double-check that the NI portion of the CI calculation matches (NI minus O-NCI-OCI)
+      #   Add OOCI + 1/2 of the UNKOCI in as an OOIAT
+      #   Add FOCI + 1/2 of the UNKOCI in as a FIAT
+      if comprehensive_income_summary
+        @ooiat.rows += comprehensive_income_summary.filter_by_type(:ooci).rows
+        @ooiat.rows += comprehensive_income_summary.filter_by_type(:ooci_nci).rows
+        @fiat.rows  += comprehensive_income_summary.filter_by_type(:foci).rows
+        comprehensive_income_summary.filter_by_type(:unkoci).rows.each do |row|
+          row.vals = row.vals.map{ |val| val / 2.0 }
+          @ooiat.rows << row
+          @fiat.rows << row
+        end
+      end
     
       @fibt_tax_effect = (@fibt.total * @tax_rate).round.to_f
       @nfi = @fibt.total + -@fibt_tax_effect + @fiat.total
@@ -33,7 +50,7 @@ module FinModeling
 
     def -(ris2)
       net_income_summary = NetIncomeSummaryFromDifferences.new(self, ris2)
-      return ReformulatedIncomeStatement.new(@period, net_income_summary, @tax_rate)
+      return ReformulatedIncomeStatement.new(@period, net_income_summary, nil, @tax_rate)
     end
 
     def gross_revenue
@@ -152,7 +169,6 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "GM ($MM)",     :vals => [nil])
         analysis.rows << CalculationRow.new(:key => "OE ($MM)",     :vals => [nil])
         analysis.rows << CalculationRow.new(:key => "OISBT ($MM)",  :vals => [nil])
-        analysis.rows << CalculationRow.new(:key => "FIBT ($MM)",  :vals => [nil])
       end
       analysis.rows << CalculationRow.new(:key => "Core OI ($MM)",  :vals => [nil])
       analysis.rows << CalculationRow.new(:key => "OI ($MM)",       :vals => [nil])
@@ -173,7 +189,7 @@ module FinModeling
       return analysis
     end
 
-    def analysis(re_bs, prev_re_is, prev_re_bs)
+    def analysis(re_bs, prev_re_is, prev_re_bs, expected_rate_of_return) # FIXME: =0.10
       analysis = CalculationSummary.new
       analysis.title = ""
       analysis.rows = []
@@ -190,7 +206,6 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "GM ($MM)",      :vals => [@gm.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "OE ($MM)",      :vals => [@operating_expenses.total.to_nearest_million])
         analysis.rows << CalculationRow.new(:key => "OISBT ($MM)",   :vals => [income_from_sales_before_tax.total.to_nearest_million])
-        analysis.rows << CalculationRow.new(:key => "FIBT ($MM)",    :vals => [@fibt.total.to_nearest_million])
       end
       analysis.rows << CalculationRow.new(:key => "Core OI ($MM)",   :vals => [income_from_sales_after_tax.total.to_nearest_million])
       analysis.rows << CalculationRow.new(:key => "OI ($MM)",        :vals => [operating_income_after_tax.total.to_nearest_million])
@@ -208,7 +223,7 @@ module FinModeling
         analysis.rows << CalculationRow.new(:key => "Revenue Growth",:vals => [revenue_growth(prev_re_is)])
         analysis.rows << CalculationRow.new(:key => "Core OI Growth",:vals => [core_oi_growth(prev_re_is)])
         analysis.rows << CalculationRow.new(:key => "OI Growth",     :vals => [oi_growth(     prev_re_is)])
-        analysis.rows << CalculationRow.new(:key => "ReOI ($MM)",    :vals => [re_oi(         prev_re_bs).to_nearest_million])
+        analysis.rows << CalculationRow.new(:key => "ReOI ($MM)",    :vals => [re_oi(prev_re_bs, expected_rate_of_return).to_nearest_million])
       else
         analysis.rows << CalculationRow.new(:key => "Sales / NOA",   :vals => [nil])
         analysis.rows << CalculationRow.new(:key => "FI / NFA",      :vals => [nil])

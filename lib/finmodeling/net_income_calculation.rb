@@ -6,16 +6,17 @@ module FinModeling
 
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "summaries/net_income_")
 
-    ALL_STATES  =             [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat ]
-    NEXT_STATES = { nil    => [ :or                                                ],
-                    :or    => [ :or, :cogs, :oe, :oibt, :fibt                      ],
-                    :cogs  => [      :cogs, :oe, :oibt, :fibt, :tax                ],
-                    :oe    => [             :oe, :oibt, :fibt, :tax                ],
-                    :oibt  => [                  :oibt, :fibt, :tax                ], # obit/fibt can cycle back/forth
-                    :fibt  => [                  :obit, :fibt, :tax                ], # obit/fibt can cycle back/forth
-                    :tax   => [                                      :ooiat, :fiat ], # tax can't go to itself. only 1 such item.
-                    :ooiat => [                                      :ooiat, :fiat ], # ooiat/fiat can cycle back/forth
-                    :fiat  => [                                      :ooiat, :fiat ] }# ooiat/fiat can cycle back/forth
+    ALL_STATES  =                 [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :ooiat_nci, :fiat ]
+    NEXT_STATES = { nil        => [ :or                                                            ],
+                    :or        => [ :or, :cogs, :oe, :oibt, :fibt                                  ],
+                    :cogs      => [      :cogs, :oe, :oibt, :fibt, :tax                            ],
+                    :oe        => [             :oe, :oibt, :fibt, :tax                            ],
+                    :oibt      => [                  :oibt, :fibt, :tax                            ], # obit/fibt can cycle back/forth
+                    :fibt      => [                  :obit, :fibt, :tax                            ], # obit/fibt can cycle back/forth
+                    :tax       => [                                      :ooiat, :ooiat_nci, :fiat ], # tax can't go to itself. only 1 such item.
+                    :ooiat     => [                                      :ooiat, :ooiat_nci, :fiat ], # other operating income after taxes
+                    :ooiat_nci => [                                      :ooiat, :ooiat_nci, :fiat ], # ooiat related to non-controlling interest
+                    :fiat      => [                                      :ooiat, :ooiat_nci, :fiat ] }# financing income after taxes
 
     def summary(args)
       summary_cache_key = args[:period].to_pretty_s

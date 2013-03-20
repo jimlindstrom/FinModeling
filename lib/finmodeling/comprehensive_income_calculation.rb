@@ -6,22 +6,23 @@ module FinModeling
 
     BASE_FILENAME = File.join(FinModeling::BASE_PATH, "summaries/comprehensive_income_")
 
-    ALL_STATES  =              [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat, :ni, :ooci, :foci, :unkoci ]
-    NEXT_STATES = { nil     => [ :or,                                                :ni                        ],
-                    :or     => [ :or, :cogs, :oe, :oibt, :fibt                                                  ],
-                    :cogs   => [      :cogs, :oe, :oibt, :fibt, :tax                                            ],
-                    :oe     => [             :oe, :oibt, :fibt, :tax                                            ],
-                    :oibt   => [                  :oibt, :fibt, :tax                                            ], # obit/fibt can cycle back/forth
-                    :fibt   => [                  :obit, :fibt, :tax                                            ], # obit/fibt can cycle back/forth
-                    :tax    => [                                      :ooiat, :fiat,      :ooci, :foci, :unkoci ], # tax can't go to itself. only 1 such item.
-                    :ooiat  => [                                      :ooiat, :fiat,      :ooci, :foci, :unkoci ], # ooiat/fiat can cycle back/forth
-                    :fiat   => [                                      :ooiat, :fiat,      :ooci, :foci, :unkoci ], # ooiat/fiat can cycle back/forth
+    ALL_STATES  =                 [ :or, :cogs, :oe, :oibt, :fibt, :tax, :ooiat, :fiat, :ni, :ooci, :ooci_nci, :foci, :unkoci ]
+    NEXT_STATES = { nil        => [ :or,                                                :ni                                   ],
+                    :or        => [ :or, :cogs, :oe, :oibt, :fibt                                                             ],
+                    :cogs      => [      :cogs, :oe, :oibt, :fibt, :tax                                                       ],
+                    :oe        => [             :oe, :oibt, :fibt, :tax                                                       ],
+                    :oibt      => [                  :oibt, :fibt, :tax                                                       ], # obit/fibt can cycle back/forth
+                    :fibt      => [                  :obit, :fibt, :tax                                                       ], # obit/fibt can cycle back/forth
+                    :tax       => [                                      :ooiat, :fiat,      :ooci, :ooci_nci, :foci, :unkoci ], # 1 tax item. then moves forward.
+                    :ooiat     => [                                      :ooiat, :fiat,      :ooci, :ooci_nci, :foci, :unkoci ], # ooiat/fiat can cycle back/forth
+                    :fiat      => [                                      :ooiat, :fiat,      :ooci, :ooci_nci, :foci, :unkoci ], # ooiat/fiat can cycle back/forth
 
-                    :ni     => [                                                          :ooci, :foci, :unkoci ], # after ni, no ordering
+                    :ni        => [                                                          :ooci, :ooci_nci, :foci, :unkoci ], # after ni, no ordering
 
-                    :ooci   => [                                                          :ooci, :foci, :unkoci ], # after ni, no ordering
-                    :foci   => [                                                          :ooci, :foci, :unkoci ], # after ni, no ordering
-                    :unkoci => [                                                          :ooci, :foci, :unkoci ] }# after ni, no ordering
+                    :ooci      => [                                                          :ooci, :ooci_nci, :foci, :unkoci ], # after ni, no ordering
+                    :ooci_nci  => [                                                          :ooci, :ooci_nci, :foci, :unkoci ], # after ni, no ordering
+                    :foci      => [                                                          :ooci, :ooci_nci, :foci, :unkoci ], # after ni, no ordering
+                    :unkoci    => [                                                          :ooci, :ooci_nci, :foci, :unkoci ] }# after ni, no ordering
 
     def summary(args)
       summary_cache_key = args[:period].to_pretty_s
