@@ -62,7 +62,7 @@ describe FinModeling::ReOIValuation do
         discount_rate  = FinModeling::Rate.new(@cost_of_capital.value + 1.0)
         d = discount_rate.annualize(from_days=365, to_days=days_from_now)
         expected_pv_reoi = reoi_row.vals[col_idx] / d
-        pv_reoi_row.vals[col_idx].should be_within(11.0).of(expected_pv_reoi)
+        pv_reoi_row.vals[col_idx].should be_within(100.0).of(expected_pv_reoi) # rounding error bc the test is working off of nearest-million values
       end
     end
 
