@@ -9,6 +9,7 @@ class Arguments
     puts
     puts "\tOptions:"
     puts "\t\t--num-forecasts <num>: how many periods to forecast"
+    puts "\t\t  --forecast-policy <trailing_avg|linear_trend> (default: linear_trend)"
     puts "\t\t  --do-valuation: value the company's equity. (requires >= 2 forecasts)"
     puts "\t\t    --marginal-tax-rate <num>: default is 0.36 (36%)"
     puts "\t\t    --before-tax-cost-of-debt <num>: default is 0.05 (5%)"
@@ -41,6 +42,7 @@ class Arguments
       :start_date              => nil, 
       :num_forecasts           => nil, 
       :do_valuation            => false, 
+      :forecast_policy         => :linear_trend,
       :marginal_tax_rate       => 0.36, 
       :before_tax_cost_of_debt => 0.05, 
       :show_regressions        => false, 
@@ -72,6 +74,13 @@ class Arguments
       when '--do-valuation'
         parsed_args[:do_valuation] = true
         puts "Doing valuation"
+
+      when '--forecast-policy'
+        self.show_usage_and_exit if raw_args.length < 2
+        parsed_args[:forecast_policy] = raw_args[1].to_s
+        self.show_usage_and_exit unless [:trailing_avg, :linear_trend].include?(parsed_args[:forecast_policy])
+        puts "Forecast policy: #{parsed_args[:forecast_policy]}"
+        raw_args.shift
 
       when '--before-tax-cost-of-debt'
         self.show_usage_and_exit if raw_args.length < 2
@@ -141,7 +150,7 @@ wacc = FinModeling::WeightedAvgCostOfCapital.new(equity_market_val      = YahooF
                                                  cost_of_equity         = ecoc,
                                                  after_tax_cost_of_debt = dcoc)
 
-forecasts = filings.forecasts(filings.choose_forecasting_policy(wacc.rate.value), num_quarters=args[:num_forecasts]) if args[:num_forecasts]
+forecasts = filings.forecasts(filings.choose_forecasting_policy(wacc.rate.value, args[:forecast_policy]), num_quarters=args[:num_forecasts]) if args[:num_forecasts]
 
 bs_analyses = filings.balance_sheet_analyses 
 bs_analyses += forecasts.balance_sheet_analyses(filings) if forecasts

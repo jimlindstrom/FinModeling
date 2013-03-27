@@ -47,4 +47,15 @@ describe FinModeling::TimeSeriesEstimator do
     its(:b) { should be_within(0.01).of(expected_b) }
   end
 
+  describe "#from_const" do
+    let(:y) { [ 10 ] }
+    subject { FinModeling::TimeSeriesEstimator.from_const(y) }
+    let(:expected_a) { 10 }
+    let(:expected_b) { 0 }
+
+    it { should be_a FinModeling::TimeSeriesEstimator }
+    its(:a) { should be_within(0.01).of(expected_a) }
+    its(:b) { should be_within(0.01).of(expected_b) }
+  end
+
 end

@@ -104,12 +104,20 @@ module FinModeling
       return ds
     end
   
-    def choose_forecasting_policy(expected_rate_of_return)
-      if length < 3
+    def choose_forecasting_policy(expected_rate_of_return, policy_type=:linear_trend)
+      raise RuntimeError.new("Cannot properly forecast with fewer than 3 filings") if length < 3
+      case policy_type
+      when :trailing_avg
+        isa = income_statement_analyses(expected_rate_of_return)
         args = { }
-        args[:operating_revenues] = re_is_arr[-1].operating_revenues.total
-        return FinModeling::GenericForecastingPolicy.new(args)
-      else
+
+        args[:revenue_estimator]        = TimeSeriesEstimator.from_const(re_is_arr[1..-1].map{ |re_is| re_is.operating_revenues.total }.mean)
+        args[:sales_pm_estimator]       = TimeSeriesEstimator.from_const(isa.operating_pm_row.vals[1..-1].mean)
+        args[:sales_over_noa_estimator] = TimeSeriesEstimator.from_const(isa.sales_over_noa_row.vals[1..-1].mean)
+        args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_const(isa.fi_over_nfa_row.vals[1..-1].mean)
+        return FinModeling::LinearTrendForecastingPolicy.new(args)
+
+      when :linear_trend
         isa = income_statement_analyses(expected_rate_of_return)
         args = { }
 
@@ -122,6 +130,9 @@ module FinModeling
         args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
                                                                                isa.fi_over_nfa_row.vals[1..-1])
         return FinModeling::LinearTrendForecastingPolicy.new(args)
+
+      else
+        raise ArgumentError.new("\"#{policy_type}\" is not a valid forecasting policy type")
       end
     end
   
