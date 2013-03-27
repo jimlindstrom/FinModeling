@@ -14,5 +14,5 @@ end
 
 desc "purges anything cached, except the raw XBRL filing downloads."
 task :purge_cache_except_filings do
-  sh "rm -rf ~/.finmodeling/classifiers/ ~/.finmodeling/companies/ ~/.finmodeling/constructors/ ~/.finmodeling/summaries/"
+  sh "rm -rf ~/.finmodeling/classifiers/ ~/.finmodeling/constructors/ ~/.finmodeling/summaries/"
 end
