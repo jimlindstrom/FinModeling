@@ -51,8 +51,8 @@ module FinModeling
 
     def cv_vals
       vals = [nil]*periods.length
-      d = @cost_of_capital.annualize(from_days=365, periods.last.days)
-      vals[-2] = reoi_vals.last / d # (@cost_of_capital.value) # FIXME: can't use a yearly cost of capital and a quarterly ReOI
+      d = @cost_of_capital.annualize(from_days=365, @forecasts.reformulated_income_statements.last.period.days)
+      vals[-2] = reoi_vals.last / d
       vals
     end
 
