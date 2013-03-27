@@ -7,7 +7,12 @@ module FinModeling
     EC_ANTI_LABELS = [ ]
     EC_IDS         = [ /^(|Locator_|loc_)(|us-gaap_)StockholdersEquityPeriodIncreaseDecrease[_a-z0-9]+/ ]
     def equity_change_calculation
-      @ec ||= EquityChangeCalculation.new(find_calculation_arc(EC_GOAL, EC_LABELS, EC_ANTI_LABELS, EC_IDS))
+      begin
+        @ec ||= EquityChangeCalculation.new(find_calculation_arc(EC_GOAL, EC_LABELS, EC_ANTI_LABELS, EC_IDS))
+      rescue FinModeling::InvalidFilingError => e
+        pre_msg = "calculation tree:\n" + self.calculation.sprint_tree
+        raise e, pre_msg+e.message, e.backtrace
+      end
     end
 
     def is_valid?
