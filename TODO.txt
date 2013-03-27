@@ -63,9 +63,6 @@ Try to figure out why the change in equity is not equal to comprehensive income,
 		- The remaining residual is probably stock-based compensation expense
 	- minority interests makes it screwey. also, preferred dividends?
 
-Disclosures
-	- Not all disclosure titles *begin* with /^disclosure/.  See CRM's most recent 10-K, for instance.
-
 Cash Flow Statement
 	- not taking into account: net cash interest, tax on net interest, or non-cash
 	  transactions.  All 3 of these items are listed in supplementary disclosures.
