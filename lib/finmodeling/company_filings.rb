@@ -111,10 +111,10 @@ module FinModeling
         isa = income_statement_analyses(expected_rate_of_return)
         args = { }
 
-        args[:revenue_estimator]        = TimeSeriesEstimator.from_const(re_is_arr[1..-1].map{ |re_is| re_is.operating_revenues.total }.mean)
-        args[:sales_pm_estimator]       = TimeSeriesEstimator.from_const(isa.operating_pm_row.vals[1..-1].mean)
-        args[:sales_over_noa_estimator] = TimeSeriesEstimator.from_const(isa.sales_over_noa_row.vals[1..-1].mean)
-        args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_const(isa.fi_over_nfa_row.vals[1..-1].mean)
+        args[:revenue_estimator]        = TimeSeriesEstimator.from_const(ArrayWithStats.new(re_is_arr[1..-1].map{ |re_is| re_is.operating_revenues.total }).mean)
+        args[:sales_pm_estimator]       = TimeSeriesEstimator.from_const(ArrayWithStats.new(isa.operating_pm_row.vals[1..-1]).mean)
+        args[:sales_over_noa_estimator] = TimeSeriesEstimator.from_const(ArrayWithStats.new(isa.sales_over_noa_row.vals[1..-1]).mean)
+        args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_const(ArrayWithStats.new(isa.fi_over_nfa_row.vals[1..-1]).mean)
         return FinModeling::LinearTrendForecastingPolicy.new(args)
 
       when :linear_trend

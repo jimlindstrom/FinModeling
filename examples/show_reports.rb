@@ -77,7 +77,7 @@ class Arguments
 
       when '--forecast-policy'
         self.show_usage_and_exit if raw_args.length < 2
-        parsed_args[:forecast_policy] = raw_args[1].to_s
+        parsed_args[:forecast_policy] = raw_args[1].to_sym
         self.show_usage_and_exit unless [:trailing_avg, :linear_trend].include?(parsed_args[:forecast_policy])
         puts "Forecast policy: #{parsed_args[:forecast_policy]}"
         raw_args.shift

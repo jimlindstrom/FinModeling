@@ -29,8 +29,7 @@ Income Statement
 	- How to tell if a stock gave off a dividend? Are we tracking those somewhere?
 
 Forecasts
-	- Refactor it. The logic is too spread around. Let the user control whether to use
-	  trend, mean, or industry-avg's
+	- Refactor it. The logic is too spread around.
 	- Detect historicals that are too noisy to forecast from:
 		- R^2 of regressions?
 		- Certain ratios remaining constant-ish (e.g, composition ratios)
