@@ -1,23 +1,23 @@
 class Fixnum
-  def to_nearest_million
-    return (self/1000000.0).round.to_f
+  def to_nearest_million(num_decimals=1)
+    return (self/1000000.0*(10.0**num_decimals)).round.to_f/(10.0**num_decimals)
   end
-  def to_nearest_thousand
-    return (self/1000.0).round.to_f
+  def to_nearest_thousand(num_decimals=1)
+    return (self/1000.0*(10.0**num_decimals)).round.to_f/(10.0**num_decimals)
   end
-  def to_nearest_penny
-    return ((self*100.0).round/100.0).to_f
+  def to_nearest_dollar(num_decimals=1)
+    return ((self*(10.0**num_decimals)).round/(10.0**num_decimals)).to_f
   end
 end
 
 class Float
-  def to_nearest_million
-    return (self/1000000.0).round.to_f
+  def to_nearest_million(num_decimals=1)
+    return (self/1000000.0*(10.0**num_decimals)).round.to_f/(10.0**num_decimals)
   end
-  def to_nearest_thousand
-    return (self/1000.0).round.to_f
+  def to_nearest_thousand(num_decimals=1)
+    return (self/1000.0*(10.0**num_decimals)).round.to_f/(10.0**num_decimals)
   end
-  def to_nearest_penny
-    return ((self*100.0).round/100.0).to_f
+  def to_nearest_dollar(num_decimals=1)
+    return ((self*(10.0**num_decimals)).round/(10.0**num_decimals)).to_f
   end
 end

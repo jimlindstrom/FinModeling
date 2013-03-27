@@ -23,7 +23,7 @@ module FinModeling
       s.rows << CalculationRow.new(:key => "NFA ($MM)", :vals => bv_nfa_vals.map{ |x| x ? x.to_nearest_million : nil })
       s.rows << CalculationRow.new(:key => "Value of Common Equity ($MM)", :vals => cse_vals.map{ |x| x ? x.to_nearest_million : nil })
       s.rows << CalculationRow.new(:key => "# Shares (MM)", :vals => num_shares_vals.map{ |x| x ? x.to_nearest_million : nil })
-      s.rows << CalculationRow.new(:key => "Value / Share ($)", :vals => val_per_shares_vals.map{ |x| x ? x.to_nearest_penny : nil })
+      s.rows << CalculationRow.new(:key => "Value / Share ($)", :vals => val_per_shares_vals.map{ |x| x ? x.to_nearest_dollar(num_decimals=2) : nil })
 
       return s
     end
