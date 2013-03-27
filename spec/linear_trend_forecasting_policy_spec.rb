@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe FinModeling::ConstantForecastingPolicy  do
+describe FinModeling::LinearTrendForecastingPolicy  do
   before (:all) do
     @vals = { :revenue_estimator        => FinModeling::TimeSeriesEstimator.new(0.04, 0.0),
               :sales_pm_estimator       => FinModeling::TimeSeriesEstimator.new(0.20, 0.0),
@@ -8,7 +8,7 @@ describe FinModeling::ConstantForecastingPolicy  do
               :sales_over_noa_estimator => FinModeling::TimeSeriesEstimator.new(2.00, 0.0) }
   end
 
-  let(:policy) { FinModeling::ConstantForecastingPolicy.new(@vals) }
+  let(:policy) { FinModeling::LinearTrendForecastingPolicy.new(@vals) }
   let(:date) { Date.today }
 
   describe ".revenue_on" do

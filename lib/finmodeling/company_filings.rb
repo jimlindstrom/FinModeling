@@ -121,7 +121,7 @@ module FinModeling
                                                                                isa.sales_over_noa_row.vals[1..-1])
         args[:fi_over_nfa_estimator]    = TimeSeriesEstimator.from_time_series(re_is_arr[1..-1].map{ |re_is| re_is.period.value["end_date"] },
                                                                                isa.fi_over_nfa_row.vals[1..-1])
-        return FinModeling::ConstantForecastingPolicy.new(args)
+        return FinModeling::LinearTrendForecastingPolicy.new(args)
       end
     end
   

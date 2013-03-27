@@ -96,6 +96,6 @@ require 'finmodeling/forecasted_reformulated_balance_sheet'
 
 require 'finmodeling/time_series_estimator'
 require 'finmodeling/generic_forecasting_policy'
-require 'finmodeling/constant_forecasting_policy'
+require 'finmodeling/linear_trend_forecasting_policy'
 require 'finmodeling/forecasts'
 

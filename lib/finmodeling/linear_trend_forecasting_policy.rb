@@ -1,5 +1,5 @@
 module FinModeling
-  class ConstantForecastingPolicy  # FIXME: better name would now be LinearForecastingPolicy
+  class LinearTrendForecastingPolicy
     def initialize(args)
       @vals = args
     end
