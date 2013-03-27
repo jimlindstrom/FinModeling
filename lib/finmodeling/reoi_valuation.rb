@@ -2,7 +2,7 @@ module FinModeling
   class ReOIValuation
     def initialize(filings, forecasts, cost_of_capital, num_shares)
       @filings, @forecasts, @cost_of_capital, @num_shares = [filings, forecasts, cost_of_capital, num_shares]
-      @discount_rate  = FinModeling::Rate.new(@cost_of_capital.value + 1.0)
+      @discount_rate  = FinModeling::DiscountRate.new(@cost_of_capital.value + 1.0)
     end
 
     def summary
