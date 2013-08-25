@@ -7,6 +7,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{A gem for manipulating XBRL financial filings}
   gem.summary       = %q{A gem for manipulating XBRL financial filings}
   gem.homepage      = "https://github.com/jimlindstrom/FinModeling"
+  gem.license       = "MIT"
 
   gem.add_dependency("fileutils")
   gem.add_dependency("sec_query")
