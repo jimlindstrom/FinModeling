@@ -12,9 +12,12 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
 - Calculates cost of capital using either [CAPM](http://en.wikipedia.org/wiki/Capital_asset_pricing_model) or [Fama/French](http://en.wikipedia.org/wiki/Fama%E2%80%93French_three-factor_model) cost of equity, and [WACC](http://en.wikipedia.org/wiki/Weighted_average_cost_of_capital)
 - Performs residual operating income-based valuation.
 
-## Example 1: Valuing Oracle's Common Equity, Based on 4 Quarters of History and 2 Quarters of Forecasts
+## Installation
 
-After running "rake install" (to build and install the 'finmodeling' gem), you can run:
+    brew install gsl        # Install the GNU Scientific Library (a non-ruby dependency)
+    gem install finmodeling # Install this gem from RubyGems.
+
+## Example 1: Valuing Oracle's Common Equity, Based on 4 Quarters of History and 2 Quarters of Forecasts
 
     $ ./examples/show_reports.rb --num-forecasts 2 --do-valuation orcl 2012-02-01
     Forecasting 2 periods
