@@ -23,7 +23,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     Forecasting 2 periods
     Doing valuation
     company name: ORACLE CORP
-    
+
     	                      2012-02-29    2012-05-31    2012-08-31    2012-11-30   2013-02-28E   2013-05-28E
     	NOA ($MM)               29,250.0      32,172.0      29,172.0      31,703.0      31,072.0      33,307.0
     	NFA ($MM)               14,016.0      11,915.0      14,564.0      11,707.0      14,672.0      15,375.0
@@ -33,8 +33,8 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Composition Ratio         2.0869        2.7001        2.0030        2.7080        2.1177        2.1663
     	NOA Growth                              0.4590       -0.3218        0.3961       -0.0783        0.3296
     	CSE Growth                              0.0775       -0.0322       -0.0316        0.2871        0.2909
-    
-    
+
+
     	                      2012-02-29    2012-05-31    2012-08-31    2012-11-30   2013-02-28E   2013-05-28E
     	Revenue ($MM)            9,039.0      10,916.0       8,181.0       9,094.0       9,748.0      10,450.0
     	Core OI ($MM)            2,674.0       3,636.0       2,076.0       2,712.0       2,870.0       3,076.0
@@ -52,8 +52,8 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Core OI Growth                          2.3835       -0.8918        1.9216        0.2582        0.3296
     	OI Growth                               2.5532       -0.8693        1.5169
     	ReOI ($MM)                             2,879.0       1,367.0       2,004.0       2,116.0       2,346.0
-    
-    
+
+
     	                      Unknown...    2012-05-31    2012-08-31    2012-11-30
     	C ($MM)                                4,057.0       5,431.0         677.0
     	I ($MM)                              -10,966.0      -7,304.0     -11,021.0
@@ -61,7 +61,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	F ($MM)                               -2,449.0      -2,789.0      -3,019.0
     	FCF ($MM)                             -6,909.0      -1,873.0     -10,344.0
     	NI / C                                  0.8508        0.3745        3.8124
-    
+
     Cost of Capital
     	                      2013-03-10
     	Market Value of        169,100.0
@@ -72,7 +72,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Cost of Debt (%)            3.20
     	Weighted Avg Cost           6.79
     	 of Capital (%)
-    
+
     ReOI Valuation
     	                      2012-11-30    2013-02-28   2013-05-28E
     	ReOI ($MM)                             2,352.0       2,574.0
@@ -89,7 +89,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	 Equity ($MM)
     	# Shares (MM)            4,735.0
     	Value / Share ($)          20.06
-    
+
 ## Example 2: More Detailed Analysis of Apple's Financials Since 2012-02-01
 
     $ ./examples/show_reports.rb --balance-detail --income-detail --show-regressions aapl 2012-02-01
@@ -97,7 +97,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     Net income detail is enabled
     Showing regressions
     company name: APPLE INC
-    
+
     	                      2012-03-31    2012-06-30    2012-09-29    2012-12-29
     	A ($MM)                150,934.0     162,896.0     176,064.0     196,088.0
     	L ($MM)                 48,436.0      51,150.0      57,854.0      68,742.0
@@ -115,9 +115,9 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	CSE Δ ($MM)                            9,248.0       6,464.0       9,136.0
     	NOA Growth                             -0.6235       -0.7284       24.9157
     	CSE Growth                              0.4140        0.2530        0.3479
-    
+
     		NOA growth: a:-4.9150, b:12.7696, r:0.8642, var:145.5436
-    
+
     	                      2012-03-31    2012-06-30    2012-09-29    2012-12-29
     	Revenue ($MM)           39,186.0      35,023.0      35,966.0      54,512.0
     	COGS ($MM)             -20,622.0     -20,029.0     -21,565.0     -33,452.0
@@ -139,12 +139,12 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Core OI Growth                         -0.6856       -0.1653        4.7648
     	OI Growth                              -0.6856       -0.1653        4.7648
     	ReOI ($MM)                             8,876.0       8,443.0      12,913.0
-    
+
     		operating pm: a:0.2806, b:-0.0196, r:-0.8581, var:0.0006
     		sales / noa: a:-11.5447, b:-12.5035, r:-0.9341, var:119.4351
     		revenue growth: a:-0.9816, b:2.3320, r:0.9085, var:4.3917
     		fi / nfa: a:0.0036, b:0.0015, r:0.2729, var:2.1244e-05
-    
+
     	                      Unknown...    2012-06-30    2012-09-29    2012-12-29
     	C ($MM)                               10,189.0       9,136.0      23,426.0
     	I ($MM)                               -2,971.0      -3,493.0      -2,791.0
@@ -176,7 +176,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	[oa] Goodwill                                                      131,000,000.0
     	[fa] Deferred Income Taxes And Other Assets Noncurrent             973,000,000.0
     	Total                                                           15,171,000,000.0
-    
+
     Liabilities And Stockholders Equity (us-gaap_LiabilitiesAndStockholdersEquity_1)
     	[fl] Long Term Debt Current                                         58,000,000.0
     	[fl] Short Term Borrowings                                         100,000,000.0
@@ -191,23 +191,23 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	[fl] Temporary Equity Carrying Amount Attributable To Parent                 0.0
     	[cse] Stockholders Equity                                       10,014,000,000.0
     	Total                                                           15,171,000,000.0
-    
+
     Net Operational Assets
     	OA                                                              10,346,000,000.0
     	OL                                                              -3,596,000,000.0
     	Total                                                            6,750,000,000.0
-    
+
     Net Financial Assets
     	FA                                                               4,825,000,000.0
     	FL                                                              -1,561,000,000.0
     	Total                                                            3,264,000,000.0
-    
+
     Common Shareholders' Equity
     	NOA                                                              6,750,000,000.0
     	NFA                                                              3,264,000,000.0
     	MI                                                                          -0.0
     	Total                                                           10,014,000,000.0
-    
+
     Income Statement (2012-09-01 to 2012-11-30)
     Net Income Loss (us-gaap_NetIncomeLoss_3)
     	[or] Sales Revenue Net                                           5,955,000,000.0
@@ -219,42 +219,42 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	[tax] Income Tax Expense Benefit                                  -191,000,000.0
     	[fiat] Income Loss From Discontinued Operations Net Of Tax        -137,000,000.0
     	Total                                                              384,000,000.0
-    
+
     Gross Revenue
     	Operating Revenues (OR)                                          5,955,000,000.0
     	Cost of Goods Sold (COGS)                                       -3,425,000,000.0
     	Total                                                            2,530,000,000.0
-    
+
     Operating Income from sales, before tax (OISBT)
     	Gross Margin (GM)                                                2,530,000,000.0
     	Operating Expense (OE)                                          -1,836,000,000.0
     	Total                                                              694,000,000.0
-    
+
     Operating Income from sales, after tax (OISAT)
     	Operating income from sales (before tax)                           694,000,000.0
     	Reported taxes                                                    -191,000,000.0
     	Taxes on net financing income                                        6,300,000.0
     	Taxes on other operating income                                              0.0
     	Total                                                              509,300,000.0
-    
+
     Operating income, after tax (OI)
     	Operating income after sales, after tax (OISAT)                    509,300,000.0
     	Other operating income, before tax (OIBT)                                    0.0
     	Tax on other operating income                                               -0.0
     	Other operating income, after tax (OOIAT)                                    0.0
     	Total                                                              509,300,000.0
-    
+
     Net financing income, after tax (NFI)
     	Financing income, before tax (FIBT)                                 18,000,000.0
     	Tax effect (FIBT_TAX_EFFECT)                                        -6,300,000.0
     	Financing income, after tax (FIAT)                                -137,000,000.0
     	Total                                                             -125,300,000.0
-    
+
     Comprehensive income (CI)
     	Operating income, after tax (OI)                                   509,300,000.0
     	Net financing income, after tax (NFI)                             -125,300,000.0
     	Total                                                              384,000,000.0
-    
+
     WARNING: cash flow statement period is nil!
     WARNING: reformulated cash flow statement period is nil!
     Disclosures
@@ -263,7 +263,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Finite Lived Intangible Assets Accumulated Amortization             78,000,000.0
     	Indefinite Lived Trademarks                                        283,000,000.0
     	Total                                                              530,000,000.0
-    
+
     Disclosure Accrued Liabilities (http://www.nikeinc.com/taxonomy/role/DisclosureAccruedLiabilities)
     	Accrued Compensation And Benefits Excluding Taxes Current          502,000,000.0
     	Accrued Taxes Other Than Income Taxes Current                      238,000,000.0
@@ -274,11 +274,11 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Derivative Liabilities Current                                      83,000,000.0
     	Other Accrued Liabilities Current                                  395,000,000.0
     	Total                                                            1,879,000,000.0
-    
+
     Disclosure Financial Assets And Liabilities Measured At Fair Value On Recurring Basis (http://www.nikeinc.com/taxonomy/role/DisclosureFinancialAssetsAndLiabilitiesMeasuredAtFairValueOnRecurringBasis)
     	Derivative Fair Value Of Derivative Asset                          129,000,000.0
     	Total                                                              129,000,000.0
-    
+
     Disclosure Reconciliation From Basic Earnings Per Share To Diluted Earnings Per Share (http://www.nikeinc.com/taxonomy/role/DisclosureReconciliationFromBasicEarningsPerShareToDilutedEarningsPerShare)
     	Income Loss From Continuing Operations Per Basic Share                      0.58
     	Income Loss From Discontinued Operations Net Of Tax Per                    -0.15
@@ -290,7 +290,7 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Incremental Common Shares Attributable To Share Based               16,100,000.0
     	 Payment Arrangements
     	Total                                                             913,100,000.85
-    
+
     Disclosure Components Of Assets And Liabilities Classified As Held For Sale (http://www.nikeinc.com/taxonomy/role/DisclosureComponentsOfAssetsAndLiabilitiesClassifiedAsHeldForSale)
     	Disposal Group Including Discontinued Operation Accounts           129,000,000.0
     	 Notes And Loans Receivable Net
@@ -308,8 +308,53 @@ FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](h
     	Disposal Group Including Discontinued Operation Deferred            32,000,000.0
     	 Income Taxes Payable And Other Liabilities
     	Total                                                              542,000,000.0
-    
+
     Disclosure Information By Operating Segments (http://www.nikeinc.com/taxonomy/role/DisclosureInformationByOperatingSegments)
     	Earnings Before Interest And Taxes                                 711,000,000.0
     	Interest Income Expense Nonoperating Net                             1,000,000.0
     	Total                                                              712,000,000.0
+## Installation
+
+##### OSX Mountain Lion
+- Install [Homebrew](http://brew.sh/)
+- Install ImageMagick
+
+        brew install imagemagick
+- Edit gsl formula
+
+        brew edit gsl
+
+- Edit the file by changing:
+
+        url 'http://ftpmirror.gnu.org/gsl/gsl-1.16.tar.gz'
+        mirror 'http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz'
+        sha1 '210af9366485f149140973700d90dc93a4b6213e'
+    to:
+
+        url 'http://ftpmirror.gnu.org/gsl/gsl-1.14.tar.gz'
+        mirror 'http://ftp.gnu.org/gnu/gsl/gsl-1.14.tar.gz'
+        sha1 'e1a600e4fe359692e6f0e28b7e12a96681efbe52'
+- Install GSL
+
+        brew install gsl
+- Install FinModeling
+
+        gem install finmodeling
+- Reset Homebrew
+
+        cd /usr/local/Cellar
+        git reset --hard
+
+##### Ubuntu 13.04
+- Install ImageMagick
+
+        apt-get install imagemagick
+- Install MagickWand Development
+
+        apt-get install libmagickwand-dev
+- Install GSL
+
+        apt-get install libgsl0-dev
+- Install FinModeling
+
+        gem install finmodeling
