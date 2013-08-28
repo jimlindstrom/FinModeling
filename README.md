@@ -2,6 +2,8 @@
 
 FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](http://en.wikipedia.org/wiki/XBRL)-based filings from SEC Edgar. As of March 2013, it can successfully parse the last 2-5 years of quarterly and annual filings from 52% of the Nasdaq 100 companies. (The remainder fail due to a long-tail distribution of filing formatting peculiarities for which I haven't yet written special-case code to handle.)
 
+Please take a moment to [give me your feedback on the gem](https://docs.google.com/forms/d/10QMbvO4wC5jQ2O7GgsKOVeMZQugeRVl-r_oq2i_BXP4/viewform) so that I can make it even better.
+
 ## Features
 
 - Pulls annual (10-k) and quarterly (10-q) financial reports from SEC Edgar
