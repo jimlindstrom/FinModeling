@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jimlindstrom/FinModeling.png?branch=master)](https://travis-ci.org/jimlindstrom/FinModeling)
+
 ## Overview
 
 FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](http://en.wikipedia.org/wiki/XBRL)-based filings from SEC Edgar. As of March 2013, it can successfully parse the last 2-5 years of quarterly and annual filings from 52% of the Nasdaq 100 companies. (The remainder fail due to a long-tail distribution of filing formatting peculiarities for which I haven't yet written special-case code to handle.)
@@ -330,9 +332,9 @@ Please take a moment to [give me your feedback on the gem](https://docs.google.c
         sha1 '210af9366485f149140973700d90dc93a4b6213e'
     to:
 
-        url 'http://ftpmirror.gnu.org/gsl/gsl-1.14.tar.gz'
-        mirror 'http://ftp.gnu.org/gnu/gsl/gsl-1.14.tar.gz'
-        sha1 'e1a600e4fe359692e6f0e28b7e12a96681efbe52'
+        url 'http://ftpmirror.gnu.org/gsl/gsl-1.15.tar.gz'
+        mirror 'http://ftp.gnu.org/gnu/gsl/gsl-1.15.tar.gz'
+        sha1 'd914f84b39a5274b0a589d9b83a66f44cd17ca8e'
 - Install GSL
 
         brew install gsl
