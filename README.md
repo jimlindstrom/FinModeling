@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jimlindstrom/FinModeling.png?branch=master)](https://travis-ci.org/jimlindstrom/FinModeling)
+
 ## Overview
 
 FinModeling is an equity valuation framework. It can retrieve and parse [XBRL](http://en.wikipedia.org/wiki/XBRL)-based filings from SEC Edgar. As of March 2013, it can successfully parse the last 2-5 years of quarterly and annual filings from 52% of the Nasdaq 100 companies. (The remainder fail due to a long-tail distribution of filing formatting peculiarities for which I haven't yet written special-case code to handle.)
