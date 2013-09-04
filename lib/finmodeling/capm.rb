@@ -42,6 +42,9 @@ module FinModeling
    
         index_monthly_returns   = index_quotes  .monthly_returns(index_div_hist)
         company_monthly_returns = company_quotes.monthly_returns(company_div_hist)
+
+        raise "no index returns"   if !index_monthly_returns || index_monthly_returns.none?
+        raise "no company returns" if !company_monthly_returns || company_monthly_returns.none?
   
         x = GSL::Vector.alloc(index_monthly_returns)
         y = GSL::Vector.alloc(company_monthly_returns)
