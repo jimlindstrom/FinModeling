@@ -249,7 +249,7 @@ describe FinModeling::ReformulatedIncomeStatement  do
       @company = FinModeling::Company.find("aapl")
       @filings = FinModeling::CompanyFilings.new(@company.filings_since_date(Time.parse("2010-10-01")))
       @last_operating_revenues = @filings.last.income_statement.latest_quarterly_reformulated(nil, nil, nil).operating_revenues.total
-      @policy = FinModeling::GenericForecastingPolicy.new(:operating_revenues => @last_operating_revenues)
+      @policy = @filings.choose_forecasting_policy(e_ror=0.10)
   
       prev_bs_period = @filings.last.balance_sheet.periods.last
       next_bs_period_value = prev_bs_period.value.next_month.next_month.next_month
