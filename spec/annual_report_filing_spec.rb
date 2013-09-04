@@ -16,11 +16,19 @@ describe FinModeling::AnnualReportFiling  do
 
   context "when the report doesn't have a comprehensive income statement" do
     its(:has_a_comprehensive_income_statement?) { should be_false }
-    its(:comprehensive_income_statement) { should be_nil }
+    describe ".comprehensive_income_statement" do
+      it "should raise an InvalidFilingError" do
+        expect{subject.comprehensive_income_statement}.to raise_error(FinModeling::InvalidFilingError)
+      end
+    end
   end
   context "when the report doesn't have a statement of shareholders' equity" do
     its(:has_a_shareholder_equity_statement?) { should be_false }
-    its(:shareholder_equity_statement) { should be_nil }
+    describe ".shareholder_equity_statement" do
+      it "should raise an InvalidFilingError" do
+        expect{subject.shareholder_equity_statement}.to raise_error(FinModeling::InvalidFilingError)
+      end
+    end
     its(:is_valid?) { should == [@filing.income_statement,
                                  @filing.balance_sheet,
                                  @filing.cash_flow_statement].all?{|x| x.is_valid?} }
