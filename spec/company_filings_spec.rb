@@ -83,14 +83,14 @@ describe FinModeling::CompanyFilings  do
   describe ".choose_forecasting_policy" do
     context "when one or two filings" do
       let(:filings) { FinModeling::CompanyFilings.new(@filings.last(2)) }
-      subject { filings.choose_forecasting_policy(e_ror=0.10) }
-
-      it { should be_a FinModeling::GenericForecastingPolicy }
+      it "should raise an error because there aren't enough filings" do
+        expect { filings.choose_forecasting_policy(e_ror=0.10) }.to raise_error
+      end
     end
     context "when three or more filings" do
       let(:filings) { FinModeling::CompanyFilings.new(@filings.last(3)) }
       subject { filings.choose_forecasting_policy(e_ror=0.10) }
-      it { should be_a FinModeling::ConstantForecastingPolicy }
+      it { should be_a FinModeling::LinearTrendForecastingPolicy }
     end
   end
 
