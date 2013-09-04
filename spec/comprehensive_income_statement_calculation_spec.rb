@@ -29,8 +29,14 @@ describe FinModeling::ComprehensiveIncomeStatementCalculation  do
   end
 
   describe ".latest_quarterly_reformulated" do
-    subject{ @ci_stmt.latest_quarterly_reformulated(@ci_stmt, @prev_ci_stmt, @prev_ci_calc) }
-    it { should be_a FinModeling::ReformulatedIncomeStatement }
+    context "has invalid total operating revenues or invalid cost of revenue" do
+      subject{ @ci_stmt.latest_quarterly_reformulated(@ci_stmt, @prev_ci_stmt, @prev_ci_calc) }
+      it { should be_nil }
+    end
+    context "has valid total operating revenues and valid cost of revenue" do
+      pending "need example..."
+      #it { should be_a FinModeling::ReformulatedIncomeStatement }
+    end
   end
 
   describe ".write_constructor" do
