@@ -19,7 +19,7 @@ module FinModeling
     end
 
     def self.from_const(y)
-      TimeSeriesEstimator.new(a=y, b=0.0)
+      TimeSeriesEstimator.new(a=y.first, b=0.0)
     end
   end
 end
