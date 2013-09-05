@@ -87,6 +87,10 @@ module FinModeling
                             }
                        .zip(rf).map{ |pair| pair[0] - pair[1] }
       end
+
+      def none?; @monthly_quotes.none?; end
+      def any?;  @monthly_quotes.any?;  end
+      def count; @monthly_quotes.count; end
     end
   
     class EquityCostOfCapital

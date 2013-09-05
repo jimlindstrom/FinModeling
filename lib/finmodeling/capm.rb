@@ -30,21 +30,27 @@ module FinModeling
       def self.from_ticker(company_ticker, num_days=6*365, index_ticker="SPY")
         index_quotes   = FamaFrench::EquityHistoricalData.new(index_ticker,   num_days)
         company_quotes = FamaFrench::EquityHistoricalData.new(company_ticker, num_days)
- 
+  
+        raise "no index returns"   if !index_quotes   || index_quotes.none?
+        raise "no company returns" if !company_quotes || company_quotes.none?
+
         common_dates = index_quotes  .year_and_month_strings &
                        company_quotes.year_and_month_strings
 
         index_quotes  .filter_by_date!(common_dates)
         company_quotes.filter_by_date!(common_dates)
-  
+ 
+        raise "no index returns (after filtering)"   if !index_quotes   || index_quotes.none?
+        raise "no company returns (after filtering)" if !company_quotes || company_quotes.none?
+ 
         index_div_hist   = NasdaqQuery::DividendHistory.for_symbol(index_ticker)
         company_div_hist = NasdaqQuery::DividendHistory.for_symbol(company_ticker)
    
         index_monthly_returns   = index_quotes  .monthly_returns(index_div_hist)
         company_monthly_returns = company_quotes.monthly_returns(company_div_hist)
 
-        raise "no index returns"   if !index_monthly_returns || index_monthly_returns.none?
-        raise "no company returns" if !company_monthly_returns || company_monthly_returns.none?
+        raise "no monthly index returns"   if !index_monthly_returns || index_monthly_returns.none?
+        raise "no monthly company returns" if !company_monthly_returns || company_monthly_returns.none?
   
         x = GSL::Vector.alloc(index_monthly_returns)
         y = GSL::Vector.alloc(company_monthly_returns)
